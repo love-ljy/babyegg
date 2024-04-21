@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme } from '@mui/material/styles';
 
 const themes = createTheme({
   palette: {
@@ -9,7 +9,7 @@ const themes = createTheme({
   },
 
   typography: {
-    fontFamily: ["Poppins", "Arial", "sans-serif"].join(","),
+    fontFamily: ['Poppins', 'Arial', 'sans-serif'].join(','),
   },
   components: {
     MuiDrawer: {
@@ -40,31 +40,31 @@ const themes = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          borderRadius: "20px",
-          background: "#EEF1F9",
+          borderRadius: '20px',
+          background: '#EEF1F9',
         },
       },
     },
     MuiDialogTitle: {
       styleOverrides: {
         root: {
-          display: "flex",
-          justifyContent: "space-between",
-          "> svg": {
-            cursor: "pointer",
+          display: 'flex',
+          justifyContent: 'space-between',
+          '> svg': {
+            cursor: 'pointer',
           },
         },
       },
     },
     MuiTab: {
-      styleOverrides:{
+      styleOverrides: {
         root: {
-          "&.Mui-disabled": {
-            background: "transparent ",
-            color: "#000 ",
+          '&.Mui-disabled': {
+            background: 'transparent ',
+            color: '#000 ',
           },
-        }
-      }
+        },
+      },
     },
     MuiCssBaseline: {
       styleOverrides: {
@@ -73,14 +73,14 @@ const themes = createTheme({
         //   color: "#ffffff !important",
         // },
         a: {
-          textDecoration: 'none'
+          textDecoration: 'none',
         },
-        ".Toastify__toast": {
-          borderRadius: "20px",
+        '.Toastify__toast': {
+          borderRadius: '20px',
         },
-        ".Toastify__toast-body": {
-          color: "#ED8347",
-          fontWeight: "700",
+        '.Toastify__toast-body': {
+          color: '#ED8347',
+          fontWeight: '700',
         },
       },
     },

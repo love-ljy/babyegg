@@ -28,7 +28,7 @@ export default function HomeAppBar() {
             color="inherit"
             aria-label="menu"
           >
-            <MenuIcon />
+            <img src="/svg/menu.svg" width={20} height={20} alt="menu" />
           </IconButton>
           <Image width="64" height={38} src={logo} alt="" />
           </LogoBox>

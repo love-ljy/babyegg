@@ -12,6 +12,7 @@ import createEmotionCache from "../createEmotionCache";
 import { config } from "../wagmi/wagmi";
 import Layout from "../components/Layout";
 import "@rainbow-me/rainbowkit/styles.css";
+import '../styles/globals.css';
 
 globalThis.Buffer = Buffer;
 
