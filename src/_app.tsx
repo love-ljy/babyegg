@@ -19,7 +19,7 @@ globalThis.Buffer = Buffer;
 const queryClient = new QueryClient();
 // 客户端的 Emotion 缓存实例
 const clientSideEmotionCache = createEmotionCache();
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={themes}>
