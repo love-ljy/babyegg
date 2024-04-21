@@ -35,7 +35,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         >
           <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>
-                <CssBaseline />
+                {/* <CssBaseline /> */}
                 <Layout>
                   <div>
                     <Component {...pageProps} />

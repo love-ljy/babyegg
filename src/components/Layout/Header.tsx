@@ -19,7 +19,7 @@ const LogoBox = styled.div`
 export default function HomeAppBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position='fixed'>
         <Toolbar sx={{display:'flex',justifyContent:"space-between",alignItems:"center"}}>
           <LogoBox>
           <IconButton
