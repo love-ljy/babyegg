@@ -25,5 +25,4 @@ interface Props {
     )
 }
 
-
 export default Layout

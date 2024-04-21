@@ -1,33 +1,29 @@
-import { Typography } from '@mui/material'
-import CountDown from './components/countDown/countDown'
+import { Typography, Box } from '@mui/material'
 import styled from '@emotion/styled'
+import CountDown from './components/countDown/countDown'
+import Participation from './components/Participation/Participation'
 
 const LongEggWrap = styled.div`
-  padding: 140px 20px 30px;
+  background-image: url('/img/countBg.png');
+  background-size: cover;
+  height: 475px;
 `
 
-const CountDownWrap = styled.div`
-  /* margin-top: 140px; */
+const Content = styled.div`
+  padding: 100px 20px 30px;
 `
 
 function LongEgg() {
   return (
-    <div>
-      <img
-        src="/img/countBg.png"
-        alt="countBg"
-        style={{
-          position: 'absolute',
-          zIndex: -1,
-        }}
-      />
-      <LongEggWrap>
-        <CountDownWrap>
-          <Typography>Countdown</Typography>
-          <CountDown />
-        </CountDownWrap>
-      </LongEggWrap>
-    </div>
+    <LongEggWrap>
+      <Content>
+        <Typography fontSize={25}>Countdown</Typography>
+        <CountDown />
+        <Box mt={2}>
+          <Participation />
+        </Box>
+      </Content>
+    </LongEggWrap>
   )
 }
 
