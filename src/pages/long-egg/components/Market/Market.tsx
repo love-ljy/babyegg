@@ -1,14 +1,17 @@
 import { useState } from 'react'
+import Image from 'next/image'
 import styled from '@emotion/styled'
 import { Box } from '@mui/material'
 import SwipeableViews from 'react-swipeable-views'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useTheme } from '@mui/material/styles'
+import markitipPng from '@imgs/markitip.png'
 
 const MarketWrap = styled.div`
   .top {
     position: relative;
+    height: 80px;
     .bg {
       width: 367px;
       height: 80px;
@@ -28,6 +31,7 @@ const MarketWrap = styled.div`
       .icon {
         position: absolute;
         right: 0;
+        top: 3px;
       }
     }
   }
@@ -138,7 +142,9 @@ const Market = () => {
         <div className="bg"></div>
         <div className="title">
           <span>Egg Market</span>
-          <span className="icon">图标</span>
+          <div className="icon">
+            <Image src={markitipPng} width={25} alt="markitip" height={25} />
+          </div>
         </div>
       </div>
       <div className="tab">

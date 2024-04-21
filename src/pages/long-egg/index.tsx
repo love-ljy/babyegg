@@ -5,9 +5,14 @@ import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 
 const LongEggWrap = styled.div`
-  background-image: url('@imgs/countBg.png');
-  background-size: cover;
-  height: 475px;
+  .bg {
+    background-image: url('/img/countBg.png');
+    background-size: cover;
+    height: 475px;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+  }
 `
 
 const Content = styled.div`
@@ -17,13 +22,14 @@ const Content = styled.div`
 function LongEgg() {
   return (
     <LongEggWrap>
+      <div className="bg"></div>
       <Content>
         <Typography fontSize={25}>Countdown</Typography>
         <CountDown />
         <Box mt={2}>
           <Participation />
         </Box>
-        <Box mt={2}>
+        <Box mt={10}>
           <Market />
         </Box>
       </Content>
