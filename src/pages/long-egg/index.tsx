@@ -5,6 +5,7 @@ import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 
 const LongEggWrap = styled.div`
+  color: #fff;
   .bg {
     background-image: url('/img/countBg.png');
     background-size: cover;
