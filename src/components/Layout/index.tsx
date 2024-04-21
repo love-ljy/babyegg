@@ -1,8 +1,14 @@
 import React from "react";
-import {Container,Box} from '@mui/material';
-import styled from "@mui/material";
+import {Container} from '@mui/material';
+import styled from '@emotion/styled';
 import HomeAppBar from './Header'
 import Footer from './Footer'
+
+const LayBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+`
 
 
 interface Props {
@@ -10,11 +16,11 @@ interface Props {
   }
   const Layout:React.FC<Props> = ({children}) => {
     return (
-        <Box>
+        <LayBox>
             <HomeAppBar/>
             <Container>{children}</Container>
             <Footer/>
-        </Box>
+        </LayBox>
     )
 }
 
