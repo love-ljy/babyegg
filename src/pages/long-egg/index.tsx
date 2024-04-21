@@ -2,9 +2,10 @@ import { Typography, Box } from '@mui/material'
 import styled from '@emotion/styled'
 import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
+import Market from './components/Market/Market'
 
 const LongEggWrap = styled.div`
-  background-image: url('/img/countBg.png');
+  background-image: url('@imgs/countBg.png');
   background-size: cover;
   height: 475px;
 `
@@ -21,6 +22,9 @@ function LongEgg() {
         <CountDown />
         <Box mt={2}>
           <Participation />
+        </Box>
+        <Box mt={2}>
+          <Market />
         </Box>
       </Content>
     </LongEggWrap>

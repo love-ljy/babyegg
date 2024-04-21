@@ -1,6 +1,8 @@
 import styled from '@emotion/styled'
 import { Box, Typography } from '@mui/material'
-
+import distributePng from '@imgs/distribute.png'
+import prizepoolPng from '@imgs/prizepool.png'
+import Image from 'next/image'
 const ParticipationWrap = styled.div`
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
@@ -9,6 +11,9 @@ const ParticipationWrap = styled.div`
   padding: 12px 14px 12px 14px;
   .count {
     font-size: 30px;
+  }
+  .img {
+    margin-bottom: 10px;
   }
 `
 
@@ -34,6 +39,7 @@ const Mid = styled.div`
   .bot {
     display: flex;
     justify-content: space-between;
+    align-items: end;
   }
 `
 
@@ -45,6 +51,7 @@ const Bot = styled.div`
   .bot {
     display: flex;
     justify-content: space-between;
+    align-items: end;
   }
 `
 
@@ -65,14 +72,18 @@ const Participation = () => {
         <Typography fontSize={15}>Total Distribute</Typography>
         <div className="bot">
           <span className="count">100,000,000</span>
-          <span>图标</span>
+          <div className="img">
+            <Image src={distributePng} width={24} height={24} alt="distribute" />
+          </div>
         </div>
       </Mid>
       <Bot>
         <Typography fontSize={15}>Total Prize Pool</Typography>
         <div className="bot">
           <span className="count">100,000,000</span>
-          <span>图标</span>
+          <div className="img">
+            <Image src={prizepoolPng} width={24} height="24" alt="prizepool" />
+          </div>
         </div>
       </Bot>
     </ParticipationWrap>
