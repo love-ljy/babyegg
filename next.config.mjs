@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 /** @type {import('next').NextConfig} */
-const basePath = process.env.BASE_PATH || "";
-console.log("env", process.env.NODE_ENV);
+// const basePath = process.env.BASE_PATH || "";
+// console.log("env", process.env.NODE_ENV);
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -16,9 +16,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath,
+  basePath: '',
   env: {
-    BASE_PATH: basePath,
+    BASE_PATH: '',
     IS_PROD: process.env.IS_PROD,
     RPC_URL: process.env.RPC_URL,
     EXPLORER_HOST: process.env.EXPLORER_HOST,

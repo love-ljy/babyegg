@@ -12,6 +12,8 @@ import createEmotionCache from "../createEmotionCache";
 import { config } from "../wagmi/wagmi";
 import Layout from "../components/Layout";
 import "@rainbow-me/rainbowkit/styles.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import '../styles/globals.css';
 
 globalThis.Buffer = Buffer;

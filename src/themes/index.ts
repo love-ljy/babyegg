@@ -15,6 +15,8 @@ const themes = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
+          minWidth:'200px',
+          color: "#fff",
           background: "rgba(0, 0, 0, 0.70)",
           backdropFilter: "blur(8.25px)"
         },
@@ -27,6 +29,11 @@ const themes = createTheme({
           color:"#fff",
           background: "var(--Linear, linear-gradient(90deg, #3220D0 0%, #F61A7E 100%));"
         }
+      }
+    },
+    MuiListItemText: {
+      styleOverrides:{
+        
       }
     },
     MuiAppBar:{

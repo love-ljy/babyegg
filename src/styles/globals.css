@@ -43,3 +43,34 @@ body {
   }
 }
 
+.slick-dots li {
+  margin: 0 3px;
+  width: 80px!important;
+}
+.slick-dots{
+  bottom: -4px!important;
+}
+.slick-dots li button {
+  font-size: 0; /* 移除默认按钮中的内容 (即'•') */
+  line-height: 0;
+  border-radius: 35px;
+  width: 80px!important;
+  height: 3px; /* 横杠高度 */
+  padding: 0;
+  border: none;
+  background-color: #fff; /* 设置横杠的颜色 */
+}
+/* 调整dots为横条形状 */
+.slick-dots li button:before {
+  content: ''; /* 移除默认的内容 */
+  display: block;
+  width: 80px; /* 横条的宽度 */
+  height: 3px; /* 横条的高度 */
+  background-color: gray; /* 横条的默认颜色 */
+}
+
+/* 当dot处于激活状态时的样式 */
+.slick-dots li.slick-active button:before {
+  background-color: #F21A80; /* 当前选中的横条的颜色 */
+}
+

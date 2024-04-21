@@ -88,3 +88,5 @@ fieldset {
 ins {
   text-decoration: none;
 }
+/* 覆盖默认的 slick dots 样式 */
+

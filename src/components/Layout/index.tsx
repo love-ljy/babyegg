@@ -18,8 +18,9 @@ interface Props {
     return (
         <LayBox>
             <HomeAppBar/>
-            <Container>{children}</Container>
+            <Container sx={{padding:0}}>{children}</Container>
             <Footer/>
+            
         </LayBox>
     )
 }
