@@ -31,14 +31,7 @@ body {
   background-color: #000;
   color: #fff;
 
-  .main {
-    position: relative;
-    max-width: 600px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding-top: 0.1px;
-    padding-bottom: 20px;
-  }
+  
 }
 
 .slick-dots li {

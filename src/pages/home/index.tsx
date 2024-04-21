@@ -1,10 +1,11 @@
 import React from 'react'
-import { Box, Typography, Button, Stack,Container } from '@mui/material'
+import { Box, Typography, Button, Stack, Container } from '@mui/material'
 import Image from 'next/image'
 import Slider from 'react-slick'
 import styled from '@emotion/styled'
 import erji from '@imgs/erji.png'
 import shoub from '@imgs/shb.png'
+import Token from '@imgs/token.png'
 
 const LayBox = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ const LayBox = styled.div`
   height: 100%;
 `
 
-const SlideBox = styled(Box)<{ bg: string }>`
+const SlideBox = styled(Box) <{ bg: string }>`
   width: 100%;
   position: relative;
   color: #fff;
@@ -92,6 +93,47 @@ const RightBox = styled.div`
   right: 0;
   top: 0;
 `
+const TokenDesc = styled.div`
+  border-radius: 5px;
+border: 1px solid #8F0DF5;
+background: #000;
+margin: 20px 0;
+text-align: left;
+padding: 5px 12px;
+width: 100%;
+`
+const TokenTitle = styled.div`
+  color: rgba(255, 255, 255, 0.50);
+font-family: Inter;
+font-size: 10px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+`
+const TokenContainer = styled.div`
+  position: relative;
+  height: 100%;
+`
+const TokenImg = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const TokenBg = styled.div`
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: rotate(-270deg);
+  flex-shrink: 0;
+  border-radius: 238px;
+background: linear-gradient(109deg, rgba(141, 16, 192, 0.62) 21.46%, rgba(46, 141, 161, 0.62) 54.77%, rgba(9, 20, 124, 0.62) 92.13%);
+filter: blur(60.150001525878906px);
+  width: 100%;
+  /* height: 339px; */
+  z-index: -1;
+`
 
 const slides = [
   {
@@ -139,16 +181,50 @@ const Home: React.FC = () => {
       <ProjectBox>
         <ProjectDes />
         <LeftBox>
-        <Image width="91" height={108} src={erji} alt="" />
+          <Image width="91" height={108} src={erji} alt="" />
         </LeftBox>
         <RightBox>
-        <Image width="124" height={99} src={shoub} alt="" />
+          <Image width="124" height={99} src={shoub} alt="" />
         </RightBox>
-        <Typography fontSize="40px" color="#fff" fontWeight="bold">项目简介</Typography>
-        <Typography fontSize="15px" color="#fff">⻢蹄链上⾸创社会实验meme币，融合燃烧机制与丰富游戏⽣态。它不仅是散户的福⾳，也是⾲菜崛起的新篇章，旨在重燃⻢蹄链的辉煌，致敬伟⼤的meme精神。这标志着区块链与NFT游戏领域的⼀次创新⻜跃。</Typography>
+        <Typography fontSize="40px" color="#fff" fontWeight="bold">
+          项目简介
+        </Typography>
+        <Typography fontSize="15px" color="#fff">
+          ⻢蹄链上⾸创社会实验meme币，融合燃烧机制与丰富游戏⽣态。它不仅是散户的福⾳，也是⾲菜崛起的新篇章，旨在重燃⻢蹄链的辉煌，致敬伟⼤的meme精神。这标志着区块链与NFT游戏领域的⼀次创新⻜跃。
+        </Typography>
       </ProjectBox>
-      <Container>
-      <Typography fontSize="40px" color="#fff" fontWeight="bold">宝贝龙代币通证</Typography>
+      <Container sx={{width:'100%'}}>
+        <Typography fontSize="40px" color="#fff" fontWeight="bold">
+          宝贝龙代币通证
+        </Typography>
+        <TokenContainer>
+          <TokenBg />
+          <TokenImg>
+            <Image width="159" height={159} src={Token} alt="" />
+          </TokenImg>
+          <TokenDesc>
+            <TokenTitle>总供应</TokenTitle>
+            <Typography color="#fff">12,800,000,000</Typography>
+          </TokenDesc>
+          <TokenDesc>
+            <TokenTitle>总供应</TokenTitle>
+            <Typography color="#fff">12,800,000,000</Typography>
+          </TokenDesc>
+          <TokenDesc>
+            <TokenTitle>总供应</TokenTitle>
+            <Typography color="#fff">12,800,000,000</Typography>
+          </TokenDesc>
+          
+          <TokenDesc>
+            <TokenTitle>总供应</TokenTitle>
+            <Typography color="#fff">12,800,000,000</Typography>
+          </TokenDesc>
+          <TokenDesc>
+            <TokenTitle>总供应</TokenTitle>
+            <Typography color="#fff">12,800,000,000</Typography>
+          </TokenDesc>
+        </TokenContainer>
+        
       </Container>
     </LayBox>
   )
