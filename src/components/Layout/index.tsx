@@ -2,7 +2,7 @@ import React from "react";
 import {Container,Box} from '@mui/material';
 import styled from "@mui/material";
 import HomeAppBar from './Header'
-
+import Footer from './Footer'
 
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
         <Box>
             <HomeAppBar/>
             <Container>{children}</Container>
+            <Footer/>
         </Box>
     )
 }

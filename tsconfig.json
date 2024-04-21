@@ -18,6 +18,7 @@
     ],
     "paths": {
       "@icons/*": ["./src/assets/icons/*"],
+      "@imgs/*": ["./src/assets/img/*"],
       "@styles/*": ["./src/assets/styles/*"],
       "@config/*": ["./src/config/*"],
       "@api/*": ["./src/api/*"],

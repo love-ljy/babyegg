@@ -2,11 +2,9 @@ import { createTheme } from "@mui/material/styles";
 
 const themes = createTheme({
   palette: {
-    primary: {
-      main: "#E77B3D",
-    },
+   
     background: {
-      default: "#EEF1F9",
+      default: "#030409;"
     },
   },
 
@@ -17,8 +15,25 @@ const themes = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          background: "#EEF1F9",
-          backdropFilter: "blur(2px)",
+          background: "rgba(0, 0, 0, 0.70)",
+          backdropFilter: "blur(8.25px)"
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides:{
+        root: {
+          borderRadius: "5px;",
+          color:"#fff",
+          background: "var(--Linear, linear-gradient(90deg, #3220D0 0%, #F61A7E 100%));"
+        }
+      }
+    },
+    MuiAppBar:{
+      styleOverrides: {
+        root: {
+          background:" linear-gradient(180deg, rgba(0, 0, 0, 0.56) 0%, rgba(0, 0, 0, 0.26) 100%);",
+          backdropFilter: "blur(6px);"
         },
       },
     },
