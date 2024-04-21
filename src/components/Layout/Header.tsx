@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@/assets/svg/menu.svg';
+import MenuIcon from '@icons/menu.svg';
 
 export default function HomeAppBar() {
   return (
@@ -19,7 +19,7 @@ export default function HomeAppBar() {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-            <Menu />
+            <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             News

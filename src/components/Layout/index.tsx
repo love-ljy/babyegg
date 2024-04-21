@@ -5,12 +5,15 @@ import HomeAppBar from './Header'
 
 
 
-const Layout = (props: any) => {
+interface Props {
+    children?: React.ReactNode;
+  }
+  const Layout:React.FC<Props> = ({children}) => {
     return (
-        <Container>
+        <Box>
             <HomeAppBar/>
-            <Box>{props.children}</Box>
-        </Container>
+            <Container>{children}</Container>
+        </Box>
     )
 }
 
