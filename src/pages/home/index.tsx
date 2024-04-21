@@ -292,10 +292,10 @@ const Home: React.FC = () => {
         <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">游戏生态</Typography>
         <PartenerBox>
           {
-            Parteners.map(e => {
+            Parteners.map((e,i) => {
               return (
                 // <PartenerCard key={e.title} title={e.title} image={e.image} />
-               <Box margin="0 auto">
+               <Box key={i+'2s'} margin="0 auto">
                  <Image width={140} src={e}   alt=""/>
                </Box>
               )
