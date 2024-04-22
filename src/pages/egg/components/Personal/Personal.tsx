@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { Box } from '@mui/material'
 import markitipPng from '@imgs/markitip.png'
 import CommonTab from '../commonTab/commonTab'
-import BuyEgg from './BuyEgg'
+import UserPanel from './UserPanel'
 
 const MarketWrap = styled.div`
   .top {
@@ -49,17 +49,17 @@ const tabList: tabItem[] = [
   {
     label: 'User Panel',
     value: 'panel',
-    component: <BuyEgg />,
+    component: <UserPanel />,
   },
   {
     label: 'Invitation',
     value: 'Invitation',
-    component: <BuyEgg />,
+    component: <UserPanel />,
   },
   {
     label: 'Withdraw',
     value: 'Withdraw',
-    component: <BuyEgg />,
+    component: <UserPanel />,
   },
 ]
 

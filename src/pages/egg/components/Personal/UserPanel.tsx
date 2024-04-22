@@ -4,10 +4,11 @@ import { Box, Typography, Button } from '@mui/material'
 import buyEggPng from '@imgs/buyegg.png'
 import Image from 'next/image'
 import TextField from '@mui/material/TextField'
-import MaticIcon from '@icons/matic.svg'
+import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import prizepoolPng from '@imgs/prizepool.png'
 import detailedPng from '@imgs/detailed.png'
+import grandmasterPng from '@imgs/grandmaster.png'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -48,7 +49,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyEggWrap = styled.div`
+const UserPanelWrap = styled.div`
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
 
@@ -60,29 +61,36 @@ const BuyEggWrap = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  .buying {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 10px;
-    align-self: flex-start;
-    margin-bottom: 2px;
-    margin-top: 2px;
-  }
-  .count {
-    font-weight: 700;
-  }
-  .available {
-    align-self: flex-start;
-  }
-  .detailed {
+  .header {
+    width: 100%;
     display: flex;
-    margin-top: 20px;
+    justify-content: start;
     img {
-      margin-right: 10px;
+      margin-right: 24px;
     }
-    .desc {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 10px;
-      text-decoration: underline;
+    .prograssWrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      .title {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .masterWrap {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .master {
+          font-size: 20px;
+          font-weight: 900;
+        }
+        .percent {
+          font-size: 10px;
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
     }
   }
 `
@@ -130,7 +138,7 @@ const coinList = [
     value: 'BSC',
   },
 ]
-const BuyEgg = () => {
+const UserPanel = () => {
   const [values, setValues] = useState('')
   const [coinType, setCoinType] = useState('')
   const [loading, setLoading] = useState(false)
@@ -138,6 +146,7 @@ const BuyEgg = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues(event.target.value)
   }
+  
   const selectChange = (option: any) => {
     setCoinType(option.value)
   }
@@ -145,49 +154,21 @@ const BuyEgg = () => {
   const handleBuy = () => {}
 
   return (
-    <BuyEggWrap>
-      <div>
-        <Image src={buyEggPng} alt="buyegg" />
-      </div>
-      <span className="buying">Buying Methods</span>
-      <CountInput
-        value={values}
-        onChange={handleChange}
-        name="numberformat"
-        id="formatted-numberformat-input"
-        InputProps={{
-          inputComponent: NumericFormatCustom as any,
-          endAdornment: (
-            <AdornmentWrap>
-              <InputAdornment position="start">
-                <MaticIcon/>
-              </InputAdornment>
-              <BaseSelect
-                customStyle={{
-                  marginRight: '20px',
-                }}
-                selectOptions={coinList}
-                selectChange={selectChange}
-              />
-            </AdornmentWrap>
-          ),
-        }}
-        variant="standard"
-      />
-      <div className="available">
-        <span className="buying">Your Current $Matic available :</span>
-        <span className="count">10,000.00</span>
-      </div>
-      <BuyBtn isCancel={loading} disabled={loading} onClick={handleBuy}>
-        {loading ? 'Loading...' : 'Buy'}
-      </BuyBtn>
-      <div className="detailed">
+    <UserPanelWrap>
+      <div className="header">
         <div>
-          <Image width={15} height={15} src={detailedPng} alt="detailed" />
+          <Image src={grandmasterPng} alt="grandmaster" />
         </div>
-        <span className="desc">Detailed Description</span>
+        <div className="prograssWrap">
+          <div className="title">Title</div>
+          <div className="masterWrap">
+            <span className="master">Grandmaster</span>
+            <span className="percent">100/100</span>
+          </div>
+          <div>进度条</div>
+        </div>
       </div>
-    </BuyEggWrap>
+    </UserPanelWrap>
   )
 }
-export default BuyEgg
+export default UserPanel

@@ -3,6 +3,25 @@
 @tailwind utilities;
 @import './reset.css';
 
+@font-face {
+  font-family: 'CustomFont';
+  src:
+    url('../assets/font/Lang-2.ttf') format('woff2'),
+    url('../assets/font/Lang-2.ttf') format('woff2'),
+    url('../assets/font/Inter-Black.ttf') format('woff2'),
+    url('../assets/font/Inter-Bold.ttf') format('woff2'),
+    url('../assets/font/Inter-ExtraBold.ttf') format('woff2'),
+    url('../assets/font/Inter-ExtraLight.ttf') format('woff2'),
+    url('../assets/font/Inter-Light.ttf') format('woff2'),
+    url('../assets/font/Inter-Medium.ttf') format('woff2'),
+    url('../assets/font/Inter-Regular.ttf') format('woff2'),
+    url('../assets/font/Inter-SemiBold.ttf') format('woff2'),
+    url('../assets/font/Inter-Thin.ttf') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 html {
   min-height: 100vh;
   box-sizing: border-box;
@@ -31,22 +50,20 @@ body {
   background-color: #000;
   color: #fff;
   padding: 0 !important;
-
-  
 }
 
 .slick-dots li {
   margin: 0 3px;
-  width: 80px!important;
+  width: 80px !important;
 }
-.slick-dots{
-  bottom: -4px!important;
+.slick-dots {
+  bottom: -4px !important;
 }
 .slick-dots li button {
   font-size: 0; /* 移除默认按钮中的内容 (即'•') */
   line-height: 0;
   border-radius: 35px;
-  width: 80px!important;
+  width: 80px !important;
   height: 3px; /* 横杠高度 */
   padding: 0;
   border: none;
@@ -63,6 +80,5 @@ body {
 
 /* 当dot处于激活状态时的样式 */
 .slick-dots li.slick-active button:before {
-  background-color: #F21A80; /* 当前选中的横条的颜色 */
+  background-color: #f21a80; /* 当前选中的横条的颜色 */
 }
-

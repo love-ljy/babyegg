@@ -8,7 +8,7 @@ const themes = createTheme({
   },
 
   typography: {
-    fontFamily: ['Poppins', 'Arial', 'sans-serif'].join(','),
+    fontFamily: ['CustomFont', 'Arial', 'sans-serif'].join(','),
   },
   components: {
     MuiDrawer: {

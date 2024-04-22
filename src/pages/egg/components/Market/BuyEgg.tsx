@@ -91,18 +91,45 @@ const AdornmentWrap = styled.div`
 `
 
 const DescContent = styled.div`
+  width: 78vw;
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: start;
+  font-size: 12px;
+  padding-bottom: 50px;
+`
+
+const CongContent = styled.div`
   width: 60vw;
   display: flex;
   justify-content: start;
   flex-direction: column;
   align-items: start;
   font-size: 13px;
-  padding-bottom: 50px;
+  /* padding-bottom: 50px; */
   .cong {
     font-size: 22px;
     text-shadow:
       inset 0px 1px 0.6px rgba(255, 255, 255, 0.56),
       0px 3px 3.9px rgba(0, 0, 0, 0.36);
+  }
+  .countWrap {
+    margin-top: 15px;
+    width: 100%;
+    /* height: 65px; */
+    border-radius: 5px;
+    background: rgba(8, 17, 33, 1);
+    border: 1px solid rgba(143, 13, 245, 1);
+    box-shadow: inset 0px 0px 12.1px rgba(143, 13, 245, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 29px 16px 29px;
+    span {
+      margin-right: 20px;
+      font-size: 30px;
+    }
   }
 `
 const DialogFooter = styled.div`
@@ -259,12 +286,18 @@ const BuyEgg = () => {
           </DialogFooter>
         }
       >
-        <DescContent>
+        <CongContent>
           <div>
             <Image src={congratulationsTxtPng} alt="txt" />
           </div>
           <div>you have received $BabyLoong</div>
-        </DescContent>
+          <div className="countWrap">
+            <span>10,000</span>
+            <div>
+              <Image src={prizepoolPng} alt="pool" />
+            </div>
+          </div>
+        </CongContent>
       </CommonModal>
     </BuyEggWrap>
   )
