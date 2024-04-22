@@ -86,9 +86,7 @@ export const ConnectButton = <T extends keyof JSX.IntrinsicElements>({
 
                     {/* {chain.name} */}
                   </div>
-                  <Button onClick={openAccountModal} type="button">
-                    {leftIcon && <span>{leftIcon}</span>}
-
+                  <Button sx={{fontSize:'12px',fontWeight:'bold'}} onClick={openAccountModal} type="button">
                     {account.displayName}
                     {account.displayBalance ? ` (${account.displayBalance})` : ''}
                   </Button>
