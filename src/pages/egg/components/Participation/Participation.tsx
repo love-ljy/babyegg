@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { Box, Typography } from '@mui/material'
 import distributePng from '@imgs/distribute.png'
-import prizepoolPng from '@imgs/prizepool.png'
+import MaticIcon from '@icons/matic.svg'
 import Image from 'next/image'
 
 const ParticipationWrap = styled.div`
@@ -81,7 +81,7 @@ const Participation = () => {
         <div className="bot">
           <span className="count">100,000,000</span>
           <div className="img">
-            <Image src={prizepoolPng} width={24} height="24" alt="prizepool" />
+            <MaticIcon />
           </div>
         </div>
       </Bot>

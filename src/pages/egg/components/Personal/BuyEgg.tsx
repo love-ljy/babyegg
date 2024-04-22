@@ -4,7 +4,7 @@ import { Box, Typography, Button } from '@mui/material'
 import buyEggPng from '@imgs/buyegg.png'
 import Image from 'next/image'
 import TextField from '@mui/material/TextField'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import MaticIcon from '@icons/matic.svg'
 import InputAdornment from '@mui/material/InputAdornment'
 import prizepoolPng from '@imgs/prizepool.png'
 import detailedPng from '@imgs/detailed.png'
@@ -160,7 +160,7 @@ const BuyEgg = () => {
           endAdornment: (
             <AdornmentWrap>
               <InputAdornment position="start">
-                <Image src={prizepoolPng} alt="prizepoolP" />
+                <MaticIcon/>
               </InputAdornment>
               <BaseSelect
                 customStyle={{

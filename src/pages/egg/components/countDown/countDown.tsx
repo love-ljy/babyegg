@@ -3,8 +3,11 @@ import quotePng from '@imgs/quote.png'
 import Image from 'next/image'
 
 const TimeWrap = styled.div`
-  background: rgba(0, 0, 0, 0.71);
-  box-shadow: inset 0px 0px 12.1px rgba(0, 100, 255, 0.74);
+ border-radius: 5px;
+background: rgba(0, 0, 0, 0.71);
+
+/* Inner Shadow */
+box-shadow: 0px 0px 12.1px 0px rgba(0, 100, 255, 0.74) inset;
   height: 73px;
   display: flex;
   justify-content: space-around;
