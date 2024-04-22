@@ -3,9 +3,11 @@ import styled from '@emotion/styled'
 import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
+import Personal from './components/Personal/Personal'
 
 const LongEggWrap = styled.div`
   color: #fff;
+  /* background-color: #fff; */
   .bg {
     background-image: url('/img/countBg.png');
     background-size: cover;
@@ -30,8 +32,11 @@ function LongEgg() {
         <Box mt={2}>
           <Participation />
         </Box>
-        <Box mt={10}>
+        <Box mt={6}>
           <Market />
+        </Box>
+        <Box mt={6}>
+          <Personal />
         </Box>
       </Content>
     </LongEggWrap>

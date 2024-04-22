@@ -22,7 +22,9 @@ export default function HomeAppBar() {
   const [isOpen,setIsOpen] = useState(false)
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed">
+      <AppBar position="fixed" sx={{
+        padding:'0 !important' 
+      }}>
         <Toolbar sx={{display:'flex',justifyContent:"space-between",alignItems:"center"}}>
           <LogoBox>
           <IconButton

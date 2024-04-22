@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
-import { Box } from '@mui/material'
+import quotePng from '@imgs/quote.png'
+import Image from 'next/image'
 
 const TimeWrap = styled.div`
   background: rgba(0, 0, 0, 0.71);
@@ -21,6 +22,9 @@ const TimeWrap = styled.div`
       color: rgba(255, 255, 255, 0.5);
     }
   }
+  img {
+    margin-top: -14px;
+  }
 `
 
 const CountDown = () => {
@@ -30,12 +34,12 @@ const CountDown = () => {
         <span className="counter">31</span>
         <span className="label">hours</span>
       </div>
-      <span className="counter">:</span>
+      <Image src={quotePng} width={3} height={12} alt=":" />
       <div className="time-item">
         <span className="counter">31</span>
         <span className="label">minute</span>
       </div>
-      <span className="counter">:</span>
+      <Image src={quotePng} width={3} height={12} alt=":" />
       <div className="time-item">
         <span className="counter">31</span>
         <span className="label">second</span>

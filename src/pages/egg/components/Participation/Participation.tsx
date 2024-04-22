@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material'
 import distributePng from '@imgs/distribute.png'
 import prizepoolPng from '@imgs/prizepool.png'
 import Image from 'next/image'
+
 const ParticipationWrap = styled.div`
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
@@ -15,12 +16,16 @@ const ParticipationWrap = styled.div`
   .img {
     margin-bottom: 10px;
   }
+  .bot {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
 `
 
 const Top = styled.div`
   display: flex;
   justify-content: space-between;
-
   .parti {
     display: flex;
     flex-direction: column;
@@ -36,11 +41,6 @@ const Mid = styled.div`
   padding: 6px 36px;
   border-radius: 51px;
   background: linear-gradient(180deg, rgba(246, 26, 126, 1) 0%, rgba(246, 26, 126, 0.3) 100%);
-  .bot {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-  }
 `
 
 const Bot = styled.div`
@@ -48,11 +48,6 @@ const Bot = styled.div`
   padding: 6px 36px;
   border-radius: 51px;
   background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
-  .bot {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-  }
 `
 
 const Participation = () => {
@@ -69,7 +64,9 @@ const Participation = () => {
         </div>
       </Top>
       <Mid>
-        <Typography fontSize={15}>Total Distribute</Typography>
+        <Typography fontSize={15} fontWeight={700}>
+          Total Distribute
+        </Typography>
         <div className="bot">
           <span className="count">100,000,000</span>
           <div className="img">
@@ -78,7 +75,9 @@ const Participation = () => {
         </div>
       </Mid>
       <Bot>
-        <Typography fontSize={15}>Total Prize Pool</Typography>
+        <Typography fontSize={15} fontWeight={700}>
+          Total Prize Pool
+        </Typography>
         <div className="bot">
           <span className="count">100,000,000</span>
           <div className="img">

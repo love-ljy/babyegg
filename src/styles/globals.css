@@ -30,6 +30,7 @@ body {
   letter-spacing: 0.01071em;
   background-color: #000;
   color: #fff;
+  padding: 0 !important;
 
   
 }

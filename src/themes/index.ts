@@ -1,10 +1,9 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles'
 
 const themes = createTheme({
   palette: {
-   
     background: {
-      default: "#030409;"
+      default: '#030409;',
     },
   },
 
@@ -15,39 +14,37 @@ const themes = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          minWidth:'200px',
-          color: "#fff",
-          background: "rgba(0, 0, 0, 0.70)",
-          backdropFilter: "blur(8.25px)"
+          minWidth: '200px',
+          color: '#fff',
+          background: 'rgba(0, 0, 0, 0.70)',
+          backdropFilter: 'blur(8.25px)',
         },
       },
     },
     MuiButton: {
-      styleOverrides:{
-        root: {
-          borderRadius: "5px;",
-          color:"#fff",
-          background: "var(--Linear, linear-gradient(90deg, #3220D0 0%, #F61A7E 100%));"
-        }
-      }
-    },
-    MuiListItemText: {
-      styleOverrides:{
-        
-      }
-    },
-    MuiAppBar:{
       styleOverrides: {
         root: {
-          background:" linear-gradient(180deg, rgba(0, 0, 0, 0.56) 0%, rgba(0, 0, 0, 0.26) 100%);",
-          backdropFilter: "blur(6px);"
+          borderRadius: '5px;',
+          color: '#fff',
+          background: 'var(--Linear, linear-gradient(90deg, #3220D0 0%, #F61A7E 100%));',
+        },
+      },
+    },
+    MuiListItemText: {
+      styleOverrides: {},
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: ' linear-gradient(180deg, rgba(0, 0, 0, 0.56) 0%, rgba(0, 0, 0, 0.26) 100%);',
+          backdropFilter: 'blur(6px);',
         },
       },
     },
     MuiDialog: {
       styleOverrides: {
         paper: {
-          borderRadius: '20px',
+          // borderRadius: '20px',
           background: '#EEF1F9',
         },
       },
@@ -92,6 +89,6 @@ const themes = createTheme({
       },
     },
   },
-});
+})
 
-export default themes;
+export default themes
