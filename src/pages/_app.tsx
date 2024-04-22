@@ -11,6 +11,8 @@ import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../createEmotionCache";
 import { config } from "../wagmi/wagmi";
 import Layout from "../components/Layout";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "@rainbow-me/rainbowkit/styles.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -37,6 +39,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         >
           <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>
+              <ToastContainer />
                 <CssBaseline />
                 <Layout>
                   <div>

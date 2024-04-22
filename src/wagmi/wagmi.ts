@@ -1,5 +1,5 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { polygonAmoy,polygon } from 'viem/chains';
+import { polygonAmoy,polygon,bscTestnet } from 'viem/chains';
 
 
 export const config = getDefaultConfig({
@@ -9,6 +9,7 @@ export const config = getDefaultConfig({
     // mainnet,
     polygonAmoy,
     polygon,
+    bscTestnet,
     // optimism,
     // arbitrum,
     // base,

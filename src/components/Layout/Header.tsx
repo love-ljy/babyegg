@@ -1,10 +1,11 @@
 import {useState} from 'react';
 import Image from "next/image";
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import styled from '@emotion/styled';
-import Button from '@mui/material/Button';
+import {ConnectButton} from './ConnectWallet';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@icons/menu.svg';
 import logo from '@imgs/logo.png'
@@ -36,7 +37,8 @@ export default function HomeAppBar() {
           </IconButton>
           <Image width="64" height={38} src={logo} alt="" />
           </LogoBox>
-          <Button color="inherit">链接钱包</Button>
+          <ConnectButton>链接钱包</ConnectButton>
+          {/* <Button color="inherit">链接钱包</Button> */}
         </Toolbar>
       </AppBar>
       <DrawerMenu open={isOpen} onClose={() => setIsOpen(false)}/>
