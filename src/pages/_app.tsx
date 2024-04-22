@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { AppProps } from "next/app";
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -10,6 +10,7 @@ import { WagmiProvider } from "wagmi";
 import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../createEmotionCache";
 import { config } from "../wagmi/wagmi";
+import { polygonAmoy,polygon,bscTestnet } from 'viem/chains';
 import Layout from "../components/Layout";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,6 +37,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             fontStack: "system",
             overlayBlur: "small",
           })}
+          initialChain={bscTestnet}
         >
           <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>

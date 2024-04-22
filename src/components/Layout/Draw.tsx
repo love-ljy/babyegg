@@ -31,7 +31,7 @@ interface DrawProps {
   onClose: () => void
 }
 
-const MenuButton = styled(ListItemButton)<{ isactive?: boolean }>`
+const MenuButton = styled(ListItemButton)<{ isactive?: number }>`
   border-radius: 10px;
   padding: 3px 16px;
   background: ${({ isactive }) =>
@@ -80,7 +80,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
           <List>
             {config.map((text, index) => (
               <ListItem key={text.name} disablePadding sx={{ marginBottom: '10px' }}>
-                <MenuButton isactive={pathname === text.path?true:false}>
+                <MenuButton isactive={pathname === text.path?1:0}>
                   <ListItemIcon sx={{minWidth:'40px'}}>
                     {pathname === text.path ? text.activeIcon : text.icon}
                   </ListItemIcon>
