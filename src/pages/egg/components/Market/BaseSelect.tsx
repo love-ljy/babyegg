@@ -86,6 +86,7 @@ const BaseSelect = ({ customStyle, selectOptions, selectChange, disabled }: Prop
             userSelect: 'none',
             color: 'rgba(255, 255, 255, 0.5)',
             fontSize: '13px',
+            marginRight: '6px',
           }}
         >
           {curr?.label ?? '-'}
