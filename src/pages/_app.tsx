@@ -41,7 +41,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         >
           <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>
-              <ToastContainer />
+              <ToastContainer theme='dark' />
                 <CssBaseline />
                 <Layout>
                   <div>

@@ -1,4 +1,5 @@
 import React from 'react'
+import Router, { useRouter } from 'next/router'
 import { Box, Typography, Button, Stack, Container } from '@mui/material'
 import Image from 'next/image'
 import Slider from 'react-slick'
@@ -16,6 +17,7 @@ import grounp3 from '@imgs/Group_6.png'
 import grounp4 from '@imgs/Group_7.png'
 import grounp5 from '@imgs/Group_8.png'
 import grounp6 from '@imgs/Group_9.png'
+import { toast } from 'react-toastify'
 
 const LayBox = styled.div`
   display: flex;
@@ -171,9 +173,13 @@ const slides = [
     name: '惊奇之旅',
     desc: '探索宝贝龙蛋的奥妙！',
     imageUrl: '/img/image1.png',
+    path:'/egg',
+    isComing:false
   },
-  { title: '准备好，', name: '冲吖', desc: '让宝贝龙激情的释放速度', imageUrl: '/img/image2.png' },
-  { title: '狂欢中', name: '', desc: '喂饱您的宝贝龙！', imageUrl: '/img/image3.png' },
+  { title: '准备好，', name: '冲吖', desc: '让宝贝龙激情的释放速度', imageUrl: '/img/image2.png', path:'/egg',
+  isComing:true },
+  { title: '狂欢中', name: '', desc: '喂饱您的宝贝龙！', imageUrl: '/img/image3.png', path:'/egg',
+  isComing:true },
 ]
 
 const ecologyLits = [
@@ -187,6 +193,14 @@ const Parteners = [
 ]
 
 const Home: React.FC = () => {
+  const router = useRouter();
+  const HandleGoGame = (e:any)=>{
+    if(!e.isComing){
+      router.push(e.path)
+    }else{
+      toast('敬请期待')
+    }
+  }
   return (
     <LayBox>
       <Slider
@@ -210,7 +224,7 @@ const Home: React.FC = () => {
                 </ContentBox>
               </SlideBox>
               <Stack flexDirection="row">
-                <Button sx={{ margin: '30px 20px' }} fullWidth variant="contained">
+                <Button onClick={()=>{HandleGoGame(e)}} sx={{ margin: '30px 20px' }} fullWidth variant="contained">
                   探索游戏
                 </Button>
               </Stack>
