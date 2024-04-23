@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { Box, Typography } from '@mui/material'
 import distributePng from '@imgs/distribute.png'
 import MaticIcon from '@icons/matic.svg'
+import EggTokenIcon from '@icons/eggToken.svg'
 import Image from 'next/image'
 
 const ParticipationWrap = styled.div`
@@ -70,7 +71,7 @@ const Participation = () => {
         <div className="bot">
           <span className="count">100,000,000</span>
           <div className="img">
-            <Image src={distributePng} width={24} height={24} alt="distribute" />
+            <EggTokenIcon />
           </div>
         </div>
       </Mid>

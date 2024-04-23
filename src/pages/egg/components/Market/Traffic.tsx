@@ -13,6 +13,7 @@ const LastWrap = styled.div`
   border: 1px solid rgba(143, 13, 245, 1);
   box-shadow: inset 0px 0px 12.1px rgba(143, 13, 245, 1);
   padding: 25px 30px 25px;
+  position: relative;
 `
 
 const Column = styled.div`
@@ -47,6 +48,15 @@ const Source = styled.div`
   height: 100%;
   .empty {
     color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* transform: translateY(50%); */
   }
 `
 
@@ -83,28 +93,34 @@ const Traffic = (props: Props) => {
   const { dataSource = [] } = props
   return (
     <LastWrap>
-      <Column>
-        <div className="No">No.</div>
-        <div className="address">Address</div>
-        <div className="amount">Amount</div>
-        <div className="time">Time</div>
-      </Column>
-      <Source>
-        {dataSource.length ? (
-          dataSource.map((item: any) => {
-            return (
-              <SourceItem>
-                <div className="No">{item.no}</div>
-                <div className="address">{item.address}</div>
-                <div className="amount">{item.amount}</div>
-                <div className="time">{item.time}</div>
-              </SourceItem>
-            )
-          })
-        ) : (
-          <span className="empty">No Data</span>
-        )}
-      </Source>
+      <div
+        style={{
+          width: '100%',
+        }}
+      >
+        <Column>
+          <div className="No">No.</div>
+          <div className="address">Address</div>
+          <div className="amount">Amount</div>
+          <div className="time">Time</div>
+        </Column>
+        <Source>
+          {dataSource.length ? (
+            dataSource.map((item: any) => {
+              return (
+                <SourceItem>
+                  <div className="No">{item.no}</div>
+                  <div className="address">{item.address}</div>
+                  <div className="amount">{item.amount}</div>
+                  <div className="time">{item.time}</div>
+                </SourceItem>
+              )
+            })
+          ) : (
+            <div className="empty">No Data</div>
+          )}
+        </Source>
+      </div>
       <Box mt={2}>{dataSource.length ? <CommonPage /> : null}</Box>
     </LastWrap>
   )

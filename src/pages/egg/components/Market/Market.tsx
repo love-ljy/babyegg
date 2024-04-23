@@ -90,18 +90,18 @@ const Market = () => {
   const [loading, setLoading] = useState(false)
   const [marketShow, setMarketShow] = useState(false)
   const [dataSource, setDataSource] = useState([
-    {
-      no: 1,
-      address: '0x9a4E864aF8E...C71c88f1782bD',
-    },
+    // {
+    //   no: 1,
+    //   address: '0x9a4E864aF8E...C71c88f1782bD',
+    // },
   ])
   const [dataSource2, setDataSource2] = useState([
-    {
-      no: 100,
-      address: '0x4Bc48...3B98fD',
-      amount: 1000,
-      time: '12 hours ago',
-    },
+    // {
+    //   no: 100,
+    //   address: '0x4Bc48...3B98fD',
+    //   amount: 1000,
+    //   time: '12 hours ago',
+    // },
   ])
   const tabList: tabItem[] = [
     {

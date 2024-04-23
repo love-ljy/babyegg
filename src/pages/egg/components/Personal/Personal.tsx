@@ -5,6 +5,10 @@ import { Box } from '@mui/material'
 import markitipPng from '@imgs/markitip.png'
 import CommonTab from '../commonTab/commonTab'
 import UserPanel from './UserPanel'
+import Invitation from './Invitation'
+import Withdraw from './Withdraw'
+import Rank from './Rank'
+import WeekMonth from './WeekMonth'
 
 const MarketWrap = styled.div`
   .top {
@@ -35,7 +39,7 @@ const MarketWrap = styled.div`
   }
   .tab {
     margin-top: 4px;
-    height: 500px;
+    /* height: 500px; */
   }
 `
 
@@ -54,17 +58,25 @@ const tabList: tabItem[] = [
   {
     label: 'Invitation',
     value: 'Invitation',
-    component: <UserPanel />,
+    component: <Invitation />,
   },
   {
     label: 'Withdraw',
     value: 'Withdraw',
-    component: <UserPanel />,
+    component: <Withdraw />,
   },
 ]
 
 const Personal = () => {
   const [loading, setLoading] = useState(false)
+  const [dataSource, setDataSource] = useState([
+    // {
+    //   no: 100,
+    //   address: '0x4Bc48...3B98fD',
+    //   amount: 1000,
+    //   time: '12 hours ago',
+    // },
+  ])
 
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
     if (loading) return
@@ -102,6 +114,10 @@ const Personal = () => {
           selectedColor={'rgba(50, 32, 208, 1)'}
         />
       </div>
+      <Rank dataSource={dataSource} />
+      <Box mt={2}>
+        <WeekMonth />
+      </Box>
     </MarketWrap>
   )
 }

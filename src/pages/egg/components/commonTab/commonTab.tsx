@@ -7,14 +7,13 @@ import { useTheme } from '@mui/material/styles'
 
 const TabItem = styled(Tab)<{ selectedColor: string }>`
   min-height: 0;
-  width: 113px;
+  flex: 1;
   height: 34px;
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 13px;
   font-weight: 500;
   text-transform: none;
   font-size: 16px;
@@ -57,8 +56,8 @@ function TabPanel(props: TabPanelProps) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: 'calc(100vh - 142px)',
-        maxHeight: '750px',
+        // height: 'calc(100vh - 142px)',
+        // maxHeight: '750px',
       }}
     >
       {value === index && children}
@@ -100,6 +99,10 @@ const CommonTab = (props: Props) => {
           '.MuiButtonBase-root': {
             minWidth: '6px',
             padding: '12px 4px',
+          },
+          '.MuiTabs-flexContainer': {
+            display: 'flex',
+            justifyContent: 'space-between',
           },
         }}
       >
