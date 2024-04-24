@@ -25,6 +25,8 @@
       "@components/*": ["./src/components/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@utils/*": ["./src/utils/*"],
+      "@service/*": ["./src/service/*"],
+      "@store/*": ["./src/store/*"],
     },
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",

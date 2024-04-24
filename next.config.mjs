@@ -22,6 +22,7 @@ const nextConfig = {
     IS_PROD: process.env.IS_PROD,
     RPC_URL: process.env.RPC_URL,
     EXPLORER_HOST: process.env.EXPLORER_HOST,
+    SERVER_HOST: process.env.SERVER_HOST
   },
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false };

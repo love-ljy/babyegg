@@ -4,6 +4,8 @@ import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
+import { userLogin } from '@service/index'
+import { useAccountEffect } from 'wagmi'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -23,6 +25,15 @@ const Content = styled.div`
 `
 
 function LongEgg() {
+  // userLogin()
+  useAccountEffect({
+    onConnect(data) {
+    
+    },
+    onDisconnect() {
+   
+    },
+  })
   return (
     <LongEggWrap>
       <div className="bg"></div>
