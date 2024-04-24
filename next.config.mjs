@@ -50,7 +50,7 @@ if (isDev) {
     return [
       {
         source: "/api/:path*",
-        destination: `http://13.112.138.221:9999/api/:path*`,
+        destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
       },
     ];
   };

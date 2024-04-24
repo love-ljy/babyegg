@@ -10,7 +10,7 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    // config.headers['X-Token'] = getToken()
+    config.headers['Language'] = 'cn'
     return config
   },
   error => {

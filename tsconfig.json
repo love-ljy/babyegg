@@ -21,7 +21,7 @@
       "@imgs/*": ["./src/assets/img/*"],
       "@styles/*": ["./src/assets/styles/*"],
       "@config/*": ["./src/config/*"],
-      "@api/*": ["./src/api/*"],
+      "@api/*": ["./src/utils/api/*"],
       "@components/*": ["./src/components/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@utils/*": ["./src/utils/*"],
