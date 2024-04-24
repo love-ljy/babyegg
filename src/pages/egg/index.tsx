@@ -5,14 +5,18 @@ import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
-import { getUserHadParent, submitUserLogin } from '@utils/api'
+import { getUserHadParent, submitUserLogin, getUserInfo } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo } from '@store/user'
+import { selectWalletInfo, setUserInfo } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import { dispatch } from '@store/index'
 import { toast } from 'react-toastify'
 import md5 from 'md5'
-import useBind from '@hooks/useBind'
+// import useBind from '@hooks/useBind'
+import eggAbi from '../../config/abi/eggAbi.json'
+import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
+import { MainContractAddr } from '@config/contants'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -83,9 +87,16 @@ function LongEgg() {
   const [bindAddress, setBindAddress] = useState('')
   const [loading, setLoading] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
-  const { loading: bindLoading, handleBindParent } = useBind()
   const router = useRouter()
   const { inviteAddress } = router.query
+  // const { checkParent } = useBind()
+
+  const result = useReadContract({
+    address: MainContractAddr,
+    abi: eggAbi,
+    functionName: 'referrers',
+    args: [walletInfo?.address],
+  })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBindAddress(event.target.value)
@@ -94,7 +105,8 @@ function LongEgg() {
   const fetchUserHadParent = useCallback(async () => {
     try {
       const res: any = await getUserHadParent({
-        username: walletInfo.address,
+        // username: walletInfo.address,
+        username: '',
       })
       if (res.code === 0) {
         if (res.data.had_parent === 0) {
@@ -114,15 +126,40 @@ function LongEgg() {
     }
   }, [walletInfo?.address])
 
+  const fetchUserInfo = async () => {
+    try {
+      const res: any = await getUserInfo()
+      if (res.code === 0) {
+        dispatch(setUserInfo(res.data))
+        const contractRes = await result.refetch()
+        // checkParent(walletInfo?.address) 
+        console.log('contractRes', contractRes)
+        if (contractRes.data != res.data.parent) {
+          // 不一致
+          setVisible(true)
+        } else {
+          setVisible(false)
+        }
+      } else {
+        toast.warn('网络错误')
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }
+
   const login = async (invite: string) => {
     try {
       const res: any = await submitUserLogin({
-        password: md5(md5(walletInfo?.address)),
+        password: md5(md5(walletInfo?.address + 'babyloong') + 'babyloong'),
         username: walletInfo?.address,
         invite,
       })
-
       if (res.code === 0) {
+        localStorage.setItem('token', res.data.Token)
+        dispatch(setUserInfo({ token: res.data.Token }))
+        fetchUserInfo()
       } else {
         toast.warn('网络错误')
       }
@@ -133,7 +170,7 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
-    await handleBindParent(walletInfo?.address)
+    // await handleBindParent(walletInfo?.address)
   }
 
   useEffect(() => {

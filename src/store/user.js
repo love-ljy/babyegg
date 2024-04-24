@@ -19,6 +19,7 @@ export const slice = createSlice({
       my_sort_num: '',
       state: '',
       share_award: '',
+      token: '',
     },
     walletInfo: {
       address: '',
@@ -28,13 +29,13 @@ export const slice = createSlice({
     setWalletInfo: (state, { payload }) => {
       state.walletInfo = payload
     },
-    setUser: (state, { payload }) => {
-      state.userInfo = payload
+    setUserInfo: (state, { payload }) => {
+      state.userInfo = { ...state.userInfo, ...payload }
     },
   },
 })
 
-export const { setUser, setWalletInfo } = slice.actions
+export const { setUserInfo, setWalletInfo } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo

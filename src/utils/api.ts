@@ -9,11 +9,11 @@ const getUserInfo = async () => {
   })
 }
 // 用户登录
-const submitUserLogin = async (params: ParamsUser) => {
+const submitUserLogin = async (data: ParamsUser) => {
   return request({
     url: '/api/user/login',
     method: 'post',
-    data: params,
+    data,
   })
 }
 // 获取用户上级
@@ -29,6 +29,7 @@ const getUserRanking = async (params: PageInfo) => {
   return request({
     url: '/api/user/ranking',
     method: 'get',
+    params,
   })
 }
 
