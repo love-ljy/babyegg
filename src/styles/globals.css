@@ -6,8 +6,8 @@
 @font-face {
   font-family: 'CustomFont';
   src:
-    url('../assets/font/Lang-2.ttf') format('woff2'),
-    url('../assets/font/Lang-2.ttf') format('woff2'),
+    /* url('../assets/font/Lang-2.ttf') format('woff2'), */
+    /* url('../assets/font/Lang-2.ttf') format('woff2'), */
     url('../assets/font/Inter-Black.ttf') format('woff2'),
     url('../assets/font/Inter-Bold.ttf') format('woff2'),
     url('../assets/font/Inter-ExtraBold.ttf') format('woff2'),
