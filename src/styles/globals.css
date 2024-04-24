@@ -6,13 +6,14 @@
 @font-face {
   font-family: 'CustomFont';
   src:
-    /* url('../assets/font/Lang-2.ttf') format('woff2'), */
-    /* url('../assets/font/Lang-2.ttf') format('woff2'), */
+    url('../assets/font/Inter-ExtraBold.ttf') format('woff2'),
+    url('../assets/font/Lang-2.ttf') format('woff2'),
+    url('../assets/font/Lang-2.ttf') format('woff2'),
     url('../assets/font/Inter-Black.ttf') format('woff2'),
     url('../assets/font/Inter-Bold.ttf') format('woff2'),
     url('../assets/font/Inter-ExtraBold.ttf') format('woff2'),
     url('../assets/font/Inter-ExtraLight.ttf') format('woff2'),
-    url('../assets/font/Inter-Light.ttf') format('woff2'),
+    url('../assets/font/Inter-Light.ttf') format('woff/2'),
     url('../assets/font/Inter-Medium.ttf') format('woff2'),
     url('../assets/font/Inter-Regular.ttf') format('woff2'),
     url('../assets/font/Inter-SemiBold.ttf') format('woff2'),

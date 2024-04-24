@@ -1,47 +1,49 @@
-import React from 'react';
-import { AppProps } from "next/app";
+import React from 'react'
+import { AppProps } from 'next/app'
 import { ThemeProvider } from '@mui/material/styles'
+import { Provider } from 'react-redux'
 import CssBaseline from '@mui/material/CssBaseline'
-import themes from '../themes/index';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Buffer } from "buffer";
-import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { WagmiProvider } from "wagmi";
-import { CacheProvider } from "@emotion/react";
-import createEmotionCache from "../createEmotionCache";
-import { config } from "../wagmi/wagmi";
-import { polygonAmoy,polygon,bscTestnet } from 'viem/chains';
-import Layout from "../components/Layout";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import "@rainbow-me/rainbowkit/styles.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import '../styles/globals.css';
+import themes from '../themes/index'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Buffer } from 'buffer'
+import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { WagmiProvider } from 'wagmi'
+import { CacheProvider } from '@emotion/react'
+import createEmotionCache from '../createEmotionCache'
+import { config } from '../wagmi/wagmi'
+import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
+import Layout from '../components/Layout'
+import { ToastContainer } from 'react-toastify'
+import store from '@store/index';
+import 'react-toastify/dist/ReactToastify.css'
+import '@rainbow-me/rainbowkit/styles.css'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import '../styles/globals.css'
 
-globalThis.Buffer = Buffer;
+globalThis.Buffer = Buffer
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 // 客户端的 Emotion 缓存实例
-const clientSideEmotionCache = createEmotionCache();
+const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <QueryClientProvider client={queryClient}>
-
-      <WagmiProvider config={config}>
-        <RainbowKitProvider
-          theme={darkTheme({
-            accentColor: "#3ae27d",
-            accentColorForeground: "#0C0E0E",
-            borderRadius: "small",
-            fontStack: "system",
-            overlayBlur: "small",
-          })}
-          initialChain={bscTestnet}
-        >
-          <CacheProvider value={clientSideEmotionCache}>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={config}>
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: '#3ae27d',
+              accentColorForeground: '#0C0E0E',
+              borderRadius: 'small',
+              fontStack: 'system',
+              overlayBlur: 'small',
+            })}
+            initialChain={bscTestnet}
+          >
+            <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>
-              <ToastContainer theme='dark' />
+                <ToastContainer theme="dark" />
                 <CssBaseline />
                 <Layout>
                   <div>
@@ -49,12 +51,12 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                   </div>
                 </Layout>
               </ThemeProvider>
-          </CacheProvider>
-        </RainbowKitProvider>
-      </WagmiProvider>
-
-    </QueryClientProvider>
-  );
+            </CacheProvider>
+          </RainbowKitProvider>
+        </WagmiProvider>
+      </QueryClientProvider>
+    </Provider>
+  )
 }
 
-export default MyApp;
+export default MyApp
