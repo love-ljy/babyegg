@@ -13,7 +13,9 @@ import detailedPng from '@imgs/detailed.png'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
-
+import { useSelector } from 'react-redux'
+import { selectWalletInfo } from '@store/user'
+import { toast } from 'react-toastify'
 const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 40px;
@@ -197,15 +199,21 @@ const BuyEgg = () => {
   const [loading, setLoading] = useState(false)
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
+  const walletInfo = useSelector(selectWalletInfo)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues(event.target.value)
   }
+  
   const selectChange = (option: any) => {
     setCoinType(option.value)
   }
 
   const handleBuy = () => {
+    if (!walletInfo) {
+      toast.warn('请链接钱包')
+      return
+    }
     setBuyShow(true)
   }
 
@@ -294,7 +302,7 @@ const BuyEgg = () => {
           <div className="countWrap">
             <span>10,000</span>
             <div>
-            <MaticIcon />
+              <MaticIcon />
             </div>
           </div>
         </CongContent>

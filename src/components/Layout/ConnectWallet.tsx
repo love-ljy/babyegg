@@ -1,6 +1,8 @@
 import { ConnectButton as RainbowConnectButton } from '@rainbow-me/rainbowkit'
 import { Button } from '@mui/material'
 import { ReactNode } from 'react'
+import { dispatch } from '@store/index'
+import { setWalletInfo } from '@store/user'
 
 type ComponentProps<T extends keyof JSX.IntrinsicElements> = {
   variant?: 'secondary' | null | undefined
@@ -26,6 +28,7 @@ export const ConnectButton = <T extends keyof JSX.IntrinsicElements>({
         authenticationStatus,
         mounted,
       }) => {
+        dispatch(setWalletInfo(account))
         const ready = mounted && authenticationStatus !== 'loading'
         const connected = ready && account && chain
         return (
@@ -58,14 +61,13 @@ export const ConnectButton = <T extends keyof JSX.IntrinsicElements>({
                       display: 'flex',
                       alignItems: 'center',
                     }}
-                    
                   >
                     {chain.hasIcon && (
                       <div
                         style={{
                           background: chain.iconBackground,
                           width: 24,
-                              height: 24,
+                          height: 24,
                           borderRadius: 999,
                           overflow: 'hidden',
                           marginRight: 4,
@@ -86,7 +88,11 @@ export const ConnectButton = <T extends keyof JSX.IntrinsicElements>({
 
                     {/* {chain.name} */}
                   </div>
-                  <Button sx={{fontSize:'12px',fontWeight:'bold'}} onClick={openAccountModal} type="button">
+                  <Button
+                    sx={{ fontSize: '12px', fontWeight: 'bold' }}
+                    onClick={openAccountModal}
+                    type="button"
+                  >
                     {account.displayName}
                     {account.displayBalance ? ` (${account.displayBalance})` : ''}
                   </Button>

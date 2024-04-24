@@ -1,7 +1,11 @@
+import { useState } from 'react'
 import styled from '@emotion/styled'
 import CopyIcon from '@icons/copy.svg'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
+import { useSelector } from 'react-redux'
+import { selectWalletInfo } from '@store/user'
+import { toast } from 'react-toastify'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -64,6 +68,21 @@ const RowLeft = styled.div`
   }
 `
 const Withdraw = () => {
+  const walletInfo = useSelector(selectWalletInfo)
+
+  const handleWithDraw1 = () => {
+    if (!walletInfo) {
+      toast.warn('请链接钱包')
+      return
+    }
+  }
+
+  const handleWithDraw2 = () => {
+    if (!walletInfo) {
+      toast.warn('请链接钱包')
+      return
+    }
+  }
   return (
     <InvitationWrap>
       <div className="title">Your Current Earning Balance</div>
@@ -72,14 +91,18 @@ const Withdraw = () => {
           <span className="text">10,000.00</span>
           <MaticIcon />
         </RowLeft>
-        <div className="draw">Withdraw</div>
+        <div className="draw" onClick={handleWithDraw1}>
+          Withdraw
+        </div>
       </div>
       <div className="row">
         <RowLeft>
           <span className="text">10,000.00</span>
           <EggTokenIcon />
         </RowLeft>
-        <div className="draw2">Withdraw</div>
+        <div className="draw2" onClick={handleWithDraw2}>
+          Withdraw
+        </div>
       </div>
       <div className="noteWrap">
         <div className="note">Note:</div>

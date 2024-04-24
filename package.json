@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-types": "typechain --target ethers-v5 ./src/config/abi/*.json --out-dir ./src/types"
   },
   "eslintConfig": {
     "extends": "./eslint.config.mjs"
@@ -21,11 +22,13 @@
     "@svgr/core": "^8.1.0",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.29.2",
+    "@typechain/ethers-v5": "^11.1.2",
     "@types/react-slick": "^0.23.13",
     "axios": "^1.6.8",
     "bignumber.js": "^9.1.0",
     "copy-to-clipboard": "^3.3.2",
     "ethers": "^5.7.0",
+    "md5": "^2.3.0",
     "next": "14.2.2",
     "react": "^18",
     "react-dom": "^18",
@@ -35,14 +38,19 @@
     "react-swipeable-views": "^0.14.0",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
+    "typechain": "^8.3.2",
     "viem": "^2.9.23",
     "wagmi": "^2.5.20"
   },
   "devDependencies": {
     "@eslint/js": "^9.1.1",
+    "@types/md5": "^2.3.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-swipeable-views": "^0.13.5",
+    "@types/react-swipeable-views-core": "^0.13.3",
+    "@types/react-swipeable-views-utils": "^0.13.7",
     "eslint": "^9.1.0",
     "eslint-config-next": "14.2.2",
     "eslint-config-prettier": "^9.1.0",
