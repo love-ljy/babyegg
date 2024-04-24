@@ -294,7 +294,7 @@ const BuyEgg = () => {
           <div className="countWrap">
             <span>10,000</span>
             <div>
-              <Image src={prizepoolPng} alt="pool" />
+            <MaticIcon />
             </div>
           </div>
         </CongContent>
