@@ -3,34 +3,40 @@ import { createSlice } from '@reduxjs/toolkit';
 export const slice = createSlice({
   name: 'user',
   initialState: {
-    address: '',
-    chainId: '',
-    balance: '',
-    walletType: '',
-    twitterInfo: {
-      profile_image_url: '', // 头像
-      screen_name: '', // 用户名
-      name: '',
-      web3_address: '', // 钱包地址
-      followers_count: '' // 粉丝数
-    }
-    ,
+    id: 0,
+    lang: '',
+    username: '',
+    nickname: '',
+    invite: '',
+    parent_id: '',
+    level_grade: '',
+    true_son_num: '',
+    my_performance: '',
+    dragon_egg_total: '',
+    dragon_egg: '',
+    last_sort_num: '',
+    my_sort_num: '',
+    state: '',
+    share_award: '',
   },
   reducers: {
     setUser: (state, { payload }) => {
-      state.address = payload.address;
-      state.chainId = payload.chainId;
-      state.balance = payload.balance;
-      state.walletType = payload.walletType;
-    },
-    setTwitterInfo: (state, { payload }) => {
-      console.log(payload)
-      state.twitterInfo.profile_image_url = payload.profile_image_url;
-      state.twitterInfo.screen_name = payload.screen_name;
-      state.twitterInfo.name = payload.name;
-      state.twitterInfo.web3_address = payload.web3_address;
-      state.followers_count = payload.followers_count;
-    },
+      state.id = payload.id;
+      state.lang = payload.lang;
+      state.username = payload.username;
+      state.nickname = payload.nickname;
+      state.invite = payload.invite;
+      state.parent_id = payload.parent_id;
+      state.level_grade = payload.level_grade;
+      state.true_son_num = payload.true_son_num;
+      state.my_performance = payload.my_performance;
+      state.dragon_egg_total = payload.dragon_egg_total;
+      state.dragon_egg = payload.dragon_egg;
+      state.last_sort_num = payload.last_sort_num;
+      state.my_sort_num = payload.my_sort_num;
+      state.state = payload.state;
+      state.share_award = payload.share_award;
+    }
   },
 });
 
@@ -39,7 +45,5 @@ export const { setUser, setTwitterInfo } = slice.actions;
 
 // getter
 export const selectUser = s => s.user;
-
-export const selectTwitterInfo = s => s.user.twitterInfo;
 
 export default slice.reducer;
