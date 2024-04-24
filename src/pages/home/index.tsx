@@ -193,6 +193,7 @@ const Parteners = [
 ]
 
 const Home: React.FC = () => {
+  
   const router = useRouter();
   const HandleGoGame = (e:any)=>{
     if(!e.isComing){

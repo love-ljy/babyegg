@@ -87,9 +87,10 @@ function LongEgg() {
   const [bindAddress, setBindAddress] = useState('')
   const [loading, setLoading] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
+  const { data: hash, isPending, error, writeContract } = useWriteContract()
   const router = useRouter()
-  const { inviteAddress } = router.query
   // const { checkParent } = useBind()
+  // console.log('inviteAddress', inviteAddress);
 
   const result = useReadContract({
     address: MainContractAddr,
@@ -112,6 +113,9 @@ function LongEgg() {
         if (res.data.had_parent === 0) {
           // 未绑定
           setVisible(true)
+          if (router.query.inviteAddress) {
+            setBindAddress((router.query.inviteAddress as string) || '')
+          }
         } else {
           // 已绑定
           setVisible(false)
@@ -132,11 +136,13 @@ function LongEgg() {
       if (res.code === 0) {
         dispatch(setUserInfo(res.data))
         const contractRes = await result.refetch()
-        // checkParent(walletInfo?.address) 
-        console.log('contractRes', contractRes)
+        // checkParent(walletInfo?.address)
         if (contractRes.data != res.data.parent) {
           // 不一致
           setVisible(true)
+          if (router.query.inviteAddress) {
+            setBindAddress((router.query.inviteAddress as string) || '')
+          }
         } else {
           setVisible(false)
         }
@@ -170,7 +176,13 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
-    // await handleBindParent(walletInfo?.address)
+    const res = await writeContract({
+      address: MainContractAddr,
+      abi: eggAbi,
+      functionName: 'bind',
+      args: [bindAddress],
+    })
+    console.log('res', res)
   }
 
   useEffect(() => {
@@ -211,3 +223,7 @@ function LongEgg() {
 }
 
 export default LongEgg
+
+LongEgg.getInitialProps = async () => {
+  return {}
+}
