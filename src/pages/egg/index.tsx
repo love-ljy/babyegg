@@ -15,7 +15,7 @@ import { toast } from 'react-toastify'
 import md5 from 'md5'
 // import useBind from '@hooks/useBind'
 import eggAbi from '../../config/abi/eggAbi.json'
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
+import { useReadContract, useWriteContract } from 'wagmi'
 import { MainContractAddr } from '@config/contants'
 
 const LongEggWrap = styled.div`
@@ -87,10 +87,23 @@ function LongEgg() {
   const [bindAddress, setBindAddress] = useState('')
   const [loading, setLoading] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
-  const { data: hash, isPending, error, writeContract } = useWriteContract()
+  const {
+    data: hash,
+    isPending,
+    error,
+    writeContractAsync,
+  } = useWriteContract({
+    mutation: {
+      onError: (error: Error) => onError(error),
+    },
+  })
+
+  const onError = (error: any) => {
+    setLoading(false)
+  }
+
   const router = useRouter()
   // const { checkParent } = useBind()
-  // console.log('inviteAddress', inviteAddress);
 
   const result = useReadContract({
     address: MainContractAddr,
@@ -106,16 +119,20 @@ function LongEgg() {
   const fetchUserHadParent = useCallback(async () => {
     try {
       const res: any = await getUserHadParent({
-        // username: walletInfo.address,
-        username: '',
+        username: walletInfo.address,
+        // username: '',
       })
       if (res.code === 0) {
         if (res.data.had_parent === 0) {
           // 未绑定
-          setVisible(true)
+          // 有邀请链接
           if (router.query.inviteAddress) {
             setBindAddress((router.query.inviteAddress as string) || '')
+          } else {
+            // 没有邀请链接，绑定后台给的
+            setBindAddress(res.data.username)
           }
+          setVisible(true)
         } else {
           // 已绑定
           setVisible(false)
@@ -136,13 +153,21 @@ function LongEgg() {
       if (res.code === 0) {
         dispatch(setUserInfo(res.data))
         const contractRes = await result.refetch()
+        console.log('contractRes', contractRes)
+
         // checkParent(walletInfo?.address)
         if (contractRes.data != res.data.parent) {
           // 不一致
           setVisible(true)
-          if (router.query.inviteAddress) {
-            setBindAddress((router.query.inviteAddress as string) || '')
-          }
+          // 以后台的为准
+          setBindAddress(res.data.parent)
+          // if (router.query.inviteAddress) {
+          // } else {
+          //   // 没有邀请链接，默认绑定一个后台账户
+          //   if (res.data.username) {
+          //     setBindAddress(res.data.username)
+          //   }
+          // }
         } else {
           setVisible(false)
         }
@@ -176,13 +201,19 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
-    const res = await writeContract({
-      address: MainContractAddr,
-      abi: eggAbi,
-      functionName: 'bind',
-      args: [bindAddress],
-    })
-    console.log('res', res)
+    try {
+      setLoading(true)
+      await writeContractAsync({
+        address: MainContractAddr,
+        abi: eggAbi,
+        functionName: 'bind',
+        args: [bindAddress],
+      })
+      setLoading(false)
+    } catch (error) {
+      console.log('bind error', error)
+      onError(error)
+    }
   }
 
   useEffect(() => {
