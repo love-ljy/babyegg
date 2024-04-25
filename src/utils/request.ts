@@ -11,7 +11,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     config.headers['Language'] = 'cn'
-    config.headers['Authorization'] = window.localStorage.getItem('token')
+    config.headers['Token'] = window.localStorage.getItem('token')
     return config
   },
   error => {
