@@ -85,6 +85,7 @@ const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
 function LongEgg() {
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState('')
+  const [inviteCode, setInviteCode] = useState('')
   const [loading, setLoading] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
   const {
@@ -102,15 +103,7 @@ function LongEgg() {
     setLoading(false)
   }
 
-  const router = useRouter()
   // const { checkParent } = useBind()
-
-  const result = useReadContract({
-    address: MainContractAddr,
-    abi: eggAbi,
-    functionName: 'referrers',
-    args: [walletInfo?.address],
-  })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBindAddress(event.target.value)
@@ -120,18 +113,13 @@ function LongEgg() {
     try {
       const res: any = await getUserHadParent({
         username: walletInfo.address,
-        // username: '',
+        invite: '',
       })
       if (res.code === 0) {
         if (res.data.had_parent === 0) {
           // 未绑定
-          // 有邀请链接
-          if (router.query.inviteAddress) {
-            setBindAddress((router.query.inviteAddress as string) || '')
-          } else {
-            // 没有邀请链接，绑定后台给的
-            setBindAddress(res.data.username)
-          }
+          setBindAddress(res.data.username)
+          setInviteCode(res.data.invite)
           setVisible(true)
         } else {
           // 已绑定
@@ -152,25 +140,8 @@ function LongEgg() {
       const res: any = await getUserInfo()
       if (res.code === 0) {
         dispatch(setUserInfo(res.data))
-        const contractRes = await result.refetch()
-        console.log('contractRes', contractRes)
-
-        // checkParent(walletInfo?.address)
-        if (contractRes.data != res.data.parent) {
-          // 不一致
-          setVisible(true)
-          // 以后台的为准
-          setBindAddress(res.data.parent)
-          // if (router.query.inviteAddress) {
-          // } else {
-          //   // 没有邀请链接，默认绑定一个后台账户
-          //   if (res.data.username) {
-          //     setBindAddress(res.data.username)
-          //   }
-          // }
-        } else {
-          setVisible(false)
-        }
+        setVisible(false)
+        setLoading(false)
       } else {
         toast.warn('网络错误')
       }
@@ -209,7 +180,7 @@ function LongEgg() {
         functionName: 'bind',
         args: [bindAddress],
       })
-      setLoading(false)
+      login(inviteCode)
     } catch (error) {
       console.log('bind error', error)
       onError(error)
