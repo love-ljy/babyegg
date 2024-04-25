@@ -14,10 +14,11 @@ import { dispatch } from '@store/index'
 import { toast } from 'react-toastify'
 import md5 from 'md5'
 // import useBind from '@hooks/useBind'
+import useBind2 from '@hooks/useBind2'
 import eggAbi from '../../config/abi/eggAbi.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { MainContractAddr } from '@config/contants'
-
+import { formatUnits } from 'viem'
 const LongEggWrap = styled.div`
   color: #fff;
   /* background-color: #fff; */
@@ -87,17 +88,26 @@ function LongEgg() {
   const [bindAddress, setBindAddress] = useState('')
   const [inviteCode, setInviteCode] = useState('')
   const [loading, setLoading] = useState(false)
-  const walletInfo = useSelector(selectWalletInfo)
-  const {
-    data: hash,
-    isPending,
-    error,
-    writeContractAsync,
-  } = useWriteContract({
-    mutation: {
-      onError: (error: Error) => onError(error),
-    },
+  const walletInfo: any = useSelector(selectWalletInfo)
+  // const {
+  //   data: hash,
+  //   isPending,
+  //   error,
+  //   writeContractAsync,
+  // } = useWriteContract({
+  //   mutation: {
+  //     onError: (error: Error) => onError(error),
+  //   },
+  // })
+
+  const result = useReadContract({
+    address: MainContractAddr,
+    abi: eggAbi,
+    functionName: 'referrers',
+    args: [walletInfo?.address],
   })
+
+  const { isPreparing, error, estimatedGas, bindParent, isLoading } = useBind2(bindAddress)
 
   const onError = (error: any) => {
     setLoading(false)
@@ -116,6 +126,8 @@ function LongEgg() {
         invite: '',
       })
       if (res.code === 0) {
+        const contractRes = await result.refetch()
+        console.log('contractRes', contractRes)
         if (res.data.had_parent === 0) {
           // 未绑定
           setBindAddress(res.data.username)
@@ -174,12 +186,23 @@ function LongEgg() {
   const handleBind = async () => {
     try {
       setLoading(true)
-      await writeContractAsync({
-        address: MainContractAddr,
-        abi: eggAbi,
-        functionName: 'bind',
-        args: [bindAddress],
-      })
+      console.log('estimatedGas', estimatedGas)
+      const estimatedGasInFloat = estimatedGas ? parseFloat(formatUnits(estimatedGas, 18)) : null // 这个精度可以斟酌下
+      console.log('estimatedGasInFloat', estimatedGasInFloat)
+
+      if (estimatedGas) {
+        // 这里处理gas不足的情况
+      }
+
+      bindParent()
+
+      
+      // await writeContractAsync({
+      //   address: MainContractAddr,
+      //   abi: eggAbi,
+      //   functionName: 'bind',
+      //   args: [bindAddress],
+      // })
       login(inviteCode)
     } catch (error) {
       console.log('bind error', error)

@@ -38,6 +38,7 @@
     "react-swipeable-views": "^0.14.0",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
+    "swr": "^2.2.5",
     "typechain": "^8.3.2",
     "viem": "^2.9.23",
     "wagmi": "^2.5.20"
