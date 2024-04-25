@@ -1,6 +1,8 @@
 import styled from '@emotion/styled'
 import CopyIcon from '@icons/copy.svg'
 import MaticIcon from '@icons/matic.svg'
+import { useSelector } from 'react-redux'
+import { selectWalletInfo, selectUserInfo } from '@store/user'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -55,6 +57,7 @@ const CommonRow = styled.div`
   }
 `
 const Invitation = () => {
+  const userInfo: any = useSelector(selectUserInfo)
   return (
     <InvitationWrap>
       <div className="title">Your Invitation Link</div>
@@ -75,7 +78,7 @@ const Invitation = () => {
           <span>Current Total Earnings from Your Referrals</span>
         </div>
         <div className="bot">
-          <span>10,000.00</span>
+          <span>{userInfo.share_award || 0}</span>
           <div className="bot-r">
             <MaticIcon />
             <span className="topTxt">Matic</span>

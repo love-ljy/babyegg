@@ -39,5 +39,6 @@ export const { setUserInfo, setWalletInfo } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
+export const selectUserInfo = s => s.user.userInfo
 
 export default slice.reducer

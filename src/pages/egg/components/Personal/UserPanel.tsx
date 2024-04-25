@@ -11,7 +11,8 @@ import EggTokenIcon from '@icons/eggToken.svg'
 import LeftArrowIcon from '@icons/leftArrow.svg'
 import RightArrowIcon from '@icons/rightArrow.svg'
 import { mod } from 'react-swipeable-views-core'
-
+import { useSelector } from 'react-redux'
+import { selectWalletInfo, selectUserInfo } from '@store/user'
 const UserPanelWrap = styled.div`
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
@@ -298,7 +299,9 @@ function slideRenderer(params: any) {
 const UserPanel = () => {
   const [progress, setProgress] = useState(0)
   const [index, setIndex] = useState(0)
-
+  const userInfo: any = useSelector(selectUserInfo)
+  console.log('userInfo', userInfo);
+  
   const handleLeftArrowClick = () => {
     setIndex(index - 1)
   }
@@ -319,8 +322,8 @@ const UserPanel = () => {
         <div className="prograssWrap">
           <div className="title">Title</div>
           <div className="masterWrap">
-            <span className="master">Grandmaster</span>
-            <span className="percent">100/1000</span>
+            <span className="master">{userInfo.level_name}</span>
+            <span className="percent">{userInfo.level_grade || 0}/1000</span>
           </div>
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={progress} />
@@ -331,27 +334,27 @@ const UserPanel = () => {
         <div className="row mar">
           <div className="group">
             <span className="title">Total Personal Expenditure</span>
-            <span className="count">10,000</span>
+            <span className="count">{userInfo.my_performance || 0}</span>
           </div>
           <div className="group group2">
             <span className="title">Total Eggs Purchased</span>
-            <span className="count">10,000</span>
+            <span className="count">{userInfo.dragon_egg_total || 0}</span>
           </div>
         </div>
         <div className="row mar">
           <div className="group">
             <span className="title">Current Eggs Held</span>
-            <span className="count">10,000</span>
+            <span className="count">{userInfo.dragon_egg}</span>
           </div>
           <div className="group group2">
             <span className="title">Current Egg Purchase Sequence</span>
-            <span className="count">10,000</span>
+            <span className="count">{userInfo.last_sort_num}</span>
           </div>
         </div>
         <div className="row">
           <div className="group">
             <span className="title">Your Ranking Sequence</span>
-            <span className="count">10,000</span>
+            <span className="count">{userInfo.my_sort_num || 0}</span>
           </div>
         </div>
       </Expenditure>
