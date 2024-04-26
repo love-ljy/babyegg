@@ -11,7 +11,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material'
-import Image from "next/image";
+import Image from 'next/image'
 import logo from '@imgs/logo_big.png'
 import Router, { useRouter } from 'next/router'
 import styled from '@emotion/styled'
@@ -43,7 +43,7 @@ const MenuButton = styled(ListItemButton)<{ isactive?: number }>`
 const LogoBox = styled.div`
   display: flex;
   justify-content: center;
-  transform: translate(0,12%);
+  transform: translate(0, 12%);
 `
 
 const config = [
@@ -71,17 +71,16 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
   }
   return (
     <React.Fragment>
-      
-        <Drawer anchor="left" open={open} onClose={onClose} >
-          <LogoBox>
-            <Image width="132" height={101} src={logo} alt="" />
-          </LogoBox>
+      <Drawer anchor="left" open={open} onClose={onClose}>
+        <LogoBox>
+          <Image width="132" height={101} src={logo} alt="" />
+        </LogoBox>
         <Box p="20px">
           <List>
             {config.map((text, index) => (
               <ListItem key={text.name} disablePadding sx={{ marginBottom: '10px' }}>
-                <MenuButton isactive={pathname === text.path?1:0}>
-                  <ListItemIcon sx={{minWidth:'40px'}}>
+                <MenuButton isactive={pathname === text.path ? 1 : 0}>
+                  <ListItemIcon sx={{ minWidth: '40px' }}>
                     {pathname === text.path ? text.activeIcon : text.icon}
                   </ListItemIcon>
                   <Typography
@@ -97,28 +96,25 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
           </List>
           <Divider sx={{ borderColor: '#fff', margin: '30px 0' }} />
           <List>
-            <Typography textAlign="left" color="#F21A80;" fontSize="12px">Trending Games</Typography>
+            <Typography textAlign="left" color="#F21A80;" fontSize="12px">
+              Trending Games
+            </Typography>
             {config2.map((text, index) => (
               <ListItem key={text.name} disablePadding>
                 <ListItemButton>
-                <ListItemIcon sx={{minWidth:'40px'}}>
-                {pathname === text.path ? text.activeIcon : text.icon}
-                {/* <Image width="35" height={35} src={recharge} alt="" /> */}
+                  <ListItemIcon sx={{ minWidth: '40px' }}>
+                    {pathname === text.path ? text.activeIcon : text.icon}
+                    {/* <Image width="35" height={35} src={recharge} alt="" /> */}
                   </ListItemIcon>
-                  <Typography
-                    fontSize="15px"
-                    fontWeight={500}
-                    color={'#878787'}
-                  >
+                  <Typography fontSize="15px" fontWeight={500} color={'#878787'}>
                     {text.name}
                   </Typography>
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
-          </Box>
-        </Drawer>
-     
+        </Box>
+      </Drawer>
     </React.Fragment>
   )
 }
