@@ -41,8 +41,7 @@
     "swr": "^2.2.5",
     "typechain": "^8.3.2",
     "viem": "^2.9.23",
-    "wagmi": "^2.5.20",
-    "yarn": "^1.22.22"
+    "wagmi": "^2.5.20"
   },
   "devDependencies": {
     "@eslint/js": "^9.1.1",
