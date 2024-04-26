@@ -32,5 +32,13 @@ const getUserRanking = async (params: PageInfo) => {
     params,
   })
 }
+// 获取龙蛋倒计时 /api/dragonegg/gameinfo
+const getGameInfo = async () => {
+  return request({
+    url: '/api/dragonegg/gameinfo',
+    method: 'get',
+  })
+}
 
-export { getUserInfo, submitUserLogin, getUserHadParent, getUserRanking }
+
+export { getUserInfo, submitUserLogin, getUserHadParent, getUserRanking,getGameInfo }

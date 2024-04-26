@@ -300,7 +300,7 @@ const UserPanel = () => {
   const [progress, setProgress] = useState(0)
   const [index, setIndex] = useState(0)
   const userInfo: any = useSelector(selectUserInfo)
-  console.log('userInfo', userInfo);
+
   
   const handleLeftArrowClick = () => {
     setIndex(index - 1)

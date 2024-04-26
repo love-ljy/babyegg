@@ -31,52 +31,54 @@ const TimeWrap = styled.div`
   }
 `
 interface Props {
-  initialTimeInSeconds?: number
+  initialTimeInSeconds: Date
 }
 
-function CountDown({ initialTimeInSeconds = 0 }: Props) {
-  const [timeLeft, setTimeLeft] = useState(initialTimeInSeconds)
+function CountDown({ initialTimeInSeconds }: Props) {
+  const calculateTimeLeft = (): { days: number, hours: number, minutes: number, seconds: number } => {
+    const difference = +new Date(initialTimeInSeconds)+212220000 - +new Date();
 
+    let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60)
+      };
+    }
+
+    return timeLeft;
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (timeLeft > 0) {
-        setTimeLeft(prevTimeLeft => prevTimeLeft - 1)
-      } else {
-        clearInterval(intervalId)
-      }
-    }, 1000)
+    const timer = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
 
-    return () => clearInterval(intervalId)
-  }, [timeLeft])
+    return () => clearTimeout(timer);
+  });
+  const pad = (num: number) => `0${num}`.slice(-2)
 
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60
 
-    const pad = (num: number) => `0${num}`.slice(-2)
-
-    return (
-      <TimeWrap>
-        <div className="time-item">
-          <span className="counter">{pad(hours)}</span>
-          <span className="label">hours</span>
-        </div>
-        <Image src={quotePng} width={3} height={12} alt=":" />
-        <div className="time-item">
-          <span className="counter">{pad(minutes)}</span>
-          <span className="label">minute</span>
-        </div>
-        <Image src={quotePng} width={3} height={12} alt=":" />
-        <div className="time-item">
-          <span className="counter">{pad(secs)}</span>
-          <span className="label">second</span>
-        </div>
-      </TimeWrap>
-    )
-  }
-
-  return <div>{formatTime(timeLeft)}</div>
+  return <div> <TimeWrap>
+    <div className="time-item">
+      <span className="counter">{pad(timeLeft.hours)}</span>
+      <span className="label">hours</span>
+    </div>
+    <Image src={quotePng} width={3} height={12} alt=":" />
+    <div className="time-item">
+      <span className="counter">{pad(timeLeft.minutes)}</span>
+      <span className="label">minute</span>
+    </div>
+    <Image src={quotePng} width={3} height={12} alt=":" />
+    <div className="time-item">
+      <span className="counter">{pad(timeLeft.seconds)}</span>
+      <span className="label">second</span>
+    </div>
+  </TimeWrap></div>
 }
 
 export default CountDown
