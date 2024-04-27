@@ -4,7 +4,11 @@ const themes = createTheme({
   palette: {
     background: {
       default: '#030409;',
+      
     },
+    info:{
+      main:"#fff"
+    }
   },
 
   typography: {

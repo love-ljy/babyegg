@@ -51,17 +51,17 @@ const Bot = styled.div`
   background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
 `
 
-const Participation = () => {
+const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
   return (
     <ParticipationWrap>
       <Top>
         <div className="parti">
           <span className="label">Master Participation</span>
-          <span className="count">100</span>
+          <span className="count">{allNet.loong_user_count}</span>
         </div>
         <div className="parti">
           <span className="label">Egg Participation</span>
-          <span className="count">100</span>
+          <span className="count">{allNet.dragon_egg_count}</span>
         </div>
       </Top>
       <Mid>
@@ -69,7 +69,7 @@ const Participation = () => {
           Total Distribute
         </Typography>
         <div className="bot">
-          <span className="count">100,000,000</span>
+          <span className="count">{allNet.wait_out_babyloong}</span>
           <div className="img">
             <EggTokenIcon />
           </div>
@@ -80,7 +80,7 @@ const Participation = () => {
           Total Prize Pool
         </Typography>
         <div className="bot">
-          <span className="count">100,000,000</span>
+          <span className="count">{allNet.reward_total}</span>
           <div className="img">
             <MaticIcon />
           </div>

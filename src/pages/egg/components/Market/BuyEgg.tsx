@@ -1,11 +1,12 @@
 import { useState, forwardRef } from 'react'
 import styled from '@emotion/styled'
-import { Button } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import buyEggPng from '@imgs/buyegg.png'
 import Image from 'next/image'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import prizepoolPng from '@imgs/prizepool.png'
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import MaticIcon from '@icons/matic.svg'
 import congratulationPng from '@imgs/congratulation.png'
 import congratulationsTxtPng from '@imgs/congratulationsTxt.png'
@@ -16,7 +17,7 @@ import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo } from '@store/user'
 import { toast } from 'react-toastify'
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -90,6 +91,13 @@ const AdornmentWrap = styled.div`
   display: flex;
   align-items: center;
   width: 140px;
+`
+const BuyNumStep = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  width: 60vw;
+  margin-top: 20px;
 `
 
 const DescContent = styled.div`
@@ -176,7 +184,7 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
         }}
         thousandSeparator
         valueIsNumericString
-        // prefix="$"
+      // prefix="$"
       />
     )
   }
@@ -204,7 +212,7 @@ const BuyEgg = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues(event.target.value)
   }
-  
+
   const selectChange = (option: any) => {
     setCoinType(option.value)
   }
@@ -230,6 +238,22 @@ const BuyEgg = () => {
       <div>
         <Image src={buyEggPng} alt="buyegg" />
       </div>
+      <BuyNumStep>
+        <IconButton>
+          <AddIcon sx={{ color: '#fff' }} />
+        </IconButton>
+        <TextField
+          hiddenLabel
+          id="filled-hidden-label-small"
+       
+          defaultValue={0}
+          variant="filled"
+          size="small"
+        />
+        <IconButton>
+          <RemoveIcon sx={{ color: '#fff' }} />
+        </IconButton>
+      </BuyNumStep>
       <span className="buying">Buying Methods</span>
       <CountInput
         value={values}

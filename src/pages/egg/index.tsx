@@ -5,7 +5,7 @@ import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
-import { getUserHadParent, submitUserLogin, getUserInfo,getGameInfo } from '@utils/api'
+import { getUserHadParent, submitUserLogin, getUserInfo,getGameInfo,queryTotalNet } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
 import { selectWalletInfo, setUserInfo, setIsBindParent } from '@store/user'
 import { useSelector } from 'react-redux'
@@ -90,6 +90,8 @@ function LongEgg() {
   const [inviteCode, setInviteCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [gameInfo, setGameInfo] = useState<any>({})
+  const [gameEnd,setGameEnd] = useState(false)
+  const [allNet,setAllNet] = useState<any>({})
   const [countDown,setCountDown] = useState<number>(0)
   const walletInfo: any = useSelector(selectWalletInfo)
   const router = useRouter()
@@ -225,8 +227,8 @@ function LongEgg() {
         const startDate = new Date().getTime()
         console.log('endDate', endDate, 'startDate', startDate)
         setCountDown(Math.ceil((startDate-endDate)))
-      } else {
-        toast.warn('网络错误')
+      } else if(res.code===1) {
+        setGameEnd(true)
       }
     } catch (e) {
       console.log('e', e)
@@ -234,7 +236,22 @@ function LongEgg() {
     }
   }
 
+  const fetchAllNetwork = async () => {
+    try {
+      const res: any = await queryTotalNet()
+      console.info(res,res.data.data)
+      if (res.code === 0) {
+        console.info(res.data)
+        setAllNet(res.data)
+      } 
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }
+
   useEffect(() => {
+    fetchAllNetwork()
     if (walletInfo?.address) {
       fetchUserHadParent()
     } else {
@@ -246,10 +263,10 @@ function LongEgg() {
     <LongEggWrap>
       <div className="bg"></div>
       <Content>
-        <Typography fontSize={25}>Countdown</Typography>
-        <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />
+        <Typography fontWeight={700} fontSize={25}>{gameEnd?'等待下一轮开启中':'Countdown'}</Typography>
+       {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />} 
         <Box mt={2}>
-          <Participation />
+          <Participation allNet={allNet} />
         </Box>
         <Box mt={6}>
           <Market />

@@ -66,6 +66,14 @@ const eggIncomeReinvestment = async (data: any) => {
   })
 }
 
+// 获取全网数据 /api/main/total
+const queryTotalNet = async () => {
+  return request({
+    url: '/api/main/total',
+    method: 'get',
+  })
+}
+
 export {
   getUserInfo,
   submitUserLogin,
@@ -75,4 +83,5 @@ export {
   getGameEgg,
   openEgg,
   eggIncomeReinvestment,
+  queryTotalNet,
 }
