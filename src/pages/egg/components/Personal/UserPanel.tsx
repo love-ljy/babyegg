@@ -4,6 +4,8 @@ import { Box, TextField, Button } from '@mui/material'
 import Image from 'next/image'
 import currentEggPng from '@imgs/currentEgg.png'
 import grandmasterPng from '@imgs/grandmaster.png'
+import openEggPng from '@imgs/openEgg.png'
+import eggUpPng from '@imgs/eggUpPng.png'
 import eggIconPng from '@imgs/eggIcon.png'
 import LinearProgress from '@mui/material/LinearProgress'
 import EggTokenIcon from '@icons/eggToken.svg'
@@ -143,7 +145,9 @@ const SwipeItem = styled.div`
   .btnWrap {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    /* margin-bottom: 20px; */
+    font-size: 13px;
+    font-weight: 500;
     span {
       margin-right: 10px;
     }
@@ -320,10 +324,43 @@ const Expenditure = styled.div`
 `
 const ModalMain = styled.div`
   width: 260px;
+  img {
+    margin: 0 auto 20px;
+  }
   .title {
     text-align: left;
-    font-size: 14px;
+    font-size: 10px;
     margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .countWrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .txt {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 50px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .mid {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    .equ {
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(143, 13, 245, 1);
+    }
+    .box {
+      display: flex;
+      align-items: center;
+      span {
+        margin-right: 4px;
+      }
+    }
   }
 `
 const CountInput = styled(TextField)`
@@ -352,13 +389,12 @@ const CountInput = styled(TextField)`
 
 const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
-  height: 40px;
+  height: 30px;
   border-radius: 32px;
   background: rgba(135, 135, 135, 1);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 6px 15px 6px 15px;
   margin-top: 20px;
   font-weight: 700px;
   font-size: 15px;
@@ -388,6 +424,7 @@ const UserPanel = () => {
   const walletInfo: any = useSelector(selectWalletInfo)
   const isBindParent: any = useSelector(selectIsBindParent)
   const [visible, setVisible] = useState(false)
+  const [eggVisible, setEggVisible] = useState(false)
 
   const fetchGameEgg = useCallback(async () => {
     try {
@@ -412,7 +449,7 @@ const UserPanel = () => {
   }, [walletInfo?.address])
 
   const openDialog = (type: string) => {
-    setVisible(true)
+    setEggVisible(true)
     setEggType(type)
   }
 
@@ -467,7 +504,7 @@ const UserPanel = () => {
     } else {
       try {
         const res: any = await eggIncomeReinvestment({
-          id:'',
+          id: '',
           game_member_id: pass,
           password: repeatPass,
         })
@@ -494,6 +531,13 @@ const UserPanel = () => {
     setVisible(false)
     setPass('')
     setRepeatPass('')
+  }
+  const handleEggConfirm = async () => {
+    setEggVisible(false)
+    setVisible(true)
+  }
+  const closeEggModal = async () => {
+    setEggVisible(false)
   }
 
   useEffect(() => {
@@ -752,6 +796,62 @@ const UserPanel = () => {
               {loading ? 'Loading...' : '确定'}
             </BuyBtn>
             <BuyBtn onClick={closeDialog}>{'取消'}</BuyBtn>
+          </BtnWrap>
+        </ModalMain>
+      </CommonModal>
+      <CommonModal visible={eggVisible} setVisible={setEggVisible} footer={<span></span>}>
+        <ModalMain>
+          {eggType === 'open' ? (
+            <div>
+              <div className="img">
+                <Image src={openEggPng} alt="egg" />
+              </div>
+              <div className="title">当前您的所有龙蛋收益</div>
+              <div className="countWrap">
+                <span>10,000,00</span>
+                <EggTokenIcon />
+              </div>
+              <div className="title">打开所有龙蛋可获得双倍收益</div>
+              <div className="countWrap">
+                <span>10,000,00</span>
+                <EggTokenIcon />
+              </div>
+              <div className="txt">确认打开所有龙蛋？</div>
+            </div>
+          ) : (
+            <div>
+              <div className="img">
+                <Image src={eggUpPng} alt="egg" />
+              </div>
+              <div className="title">当前您的所有龙蛋收益</div>
+              <div className="countWrap">
+                <span>10,000,00</span>
+                <EggTokenIcon />
+              </div>
+              <div className="mid">
+                <div className="box">
+                  <span>10,000.00</span>
+                  <EggTokenIcon />
+                </div>
+                <span className="equ">=</span>
+                <div className="box">
+                  <span>10,000</span>
+                  <EggTokenIcon />
+                </div>
+              </div>
+              <div className="title">当前您可升级</div>
+              <div className="countWrap">
+                <span>10,000,00</span>
+                <EggTokenIcon />
+              </div>
+              <div className="txt">确认升级 ?</div>
+            </div>
+          )}
+          <BtnWrap>
+            <BuyBtn className="confirm" onClick={handleEggConfirm}>
+              是
+            </BuyBtn>
+            <BuyBtn onClick={closeEggModal}>否</BuyBtn>
           </BtnWrap>
         </ModalMain>
       </CommonModal>

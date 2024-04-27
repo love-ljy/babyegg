@@ -6,6 +6,8 @@ import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo } from '@store/user'
 import { toast } from 'react-toastify'
+import CommonModal from '../commonModal/commonModal'
+import { Button } from '@mui/material'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -34,7 +36,7 @@ const InvitationWrap = styled.div`
     }
     .draw2 {
       border-radius: 5px;
-      background: linear-gradient(90deg, rgba(50, 32, 208, 1) 0%, rgba(246, 26, 126, 1) 100%);
+      background: rgba(184, 3, 139, 1);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -67,22 +69,106 @@ const RowLeft = styled.div`
     text-align: left;
   }
 `
+
+const ModalMain = styled.div`
+  width: 260px;
+  img {
+    margin: 0 auto 20px;
+  }
+  .divied {
+    height: 2px;
+    background-color: rgba(143, 13, 245, 0.3);
+    margin: 10px 0;
+  }
+  .title {
+    text-align: left;
+    font-size: 10px;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255);
+  }
+  .countWrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 10px;
+    .label {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .r {
+      display: flex;
+      align-items: center;
+      span {
+        margin-right: 4px;
+      }
+    }
+  }
+  .txt {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 50px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .mid {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    .equ {
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(143, 13, 245, 1);
+    }
+    .box {
+      display: flex;
+      align-items: center;
+      span {
+        margin-right: 4px;
+      }
+    }
+  }
+`
+
+const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
+  display: flex;
+`
+
+const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+  width: 80%;
+  height: 30px;
+  border-radius: 32px;
+  background: rgba(135, 135, 135, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  font-weight: 700px;
+  font-size: 15px;
+  margin: 20px 10px 0;
+  &.confirm {
+    background: rgba(213, 27, 140, 1);
+  }
+`
+
 const Withdraw = () => {
+  const [visible, setVisible] = useState(false)
+  const [withdrawType, setWithdrawType] = useState('')
   const walletInfo = useSelector(selectWalletInfo)
 
-  const handleWithDraw1 = () => {
+  const openModal = (type: string) => {
     if (!walletInfo) {
       toast.warn('请链接钱包')
       return
     }
+    setWithdrawType(type)
+    setVisible(true)
   }
 
-  const handleWithDraw2 = () => {
-    if (!walletInfo) {
-      toast.warn('请链接钱包')
-      return
-    }
+  const closeModal = () => {
+    setVisible(false)
   }
+
+  const handleWithdraw = () => {}
+
   return (
     <InvitationWrap>
       <div className="title">Your Current Earning Balance</div>
@@ -91,7 +177,7 @@ const Withdraw = () => {
           <span className="text">10,000.00</span>
           <MaticIcon />
         </RowLeft>
-        <div className="draw" onClick={handleWithDraw1}>
+        <div className="draw" onClick={() => openModal('babyloong')}>
           Withdraw
         </div>
       </div>
@@ -100,7 +186,7 @@ const Withdraw = () => {
           <span className="text">10,000.00</span>
           <EggTokenIcon />
         </RowLeft>
-        <div className="draw2" onClick={handleWithDraw2}>
+        <div className="draw2" onClick={() => openModal('Matic')}>
           Withdraw
         </div>
       </div>
@@ -111,6 +197,66 @@ const Withdraw = () => {
           $Matic, a portion of the amount will be automatically reinvested.
         </div>
       </div>
+      <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
+        <ModalMain>
+          {withdrawType === 'babyloong' ? (
+            <div>
+              <div className="title">*提现数量的5%作为手续费</div>
+              <div className="countWrap">
+                <span className="label">提现的 $BabyLoong 数量</span>
+                <span>100</span>
+              </div>
+              <div className="countWrap">
+                <span className="label">手续费</span>
+                <span>10,000,00</span>
+              </div>
+              <div className="divied"></div>
+              <div className="countWrap">
+                <span>实际到账</span>
+                <div className="r">
+                  <span>10,000,00</span>
+                  <EggTokenIcon />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="title">*提现数量的5%作为手续费</div>
+              <div className="countWrap">
+                <span className="label">提现的 $Matic 数量</span>
+                <span>100</span>
+              </div>
+              <div className="countWrap">
+                <span className="label">手续费</span>
+                <span>10,000,00</span>
+              </div>
+              <div className="countWrap">
+                <span className="label">总计</span>
+                <span>10,000,00</span>
+              </div>
+              <div className="divied"></div>
+              <div className="countWrap">
+                <span className="label">自动复投 (60%)</span>
+                <span>10,000,00</span>
+              </div>
+              <div className="divied"></div>
+              <div className="countWrap">
+                <span>实际到账</span>
+                <div className="r">
+                  <span>10,000,00</span>
+                  <EggTokenIcon />
+                </div>
+              </div>
+            </div>
+          )}
+          <BtnWrap>
+            <BuyBtn className="confirm" onClick={handleWithdraw}>
+              是
+            </BuyBtn>
+            <BuyBtn onClick={closeModal}>否</BuyBtn>
+          </BtnWrap>
+        </ModalMain>
+      </CommonModal>
     </InvitationWrap>
   )
 }
