@@ -21,9 +21,9 @@ import NftIcon from '@icons/nft.svg'
 import LinkActiveIcon from '@icons/link_a.svg'
 import HomeActiveIcon from '@icons/home_a.svg'
 import NftActiveIcon from '@icons/nft_a.svg'
-import LiveIcon from '@icons/live.svg'
+import LiveIcon from '@imgs/live.png'
 import RechargeIcon from '@icons/recharge.svg'
-import RunIcon from '@icons/run.svg'
+import RunIcon from '@imgs/run.png'
 import recharge from '@imgs/recharge.png'
 
 interface DrawProps {
@@ -53,9 +53,9 @@ const config = [
 ]
 
 const config2 = [
-  { name: '宝贝龙蛋孵化大赛', icon: <RechargeIcon />, activeIcon: <RechargeIcon />, path: '/' },
-  { name: '龙龙快跑', icon: <RunIcon />, activeIcon: <RunIcon />, path: '/nft' },
-  { name: '宝贝龙养成记', icon: <LiveIcon />, activeIcon: <LiveIcon />, path: '/link' },
+  { name: '宝贝龙蛋孵化大赛', icon: <Image src={recharge} width="35" height="35" alt='' />, activeIcon: <Image src={recharge} width="35" height="35" alt='' />, path: '/' },
+  { name: '龙龙快跑', icon: <Image src={LiveIcon} width="35" height="35" alt='' />, activeIcon: <Image src={LiveIcon} width="35" height="35" alt='' />, path: '/nft' },
+  { name: '宝贝龙养成记', icon:<Image src={RunIcon} width="35" height="35" alt='' />, activeIcon: <Image src={RunIcon} width="35" height="35" alt='' />, path: '/link' },
 ]
 
 const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
@@ -79,7 +79,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
           <List>
             {config.map((text, index) => (
               <ListItem key={text.name} disablePadding sx={{ marginBottom: '10px' }}>
-                <MenuButton isactive={pathname === text.path ? 1 : 0}>
+                <MenuButton onClick={() => Router.push(text.path)} isactive={pathname === text.path ? 1 : 0}>
                   <ListItemIcon sx={{ minWidth: '40px' }}>
                     {pathname === text.path ? text.activeIcon : text.icon}
                   </ListItemIcon>

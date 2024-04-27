@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "esModuleInterop": true,
+    "noImplicitAny": false,
     "module": "esnext",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -17,21 +21,41 @@
       }
     ],
     "paths": {
-      "@icons/*": ["./src/assets/svg/*"],
-      "@imgs/*": ["./src/assets/img/*"],
-      "@styles/*": ["./src/assets/styles/*"],
-      "@config/*": ["./src/config/*"],
-      "@api/*": ["./src/utils/api/*"],
-      "@components/*": ["./src/components/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@service/*": ["./src/service/*"],
-      "@store/*": ["./src/store/*"],
+      "@icons/*": [
+        "./src/assets/svg/*"
+      ],
+      "@imgs/*": [
+        "./src/assets/img/*"
+      ],
+      "@styles/*": [
+        "./src/assets/styles/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
+      ],
+      "@api/*": [
+        "./src/utils/api/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@service/*": [
+        "./src/service/*"
+      ],
+      "@store/*": [
+        "./src/store/*"
+      ]
     },
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "baseUrl": ".",
-   
+    "esModuleInterop": true
   },
   "include": [
     "next-env.d.ts",
@@ -40,5 +64,10 @@
     ".next/types/**/*.ts",
     "src/pages/_document.tsx"
   ],
-  "exclude": ["node_modules", "out", ".next", "abis"]
+  "exclude": [
+    "node_modules",
+    "out",
+    ".next",
+    "abis"
+  ]
 }
