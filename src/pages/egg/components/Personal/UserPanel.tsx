@@ -1,18 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import styled from '@emotion/styled'
-import { Box } from '@mui/material'
+import { Box, TextField, Button } from '@mui/material'
 import Image from 'next/image'
 import currentEggPng from '@imgs/currentEgg.png'
 import grandmasterPng from '@imgs/grandmaster.png'
+import eggIconPng from '@imgs/eggIcon.png'
 import LinearProgress from '@mui/material/LinearProgress'
-import SwipeableViews from 'react-swipeable-views'
-import { autoPlay, virtualize } from 'react-swipeable-views-utils'
 import EggTokenIcon from '@icons/eggToken.svg'
-import LeftArrowIcon from '@icons/leftArrow.svg'
-import RightArrowIcon from '@icons/rightArrow.svg'
-import { mod } from 'react-swipeable-views-core'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectUserInfo } from '@store/user'
+import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
+import { getGameEgg, openEgg, eggIncomeReinvestment } from '@utils/api'
+import { toast } from 'react-toastify'
+import CommonModal from '../commonModal/commonModal'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+
 const UserPanelWrap = styled.div`
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
@@ -73,8 +77,55 @@ const SwipeItem = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  img {
-    margin-bottom: 10px;
+  .longEgg {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .infoItem {
+      width: 50%;
+      /* width: 150px; */
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 1);
+      border: 1px solid rgba(26, 0, 187, 1);
+      padding: 4px 10px 4px 10px;
+      text-align: left;
+      margin-bottom: 10px;
+      &:first-child {
+        margin-right: 10px;
+      }
+      .title {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 2px;
+      }
+      .bot {
+        display: flex;
+        /* justify-content: space-around; */
+        align-items: center;
+        img {
+          margin-right: 4px;
+        }
+      }
+      .rit-bot {
+        display: flex;
+        justify-content: space-between;
+
+        .t {
+          display: flex;
+          align-items: center;
+          span {
+            margin-left: 4px;
+          }
+        }
+        .rit {
+          display: flex;
+          flex-direction: column;
+          align-items: end;
+          font-size: 8px;
+          color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
   }
   .earn {
     font-size: 10px;
@@ -98,19 +149,20 @@ const SwipeItem = styled.div`
     }
     .open {
       width: 126px;
-      height: 30px;
+      /* height: 30px; */
       border-radius: 32px;
       background: rgba(0, 79, 201, 1);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 6px 15px 6px 15px;
+      margin-right: 10px;
     }
     .repu {
       width: 126px;
-      height: 30px;
+      /* height: 30px; */
       border-radius: 32px;
-      background: rgba(88, 88, 88, 1);
+      background: rgba(184, 3, 139, 1);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -266,52 +318,189 @@ const Expenditure = styled.div`
     }
   }
 `
+const ModalMain = styled.div`
+  width: 260px;
+  .title {
+    text-align: left;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+`
+const CountInput = styled(TextField)`
+  width: 100%;
+  margin-bottom: 10px;
+  input {
+    color: #fff;
+    text-indent: 1em;
+    /* font-weight: 700; */
+    font-size: 12px;
+    height: 26px;
+    user-select: text;
+  }
+  .Mui-focused {
+    border: none;
+    outline: none;
+  }
+  .MuiInputBase-root::after {
+    border: none;
+  }
+  opacity: 1;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 1);
+  border: 1px solid rgba(143, 13, 245, 1);
+`
 
-const AutoPlaySwipeableViews = autoPlay(virtualize(SwipeableViews))
+const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+  width: 80%;
+  height: 40px;
+  border-radius: 32px;
+  background: rgba(135, 135, 135, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 15px 6px 15px;
+  margin-top: 20px;
+  font-weight: 700px;
+  font-size: 15px;
+  margin: 20px 10px 0;
+  &.confirm {
+    background: rgba(213, 27, 140, 1);
+  }
+`
 
-const slidesData = [
-  { img: currentEggPng, count: 10000 },
-  { img: currentEggPng, count: 20000 },
-  { img: currentEggPng, count: 30000 },
-]
-
-function slideRenderer(params: any) {
-  const { index, key } = params
-  const inx = mod(index, slidesData.length)
-  return (
-    <SwipeItem key={index}>
-      <div>
-        <Image src={slidesData[inx].img} alt="egg" />
-      </div>
-      <span className="earn">Earnings</span>
-      <div className="countWrap">
-        <span>{slidesData[inx].count}</span>
-        <EggTokenIcon />
-      </div>
-      <div className="btnWrap">
-        <span className="open">Open Egg</span>
-        <span className="repu">Repurchase</span>
-      </div>
-    </SwipeItem>
-  )
-}
+const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
+  display: flex;
+`
 
 const UserPanel = () => {
   const [progress, setProgress] = useState(0)
-  const [index, setIndex] = useState(0)
+  const [showPass, setShowPass] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [showRepeatPass, setShowRepeatPass] = useState(false)
+  const [pass, setPass] = useState('')
+  const [repeatPass, setRepeatPass] = useState('')
+  const [eggType, setEggType] = useState('')
+  const [eggInfo, setEggInfo] = useState({
+    dragon_egg: 0,
+    dragon_egg_babyloong: 0,
+  })
   const userInfo: any = useSelector(selectUserInfo)
-  console.log('userInfo', userInfo);
-  
-  const handleLeftArrowClick = () => {
-    setIndex(index - 1)
-  }
-  const handleRightArrowClick = () => {
-    setIndex(index + 1)
+  const walletInfo: any = useSelector(selectWalletInfo)
+  const isBindParent: any = useSelector(selectIsBindParent)
+  const [visible, setVisible] = useState(false)
+
+  const fetchGameEgg = useCallback(async () => {
+    try {
+      const res: any = await getGameEgg()
+      if (res.code === 0) {
+        setEggInfo(res.data)
+      } else {
+        setEggInfo({
+          dragon_egg: 0,
+          dragon_egg_babyloong: 0,
+        })
+        toast.warn('网络错误')
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+      setEggInfo({
+        dragon_egg: 0,
+        dragon_egg_babyloong: 0,
+      })
+    }
+  }, [walletInfo?.address])
+
+  const openDialog = (type: string) => {
+    setVisible(true)
+    setEggType(type)
   }
 
-  const pageClick = (index: number) => {
-    setIndex(index)
+  const passChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPass(event.target.value)
   }
+
+  const repeatPassChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRepeatPass(event.target.value)
+  }
+
+  const handleClickShowPassword = () => setShowPass(show => !show)
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+  }
+
+  const handleClickShowRepeatPassword = () => setShowRepeatPass(show => !show)
+
+  const handleMouseDownRepeatPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+  }
+
+  const handleOpenEgg = async () => {
+    if (pass !== repeatPass) {
+      toast.warn('密码不一致，请重新输入')
+      return
+    }
+    setLoading(true)
+    if (eggType === 'open') {
+      try {
+        const res: any = await openEgg({
+          game_member_id: pass,
+          password: repeatPass,
+        })
+        console.log('res')
+        if (res.code === 0) {
+          setVisible(false)
+          setPass('')
+          setRepeatPass('')
+          fetchGameEgg()
+          toast.success('打开成功')
+        } else {
+          toast.warn('网络错误')
+        }
+      } catch (e) {
+        console.log('e')
+        toast.warn('网络错误')
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      try {
+        const res: any = await eggIncomeReinvestment({
+          id:'',
+          game_member_id: pass,
+          password: repeatPass,
+        })
+        console.log('res')
+        if (res.code === 0) {
+          setVisible(false)
+          setPass('')
+          setRepeatPass('')
+          fetchGameEgg()
+          toast.success('升级成功')
+        } else {
+          toast.warn('网络错误')
+        }
+      } catch (e) {
+        console.log('e')
+        toast.warn('网络错误')
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+
+  const closeDialog = async () => {
+    setVisible(false)
+    setPass('')
+    setRepeatPass('')
+  }
+
+  useEffect(() => {
+    if (walletInfo?.address && isBindParent) {
+      fetchGameEgg()
+    }
+  }, [walletInfo?.address, isBindParent])
 
   return (
     <UserPanelWrap>
@@ -333,51 +522,65 @@ const UserPanel = () => {
       <Expenditure>
         <div className="row mar">
           <div className="group">
-            <span className="title">Total Personal Expenditure</span>
+            <span className="title">个人总消费额度</span>
             <span className="count">{userInfo.my_performance || 0}</span>
           </div>
           <div className="group group2">
-            <span className="title">Total Eggs Purchased</span>
+            <span className="title">购买龙蛋总量</span>
             <span className="count">{userInfo.dragon_egg_total || 0}</span>
           </div>
         </div>
         <div className="row mar">
           <div className="group">
-            <span className="title">Current Eggs Held</span>
+            <span className="title">当前持有龙蛋总量</span>
             <span className="count">{userInfo.dragon_egg}</span>
           </div>
           <div className="group group2">
-            <span className="title">Current Egg Purchase Sequence</span>
+            <span className="title">您的育龙师序列</span>
             <span className="count">{userInfo.last_sort_num}</span>
-          </div>
-        </div>
-        <div className="row">
-          <div className="group">
-            <span className="title">Your Ranking Sequence</span>
-            <span className="count">{userInfo.my_sort_num || 0}</span>
           </div>
         </div>
       </Expenditure>
       <EggStatusWrap>
         <div className="eggTitle">Current Egg Status</div>
         <div className="eggStatus">
-          <LeftArrowIcon onClick={handleLeftArrowClick} className="swiperBtn left" />
-          <AutoPlaySwipeableViews
-            slideRenderer={slideRenderer}
-            index={index}
-            onChangeIndex={(index: number) => setIndex(index)}
-          />
-          <RightArrowIcon onClick={handleRightArrowClick} className="swiperBtn right" />
-          <div className="pageWrap">
-            {slidesData.map((item, i) => {
-              return (
-                <div
-                  className={`page ${i === mod(index, slidesData.length) ? 'actived' : ''}`}
-                  onClick={() => pageClick(i)}
-                ></div>
-              )
-            })}
-          </div>
+          <SwipeItem>
+            <div>
+              <Image src={currentEggPng} alt="egg" />
+            </div>
+            <div className="longEgg">
+              <div className="infoItem">
+                <div className="title">龙蛋持有总额</div>
+                <div className="bot">
+                  <div>
+                    <Image src={eggIconPng} alt="egg" />
+                  </div>
+                  <span>{eggInfo.dragon_egg}</span>
+                </div>
+              </div>
+              <div className="infoItem">
+                <div className="title">龙蛋当前收益</div>
+                <div className="rit-bot">
+                  <div className="t">
+                    <EggTokenIcon />
+                    <span>{eggInfo.dragon_egg_babyloong}</span>
+                  </div>
+                  <div className="rit">
+                    <span>≈ 100.00</span>
+                    <span>Matic</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="btnWrap">
+              <div className="open" onClick={() => openDialog('open')}>
+                打开龙蛋
+              </div>
+              <div className="repu" onClick={() => openDialog('up')}>
+                升级龙蛋
+              </div>
+            </div>
+          </SwipeItem>
         </div>
       </EggStatusWrap>
       <RewardStatusWrap>
@@ -466,6 +669,92 @@ const UserPanel = () => {
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
+      <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
+        <ModalMain>
+          <div className="title">密码</div>
+          <CountInput
+            type={showPass ? 'text' : 'password'}
+            id="outlined-adornment-password"
+            value={pass}
+            onChange={passChange}
+            variant="standard"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPass ? (
+                      <VisibilityOff
+                        sx={{
+                          color: '#fff',
+                          marginRight: '10px',
+                        }}
+                      />
+                    ) : (
+                      <Visibility
+                        sx={{
+                          color: '#fff',
+                          marginRight: '10px',
+                        }}
+                      />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <div className="title">确认密码</div>
+          <CountInput
+            type={showRepeatPass ? 'text' : 'password'}
+            value={repeatPass}
+            onChange={repeatPassChange}
+            variant="standard"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowRepeatPassword}
+                    onMouseDown={handleMouseDownRepeatPassword}
+                    edge="end"
+                  >
+                    {showRepeatPass ? (
+                      <VisibilityOff
+                        sx={{
+                          color: '#fff',
+                          marginRight: '10px',
+                        }}
+                      />
+                    ) : (
+                      <Visibility
+                        sx={{
+                          color: '#fff',
+                          marginRight: '10px',
+                        }}
+                      />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <BtnWrap>
+            <BuyBtn
+              className="confirm"
+              isCancel={loading}
+              disabled={loading}
+              onClick={handleOpenEgg}
+            >
+              {loading ? 'Loading...' : '确定'}
+            </BuyBtn>
+            <BuyBtn onClick={closeDialog}>{'取消'}</BuyBtn>
+          </BtnWrap>
+        </ModalMain>
+      </CommonModal>
     </UserPanelWrap>
   )
 }

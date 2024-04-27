@@ -6,7 +6,7 @@ export interface ParamsUser {
 
 export interface CheckUser {
   username?: string
-  invite?: string
+  invite?: string | string[]
 }
 
 export interface PageInfo {

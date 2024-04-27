@@ -24,21 +24,26 @@ export const slice = createSlice({
     walletInfo: {
       address: '',
     },
+    isBindParent: false,
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
-      state.walletInfo = payload
+      state.walletInfo = { ...state.walletInfo, ...payload }
     },
     setUserInfo: (state, { payload }) => {
       state.userInfo = { ...state.userInfo, ...payload }
     },
+    setIsBindParent: (state, { payload }) => {
+      state.isBindParent = payload
+    },
   },
 })
 
-export const { setUserInfo, setWalletInfo } = slice.actions
+export const { setUserInfo, setWalletInfo, setIsBindParent } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
 export const selectUserInfo = s => s.user.userInfo
+export const selectIsBindParent = s => s.user.isBindParent
 
 export default slice.reducer

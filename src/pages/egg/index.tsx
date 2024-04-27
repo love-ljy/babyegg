@@ -7,7 +7,7 @@ import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
 import { getUserHadParent, submitUserLogin, getUserInfo } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo } from '@store/user'
+import { selectWalletInfo, setUserInfo, setIsBindParent } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
@@ -19,6 +19,7 @@ import eggAbi from '../../config/abi/eggAbi.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { MainContractAddr } from '@config/contants'
 import { formatUnits } from 'viem'
+
 const LongEggWrap = styled.div`
   color: #fff;
   /* background-color: #fff; */
@@ -89,6 +90,7 @@ function LongEgg() {
   const [inviteCode, setInviteCode] = useState('')
   const [loading, setLoading] = useState(false)
   const walletInfo: any = useSelector(selectWalletInfo)
+  const router = useRouter()
   // const {
   //   data: hash,
   //   isPending,
@@ -123,16 +125,15 @@ function LongEgg() {
     try {
       const res: any = await getUserHadParent({
         username: walletInfo.address,
-        invite: '',
+        invite: router.query.invite,
       })
       if (res.code === 0) {
-        const contractRes = await result.refetch()
-        console.log('contractRes', contractRes)
         if (res.data.had_parent === 0) {
           // 未绑定
           setBindAddress(res.data.username)
           setInviteCode(res.data.invite)
           setVisible(true)
+          dispatch(setIsBindParent(false))
         } else {
           // 已绑定
           setVisible(false)
@@ -152,6 +153,7 @@ function LongEgg() {
       const res: any = await getUserInfo()
       if (res.code === 0) {
         dispatch(setUserInfo(res.data))
+        dispatch(setIsBindParent(true))
         setVisible(false)
         setLoading(false)
       } else {
@@ -196,7 +198,6 @@ function LongEgg() {
 
       bindParent()
 
-      
       // await writeContractAsync({
       //   address: MainContractAddr,
       //   abi: eggAbi,

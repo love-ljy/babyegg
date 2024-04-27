@@ -33,4 +33,38 @@ const getUserRanking = async (params: PageInfo) => {
   })
 }
 
-export { getUserInfo, submitUserLogin, getUserHadParent, getUserRanking }
+// 获取龙蛋信息
+const getGameEgg = async () => {
+  return request({
+    url: '/api/dragonegg/gameEgg',
+    method: 'get',
+  })
+}
+
+// 打开龙蛋
+const openEgg = async (data: any) => {
+  return request({
+    url: '/api/dragonegg/open',
+    method: 'post',
+    data,
+  })
+}
+
+// 龙蛋收益复投 升级
+const eggIncomeReinvestment = async (data: any) => {
+  return request({
+    url: '/api/dragonegg/EggIncomeReinvestment',
+    method: 'post',
+    data,
+  })
+}
+
+export {
+  getUserInfo,
+  submitUserLogin,
+  getUserHadParent,
+  getUserRanking,
+  getGameEgg,
+  openEgg,
+  eggIncomeReinvestment,
+}
