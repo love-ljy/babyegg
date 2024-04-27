@@ -23,18 +23,16 @@ import { formatUnits } from 'viem'
 const LongEggWrap = styled.div`
   color: #fff;
   /* background-color: #fff; */
-  .bg {
-    background-image: url('/img/countBg.png');
+  padding: 8rem 20px 0 20px;
+  background-image: url('/img/countBg.png');
     background-size: cover;
     height: 475px;
-    position: absolute;
     width: 100%;
-    z-index: -1;
-  }
 `
 
 const Content = styled.div`
-  padding: 100px 20px 30px;
+  padding: 10px 20px 30px;
+  color: #fff;
 `
 const ModalMain = styled.div`
   width: 260px;
@@ -259,16 +257,22 @@ function LongEgg() {
     }
   }, [walletInfo?.address])
 
-  return (
-    <LongEggWrap>
-      <div className="bg"></div>
-      <Content>
-        <Typography fontWeight={700} fontSize={25}>{gameEnd?'等待下一轮开启中':'Countdown'}</Typography>
+  const LongHeader = () => {
+    return <LongEggWrap>
+       <Typography fontWeight={700} fontSize={25}>{gameEnd?'等待下一轮开启中':'Countdown'}</Typography>
        {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />} 
         <Box mt={2}>
           <Participation allNet={allNet} />
         </Box>
-        <Box mt={6}>
+    </LongEggWrap>
+  }
+
+  return (
+    <div>
+     <LongHeader/>
+      <Content>
+       
+        <Box >
           <Market />
         </Box>
         <Box mt={6}>
@@ -284,7 +288,7 @@ function LongEgg() {
           </BuyBtn>
         </ModalMain>
       </CommonModal>
-    </LongEggWrap>
+    </div>
   )
 }
 

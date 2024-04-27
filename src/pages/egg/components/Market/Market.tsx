@@ -39,7 +39,7 @@ const MarketWrap = styled.div`
   }
   .tab {
     margin-top: 4px;
-    height: 500px;
+    /* max-height: 500px; */
   }
 `
 const DialogMain = styled.div`

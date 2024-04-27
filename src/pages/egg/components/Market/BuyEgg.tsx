@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react'
+import { useState, forwardRef, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Button, IconButton } from '@mui/material'
 import buyEggPng from '@imgs/buyegg.png'
@@ -16,7 +16,10 @@ import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo } from '@store/user'
+import { useBalance,useAccount } from 'wagmi'
+import {formatTeamNumber,getFullDisplayBalance} from '@utils/formatterBalance'
 import { toast } from 'react-toastify'
+import BigNumber from 'bignumber.js'
 const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 40px;
@@ -96,8 +99,9 @@ const BuyNumStep = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px;
-  width: 60vw;
+  width: 40vw;
   align-items: center;
+  align-content: center;
   margin-top: 20px;
 `
 const BuyNumStepItem = styled.div`
@@ -215,7 +219,20 @@ const BuyEgg = () => {
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
+  const account = useAccount()
+  const [buyNum,setBuyNum] = useState(0)
+  const [balance,setBalance] = useState<string>('0')
+  const result = useBalance({
+    address:account.address,
+  })
+  
 
+   useEffect(()=>{
+    if(result&&result.data?.value){
+      const value =  getFullDisplayBalance(new BigNumber(result.data?.value.toString()),result.data?.decimals)
+       setBalance(value)
+     }
+   },[result])
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues(event.target.value)
   }
@@ -246,11 +263,11 @@ const BuyEgg = () => {
         <Image src={buyEggPng} alt="buyegg" />
       </div>
       <BuyNumStep>
-        <IconButton>
+        <IconButton onClick={()=>setBuyNum(buyNum+1)}>
           <AddIcon sx={{ color: '#fff' }} />
         </IconButton>
-       <BuyNumStepItem>0</BuyNumStepItem>
-        <IconButton>
+       <BuyNumStepItem>{buyNum}</BuyNumStepItem>
+        <IconButton disabled={buyNum<=0} onClick={()=>buyNum>0&&setBuyNum(buyNum-1)}>
           <RemoveIcon sx={{ color: '#fff' }} />
         </IconButton>
       </BuyNumStep>
@@ -281,7 +298,7 @@ const BuyEgg = () => {
       />
       <div className="available">
         <span className="buying">Your Current $Matic available :</span>
-        <span className="count">10,000.00</span>
+        <span className="count">{balance}</span>
       </div>
       <BuyBtn isCancel={loading} disabled={loading} onClick={handleBuy}>
         {loading ? 'Loading...' : 'Buy'}
