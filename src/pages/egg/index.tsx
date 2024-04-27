@@ -5,7 +5,7 @@ import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
-import { getUserHadParent, submitUserLogin, getUserInfo } from '@utils/api'
+import { getUserHadParent, submitUserLogin, getUserInfo,getGameInfo } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
 import { selectWalletInfo, setUserInfo, setIsBindParent } from '@store/user'
 import { useSelector } from 'react-redux'
@@ -89,6 +89,8 @@ function LongEgg() {
   const [bindAddress, setBindAddress] = useState('')
   const [inviteCode, setInviteCode] = useState('')
   const [loading, setLoading] = useState(false)
+  const [gameInfo, setGameInfo] = useState<any>({})
+  const [countDown,setCountDown] = useState<number>(0)
   const walletInfo: any = useSelector(selectWalletInfo)
   const router = useRouter()
   // const {
@@ -154,6 +156,7 @@ function LongEgg() {
       if (res.code === 0) {
         dispatch(setUserInfo(res.data))
         dispatch(setIsBindParent(true))
+        fetchEggCountDown()
         setVisible(false)
         setLoading(false)
       } else {
@@ -176,6 +179,7 @@ function LongEgg() {
         localStorage.setItem('token', res.data.Token)
         dispatch(setUserInfo({ token: res.data.Token }))
         fetchUserInfo()
+      
       } else {
         toast.warn('网络错误')
       }
@@ -211,6 +215,25 @@ function LongEgg() {
     }
   }
 
+  const fetchEggCountDown = async()=>{
+    try {
+      const res: any = await getGameInfo()
+      if (res.code === 0) {
+        setGameInfo(res.data)
+        const {end_time } = res.data
+        const endDate = new Date(end_time).getTime()
+        const startDate = new Date().getTime()
+        console.log('endDate', endDate, 'startDate', startDate)
+        setCountDown(Math.ceil((startDate-endDate)))
+      } else {
+        toast.warn('网络错误')
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }
+
   useEffect(() => {
     if (walletInfo?.address) {
       fetchUserHadParent()
@@ -224,7 +247,7 @@ function LongEgg() {
       <div className="bg"></div>
       <Content>
         <Typography fontSize={25}>Countdown</Typography>
-        <CountDown />
+        <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />
         <Box mt={2}>
           <Participation />
         </Box>
