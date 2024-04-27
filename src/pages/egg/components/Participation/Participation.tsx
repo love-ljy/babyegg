@@ -80,7 +80,7 @@ const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
           Total Prize Pool
         </Typography>
         <div className="bot">
-          <span className="count">{allNet.reward_total}</span>
+          <span className="count">0</span>
           <div className="img">
             <MaticIcon />
           </div>

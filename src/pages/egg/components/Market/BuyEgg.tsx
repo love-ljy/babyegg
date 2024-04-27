@@ -97,8 +97,15 @@ const BuyNumStep = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px;
   width: 60vw;
+  align-items: center;
   margin-top: 20px;
 `
+const BuyNumStepItem = styled.div`
+  border: 1px solid #fff;
+  border-radius: 5px;
+  height: 40px;
+  line-height: 40px;
+  `
 
 const DescContent = styled.div`
   width: 78vw;
@@ -242,14 +249,7 @@ const BuyEgg = () => {
         <IconButton>
           <AddIcon sx={{ color: '#fff' }} />
         </IconButton>
-        <TextField
-          hiddenLabel
-          id="filled-hidden-label-small"
-       
-          defaultValue={0}
-          variant="filled"
-          size="small"
-        />
+       <BuyNumStepItem>0</BuyNumStepItem>
         <IconButton>
           <RemoveIcon sx={{ color: '#fff' }} />
         </IconButton>
