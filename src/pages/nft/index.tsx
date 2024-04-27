@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from './bazaar.module.css'
-import Modal from '../../../components/Modal/Modal'
+import Modal from '../../components/Modal/Modal'
 
 const NftBazaar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false)

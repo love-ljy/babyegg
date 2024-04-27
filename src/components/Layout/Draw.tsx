@@ -60,14 +60,9 @@ const config2 = [
 
 const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
   const { pathname } = useRouter()
-  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (
-      event.type === 'keydown' &&
-      ((event as React.KeyboardEvent).key === 'Tab' ||
-        (event as React.KeyboardEvent).key === 'Shift')
-    ) {
-      return
-    }
+  const toggleDrawer = (path:string) => {
+    Router.push(path);
+    onClose()
   }
   return (
     <React.Fragment>
@@ -79,7 +74,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
           <List>
             {config.map((text, index) => (
               <ListItem key={text.name} disablePadding sx={{ marginBottom: '10px' }}>
-                <MenuButton onClick={() => Router.push(text.path)} isactive={pathname === text.path ? 1 : 0}>
+                <MenuButton onClick={()=>{toggleDrawer(text.path)}} isactive={pathname === text.path ? 1 : 0}>
                   <ListItemIcon sx={{ minWidth: '40px' }}>
                     {pathname === text.path ? text.activeIcon : text.icon}
                   </ListItemIcon>
