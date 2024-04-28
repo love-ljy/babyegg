@@ -22,10 +22,6 @@ const nextConfig = {
     EXPLORER_HOST: process.env.EXPLORER_HOST,
     SERVER_HOST: process.env.SERVER_HOST,
   },
-  i18n: {
-    locales: ['en', 'zh-CN'],
-    defaultLocale: 'zh-CN',
-  },
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }
     const fileLoaderRule = config.module.rules.find(rule => rule.test?.test?.('.svg'))
