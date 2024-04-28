@@ -50,7 +50,10 @@
       ],
       "@store/*": [
         "./src/store/*"
-      ]
+      ],
+      "@i8n": [
+        "./src/i18n.ts"
+      ],
     },
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",

@@ -5,8 +5,8 @@ import buyEggPng from '@imgs/buyegg.png'
 import Image from 'next/image'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
 import MaticIcon from '@icons/matic.svg'
 import congratulationPng from '@imgs/congratulation.png'
 import congratulationsTxtPng from '@imgs/congratulationsTxt.png'
@@ -20,6 +20,7 @@ import { useBalance,useAccount } from 'wagmi'
 import {formatTeamNumber,getFullDisplayBalance} from '@utils/formatterBalance'
 import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
+
 const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 40px;
@@ -109,7 +110,7 @@ const BuyNumStepItem = styled.div`
   border-radius: 5px;
   height: 40px;
   line-height: 40px;
-  `
+`
 
 const DescContent = styled.div`
   width: 78vw;
@@ -195,7 +196,7 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
         }}
         thousandSeparator
         valueIsNumericString
-      // prefix="$"
+        // prefix="$"
       />
     )
   }
