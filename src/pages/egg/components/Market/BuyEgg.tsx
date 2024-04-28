@@ -1,7 +1,8 @@
-import { useState, forwardRef, useEffect } from 'react'
+import { useState, forwardRef, useEffect, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Button, IconButton } from '@mui/material'
 import buyEggPng from '@imgs/buyegg.png'
+import firstBuyPng from '@imgs/firstBuy.png'
 import Image from 'next/image'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -15,13 +16,15 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo } from '@store/user'
-import { useBalance,useAccount } from 'wagmi'
-import {formatTeamNumber,getFullDisplayBalance} from '@utils/formatterBalance'
+import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
+import { useBalance, useAccount } from 'wagmi'
+import { formatTeamNumber, getFullDisplayBalance } from '@utils/formatterBalance'
 import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
+import PasswordModal from '../PasswordModal/PasswordModal'
+import { buyEgg, getCoin, eggIncomeReinvestment } from '@utils/api'
 
-const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -113,13 +116,22 @@ const BuyNumStepItem = styled.div`
 `
 
 const DescContent = styled.div`
-  width: 78vw;
+  /* width: 78vw; */
   display: flex;
   justify-content: start;
   flex-direction: column;
   align-items: start;
   font-size: 12px;
   padding-bottom: 50px;
+  &.firstBuy {
+    display: flex;
+    justify-content: center;
+    font-size: 15px;
+    img {
+      margin: 0 auto;
+      margin-bottom: 20px;
+    }
+  }
 `
 
 const CongContent = styled.div`
@@ -202,38 +214,36 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
   }
 )
 
-const coinList = [
-  {
-    label: 'Matic',
-    value: 'Matic',
-  },
-  {
-    label: 'BSC',
-    value: 'BSC',
-  },
-]
-
 const BuyEgg = () => {
   const [values, setValues] = useState('')
-  const [coinType, setCoinType] = useState('')
+  const [coinType, setCoinType] = useState('2')
   const [loading, setLoading] = useState(false)
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
+  const [passVisible, setPassVisible] = useState(false)
+  const [inputPassVisible, setInputPassVisible] = useState(false)
+  const [firstBuyVisible, setFirstBuyVisible] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
   const account = useAccount()
-  const [buyNum,setBuyNum] = useState(0)
-  const [balance,setBalance] = useState<string>('0')
+  const [buyNum, setBuyNum] = useState(0)
+  const [coinList, setCoinList] = useState([])
+  const [balance, setBalance] = useState<string>('0')
+  const isBindParent: any = useSelector(selectIsBindParent)
   const result = useBalance({
-    address:account.address,
+    address: account.address,
   })
-  
+  const userInfo: any = useSelector(selectUserInfo)
 
-   useEffect(()=>{
-    if(result&&result.data?.value){
-      const value =  getFullDisplayBalance(new BigNumber(result.data?.value.toString()),result.data?.decimals)
-       setBalance(value)
-     }
-   },[result])
+  useEffect(() => {
+    if (result && result.data?.value) {
+      const value = getFullDisplayBalance(
+        new BigNumber(result.data?.value.toString()),
+        result.data?.decimals
+      )
+      setBalance(value)
+    }
+  }, [result])
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues(event.target.value)
   }
@@ -242,12 +252,59 @@ const BuyEgg = () => {
     setCoinType(option.value)
   }
 
-  const handleBuy = () => {
+  const handleBuy = async () => {
     if (!walletInfo) {
       toast.warn('请链接钱包')
       return
     }
-    setBuyShow(true)
+    if (coinType === '2') {
+      // usdt
+    }
+    if (coinType === '1') {
+      // babyloong
+    }
+    if (coinType === '0') {
+      // matic
+      if (userInfo.pay_password) {
+        setInputPassVisible(true)
+        // 需输入密码
+        // try {
+        //   const res: any = await eggIncomeReinvestment({
+        //     id: '',
+        //     password: passParams.pass,
+        //   })
+        //   console.log('res')
+        //   if (res.code === 0) {
+        //     setPassVisible(false)
+        //     setEggVisible(false)
+        //     fetchGameEgg()
+        //     toast.success('升级成功')
+        //   } else {
+        //     toast.warn(res.msg)
+        //   }
+        // } catch (e) {
+        //   console.log('e', e)
+        //   toast.warn('网络错误')
+        // }
+      } else {
+        setFirstBuyVisible(true)
+        // const res: any = await buyEgg({
+        //   type: 1,
+        // })
+        // if (res.code === 0) {
+        //   setFirstBuyVisible(true)
+        // } else {
+        //   toast.warn(res.msg)
+        // }
+      }
+    }
+    // if (!userInfo.pay_password) {
+    //   setFirstBuyVisible(true)
+    //   // setPassVisible(true)
+    // } else {
+    //   handleBuyEgg()
+    // }
+    // setBuyShow(true)
   }
 
   const closeDialog = () => {
@@ -258,17 +315,75 @@ const BuyEgg = () => {
     setDescShow(true)
   }
 
+  const handleBuyEgg = async () => {
+    try {
+      const res: any = await buyEgg({
+        type: userInfo.pay_password ? 0 : 1,
+        number: buyNum,
+        id: 0,
+      })
+      console.log('res')
+      if (res.code === 0) {
+        setPassVisible(false)
+        toast.success('购买成功')
+      } else {
+        toast.warn(res.msg)
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }
+
+  const passOK = async () => {
+    await handleBuyEgg()
+  }
+
+  const firstBuyClose = () => {
+    setFirstBuyVisible(false)
+    setPassVisible(true)
+  }
+
+  const fetCoin = useCallback(async () => {
+    try {
+      const res: any = await getCoin({
+        type: -1,
+      })
+      if (res.code === 0) {
+        const options = res.data.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.type,
+          }
+        })
+        setCoinList(options)
+        setCoinType(options[0].value)
+      } else {
+        toast.warn('网络错误')
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (walletInfo?.address && isBindParent) {
+      fetCoin()
+    }
+  }, [walletInfo?.address, isBindParent])
+
   return (
     <BuyEggWrap>
       <div>
         <Image src={buyEggPng} alt="buyegg" />
       </div>
       <BuyNumStep>
-        <IconButton onClick={()=>setBuyNum(buyNum+1)}>
+        <IconButton onClick={() => setBuyNum(buyNum + 1)}>
           <AddIcon sx={{ color: '#fff' }} />
         </IconButton>
-       <BuyNumStepItem>{buyNum}</BuyNumStepItem>
-        <IconButton disabled={buyNum<=0} onClick={()=>buyNum>0&&setBuyNum(buyNum-1)}>
+        <BuyNumStepItem>{buyNum}</BuyNumStepItem>
+        <IconButton disabled={buyNum <= 0} onClick={() => buyNum > 0 && setBuyNum(buyNum - 1)}>
           <RemoveIcon sx={{ color: '#fff' }} />
         </IconButton>
       </BuyNumStep>
@@ -321,6 +436,16 @@ const BuyEgg = () => {
         </DescContent>
       </CommonModal>
       <CommonModal
+        visible={firstBuyVisible}
+        setVisible={setFirstBuyVisible}
+        onClose={firstBuyClose}
+      >
+        <DescContent className="firstBuy">
+          <Image src={firstBuyPng} alt={'firstBuy'} />
+          <div>首次购买龙蛋需使用 $Matic 解锁</div>
+        </DescContent>
+      </CommonModal>
+      <CommonModal
         visible={buyShow}
         setVisible={setBuyShow}
         title={
@@ -349,7 +474,15 @@ const BuyEgg = () => {
           </div>
         </CongContent>
       </CommonModal>
+      <PasswordModal visible={passVisible} setVisible={setPassVisible} onOk={passOK} />
+      <PasswordModal
+        visible={inputPassVisible}
+        setVisible={setInputPassVisible}
+        onOk={passOK}
+        type={'input'}
+      />
     </BuyEggWrap>
   )
 }
+
 export default BuyEgg

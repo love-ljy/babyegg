@@ -35,9 +35,9 @@ const LongEggWrap = styled.div`
   /* background-color: #fff; */
   padding: 8rem 20px 0 20px;
   background-image: url('/img/countBg.png');
-    background-size: cover;
-    height: 475px;
-    width: 100%;
+  background-size: cover;
+  height: 475px;
+  width: 100%;
 `
 
 const Content = styled.div`
@@ -277,21 +277,24 @@ function LongEgg() {
   }, [walletInfo?.address])
 
   const LongHeader = () => {
-    return <LongEggWrap>
-       <Typography fontWeight={700} fontSize={25}>{gameEnd?'等待下一轮开启中':<Trans>Countdown</Trans>}</Typography>
-       {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />} 
+    return (
+      <LongEggWrap>
+        <Typography fontWeight={700} fontSize={25}>
+          {gameEnd ? '等待下一轮开启中' : <Trans>Countdown</Trans>}
+        </Typography>
+        {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />}
         <Box mt={2}>
           <Participation allNet={allNet} />
         </Box>
-    </LongEggWrap>
+      </LongEggWrap>
+    )
   }
 
   return (
     <div>
-     <LongHeader/>
+      <LongHeader />
       <Content>
-       
-        <Box >
+        <Box>
           <Market />
         </Box>
         <Box mt={6}>

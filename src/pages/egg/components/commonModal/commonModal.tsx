@@ -55,12 +55,14 @@ type Props = {
   modalTitleImage?: string
   footer?: any
   title?: any
+  onClose?: any
 }
 
 const CommonModal = (props: Props) => {
-  const { visible, children, setVisible, footer, title } = props
+  const { visible, children, setVisible, footer, title, onClose } = props
   const close = () => {
     setVisible && setVisible(false)
+    onClose && onClose()
   }
   return (
     <CommonModalContainer>

@@ -16,7 +16,7 @@ const CurrentData = styled.div((props: any) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '50px',
+    // width: '50px',
     ...props.customStyle,
   }
 })
