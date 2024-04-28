@@ -1,10 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect,useMemo, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Box, TextField, Button } from '@mui/material'
 import Image from 'next/image'
 import currentEggPng from '@imgs/currentEgg.png'
 import grandmasterPng from '@imgs/grandmaster.png'
 import openEggPng from '@imgs/openEgg.png'
+import VIP0 from '@imgs/99.png'
+import VIP1 from '@imgs/100.png'
+import VIP2 from '@imgs/300.png'
+import VIP3 from '@imgs/500.png'
+import VIP4 from '@imgs/1000.png'
+import VIP5 from '@imgs/3000.png'
 import eggUpPng from '@imgs/eggUpPng.png'
 import eggIconPng from '@imgs/eggIcon.png'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -382,7 +388,17 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
   display: flex;
 `
 
+
+
 const UserPanel = () => {
+  const LevelList = [
+    {name:'育龙实习',count:0,imgSrc:<Image src={VIP0} width={61} height={66} alt=''/>},
+    {name:'育龙新锐',count:100,imgSrc:<Image src={VIP1} width={61} height={66} alt=''/>},
+    {name:'育龙精英',count:300,imgSrc:<Image src={VIP2} width={61} height={66} alt=''/>},
+    {name:'育龙专家',count:500,imgSrc:<Image src={VIP3} width={61} height={66} alt=''/>},
+    {name:'育龙大师',count:1000,imgSrc:<Image src={VIP4} width={61} height={66} alt=''/>},
+    {name:'育龙宗师',count:3000,imgSrc:<Image src={VIP5} width={61} height={66} alt=''/>}
+  ]
   const [progress, setProgress] = useState(0)
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
@@ -516,15 +532,20 @@ const UserPanel = () => {
       fetchGameEgg()
     }
   }, [walletInfo?.address, isBindParent])
-
+  const LevlImg = useMemo(()=>{
+    return LevelList.find(item=>item.count>=userInfo.level_grade)?.imgSrc
+  },[userInfo.level_grade])
+  const LevlName = useMemo(()=>{
+    return LevelList.find(item=>item.count>=userInfo.level_grade)?.name
+  },[userInfo.level_grade])
   return (
     <UserPanelWrap>
       <div className="header">
         <div>
-          <Image src={grandmasterPng} alt="grandmaster" />
+         {LevlImg}
         </div>
         <div className="prograssWrap">
-          <div className="title">Title</div>
+          <div className="title">{LevlName}</div>
           <div className="masterWrap">
             <span className="master">{userInfo.level_name}</span>
             <span className="percent">{userInfo.level_grade || 0}/1000</span>

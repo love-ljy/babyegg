@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
 import markitipPng from '@imgs/markitip.png'
-import closePng from '@imgs/close.png'
+import {getState} from '@store/index'
 import rankBgPng from '@imgs/rankBg.png'
 import CommonTab from '../commonTab/commonTab'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
@@ -227,6 +227,8 @@ interface Props {
 
 const Rank = (props: Props) => {
   const { dataSource = [] } = props
+  const userInfo = getState('user').userInfo
+  console.info(userInfo,'userInfo')
   return (
     <MarketWrap>
       <div className="top">
