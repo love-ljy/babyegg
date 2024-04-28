@@ -18,6 +18,7 @@ import grounp4 from '@imgs/Group_7.png'
 import grounp5 from '@imgs/Group_8.png'
 import grounp6 from '@imgs/Group_9.png'
 import { toast } from 'react-toastify'
+import { Trans } from '@lingui/macro'
 
 const LayBox = styled.div`
   display: flex;
@@ -226,7 +227,7 @@ const Home: React.FC = () => {
               </SlideBox>
               <Stack flexDirection="row">
                 <Button onClick={()=>{HandleGoGame(e)}} sx={{ margin: '30px 20px' }} fullWidth variant="contained">
-                  探索游戏
+                <Trans>探索游戏</Trans> 
                 </Button>
               </Stack>
             </InfoBox>
