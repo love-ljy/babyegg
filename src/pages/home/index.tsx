@@ -274,7 +274,7 @@ const Home: React.FC = () => {
             <TokenTitle>税收奖励池</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">5%</Typography>
           </TokenDesc>
-          <TokenDesc>
+          {/* <TokenDesc>
             <TokenTitle>税收奖励池</TokenTitle>
             <TokenBurn>
               <div>
@@ -292,7 +292,7 @@ const Home: React.FC = () => {
             <TokenTitle>底池锁仓1年</TokenTitle>
             <Typography sx={{ wordBreak: 'break-all' }} fontSize="12px" fontWeight="bold" color="#fff">https://www.pinksale.finance/pinklock/polygon/record/
               1002383</Typography>
-          </TokenDesc>
+          </TokenDesc> */}
         </TokenContainer>
        
       </Container>
