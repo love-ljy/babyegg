@@ -25,10 +25,6 @@ import eggAbi from '../../config/abi/eggAbi.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { MainContractAddr } from '@config/contants'
 import { formatUnits } from 'viem'
-import { GetStaticProps } from 'next'
-import { loadCatalog } from '@i8n'
-import { useLingui } from '@lingui/react'
-import { Trans } from '@lingui/macro'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -92,15 +88,6 @@ const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   margin: 20px auto 0;
 `
 
-export const getStaticProps: GetStaticProps = async ctx => {
-  const translation = await loadCatalog(ctx.locale!)
-  return {
-    props: {
-      translation,
-    },
-  }
-}
-
 function LongEgg() {
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState('')
@@ -112,7 +99,6 @@ function LongEgg() {
   const [countDown, setCountDown] = useState<number>(0)
   const walletInfo: any = useSelector(selectWalletInfo)
   const router = useRouter()
-  useLingui()
   // const {
   //   data: hash,
   //   isPending,
@@ -280,7 +266,7 @@ function LongEgg() {
     return (
       <LongEggWrap>
         <Typography fontWeight={700} fontSize={25}>
-          {gameEnd ? '等待下一轮开启中' : <Trans>Countdown</Trans>}
+          {gameEnd ? '等待下一轮开启中' : 'Countdown'}
         </Typography>
         {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />}
         <Box mt={2}>

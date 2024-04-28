@@ -25,7 +25,6 @@ import LiveIcon from '@imgs/live.png'
 import RechargeIcon from '@icons/recharge.svg'
 import RunIcon from '@imgs/run.png'
 import recharge from '@imgs/recharge.png'
-import { Trans } from '@lingui/macro'
 
 interface DrawProps {
   open: boolean
@@ -93,7 +92,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
           <Divider sx={{ borderColor: '#fff', margin: '30px 0' }} />
           <List>
             <Typography textAlign="left" color="#F21A80;" fontSize="12px">
-              <Trans>Trending Games</Trans>
+              Trending Games
             </Typography>
             {config2.map((text, index) => (
               <ListItem key={text.name} disablePadding>

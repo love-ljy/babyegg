@@ -20,9 +20,6 @@ import '@rainbow-me/rainbowkit/styles.css'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import '../styles/globals.css'
-import { I18nProvider } from '@lingui/react'
-import { i18n } from '@lingui/core'
-import { useLinguiInit } from '../i18n'
 
 globalThis.Buffer = Buffer
 
@@ -30,39 +27,35 @@ const queryClient = new QueryClient()
 // 客户端的 Emotion 缓存实例
 const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
-  useLinguiInit(pageProps.translation)
-
   return (
-    <I18nProvider i18n={i18n}>
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <WagmiProvider config={config}>
-            <RainbowKitProvider
-              theme={darkTheme({
-                accentColor: '#3ae27d',
-                accentColorForeground: '#0C0E0E',
-                borderRadius: 'small',
-                fontStack: 'system',
-                overlayBlur: 'small',
-              })}
-              initialChain={bscTestnet}
-            >
-              <CacheProvider value={clientSideEmotionCache}>
-                <ThemeProvider theme={themes}>
-                  <ToastContainer theme="dark" />
-                  <CssBaseline />
-                  <Layout>
-                    <div>
-                      <Component {...pageProps} />
-                    </div>
-                  </Layout>
-                </ThemeProvider>
-              </CacheProvider>
-            </RainbowKitProvider>
-          </WagmiProvider>
-        </QueryClientProvider>
-      </Provider>
-    </I18nProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={config}>
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: '#3ae27d',
+              accentColorForeground: '#0C0E0E',
+              borderRadius: 'small',
+              fontStack: 'system',
+              overlayBlur: 'small',
+            })}
+            initialChain={bscTestnet}
+          >
+            <CacheProvider value={clientSideEmotionCache}>
+              <ThemeProvider theme={themes}>
+                <ToastContainer theme="dark" />
+                <CssBaseline />
+                <Layout>
+                  <div>
+                    <Component {...pageProps} />
+                  </div>
+                </Layout>
+              </ThemeProvider>
+            </CacheProvider>
+          </RainbowKitProvider>
+        </WagmiProvider>
+      </QueryClientProvider>
+    </Provider>
   )
 }
 
