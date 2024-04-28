@@ -287,16 +287,22 @@ const BuyEgg = () => {
     if (coinType === '1') {
       // babyloong
     }
+    console.info(332323,coinType === '0')
     if (coinType === '0') {
       // matic
       // handleStake()
-      await writeContract({
-        address: MainContractAddr,
-        abi: eggAbi,
-        functionName: 'stake',
-        args: [],
-        // value: buyNum * 1e13
-      })
+      try {
+        writeContract({
+          address: MainContractAddr,
+          abi: eggAbi,
+          functionName: 'stake',
+          args: [],
+          value: BigInt(buyNum * 1e13)
+        })
+      } catch (error) {
+        console.info(error)
+      }
+     
     }
   }
 

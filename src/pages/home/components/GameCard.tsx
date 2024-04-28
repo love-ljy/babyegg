@@ -15,7 +15,7 @@ interface GameCardProps {
 const GameCard: React.FC<GameCardProps> = ({title,comingsoon,description,image,onClick}) => {
   return (
     <Box >
-      <Image src={image} objectFit="cover"  alt=""/>
+      <Image  width={350} height={220} src={image}   alt=""/>
       <Container>
       <Typography textAlign="left" color="#fff" fontSize="20px" fontWeight={900} mt={3}>{title}</Typography>
       {comingsoon&&<Typography textAlign="left" color="#D209AC" fontSize="15px">即将推出</Typography>}
