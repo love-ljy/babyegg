@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2024-04-28 15:55+0800\n"
+"POT-Creation-Date: 2024-04-28 21:29+0800\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,10 +13,14 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/egg/components/Market/BuyEgg.tsx:263
-#~ msgid "Buying Methods"
-#~ msgstr "Buying Methods"
-
-#: src/pages/egg/index.tsx:288
+#: src/pages/egg/index.tsx:283
 msgid "Countdown"
-msgstr "Countdown"
+msgstr ""
+
+#: src/pages/home/index.tsx:247
+msgid "PPPPP"
+msgstr "PPPPP"
+
+#: src/components/Layout/Draw.tsx:96
+msgid "Trending Games"
+msgstr "Trending Games"

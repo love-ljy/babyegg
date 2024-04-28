@@ -1,1 +1,1 @@
-/*eslint-disable*/module.exports={messages:JSON.parse("{\"LJalRN\":\"购买方式\",\"B72PD3\":\"Countdown\"}")};
+/*eslint-disable*/module.exports={messages:JSON.parse("{\"B72PD3\":\"Countdown\",\"+35xSm\":\"PPPPP\"}")};

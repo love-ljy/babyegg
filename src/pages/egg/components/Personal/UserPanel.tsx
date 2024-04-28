@@ -11,13 +11,10 @@ import LinearProgress from '@mui/material/LinearProgress'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { getGameEgg, openEgg, eggIncomeReinvestment } from '@utils/api'
+import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
-import InputAdornment from '@mui/material/InputAdornment'
-import IconButton from '@mui/material/IconButton'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import PasswordModal from '../PasswordModal/PasswordModal'
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -363,29 +360,6 @@ const ModalMain = styled.div`
     }
   }
 `
-const CountInput = styled(TextField)`
-  width: 100%;
-  margin-bottom: 10px;
-  input {
-    color: #fff;
-    text-indent: 1em;
-    /* font-weight: 700; */
-    font-size: 12px;
-    height: 26px;
-    user-select: text;
-  }
-  .Mui-focused {
-    border: none;
-    outline: none;
-  }
-  .MuiInputBase-root::after {
-    border: none;
-  }
-  opacity: 1;
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 1);
-  border: 1px solid rgba(143, 13, 245, 1);
-`
 
 const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
@@ -410,11 +384,8 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
 
 const UserPanel = () => {
   const [progress, setProgress] = useState(0)
-  const [showPass, setShowPass] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [showRepeatPass, setShowRepeatPass] = useState(false)
-  const [pass, setPass] = useState('')
-  const [repeatPass, setRepeatPass] = useState('')
+  const [passVisible, setPassVisible] = useState(false)
+  const [eggLoading, setEggLoading] = useState(false)
   const [eggType, setEggType] = useState('')
   const [eggInfo, setEggInfo] = useState({
     dragon_egg: 0,
@@ -423,7 +394,6 @@ const UserPanel = () => {
   const userInfo: any = useSelector(selectUserInfo)
   const walletInfo: any = useSelector(selectWalletInfo)
   const isBindParent: any = useSelector(selectIsBindParent)
-  const [visible, setVisible] = useState(false)
   const [eggVisible, setEggVisible] = useState(false)
 
   const fetchGameEgg = useCallback(async () => {
@@ -448,96 +418,97 @@ const UserPanel = () => {
     }
   }, [walletInfo?.address])
 
+  const fetCoin = useCallback(async () => {
+    try {
+      const res: any = await getCoin({
+        type: -1,
+      })
+      if (res.code === 0) {
+        setEggInfo(res.data)
+      } else {
+        setEggInfo({
+          dragon_egg: 0,
+          dragon_egg_babyloong: 0,
+        })
+        toast.warn('网络错误')
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+      setEggInfo({
+        dragon_egg: 0,
+        dragon_egg_babyloong: 0,
+      })
+    }
+  }, [walletInfo?.address])
+
   const openDialog = (type: string) => {
+    if (!walletInfo) {
+      toast.warn('请链接钱包')
+      return
+    }
     setEggVisible(true)
     setEggType(type)
   }
 
-  const passChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPass(event.target.value)
-  }
-
-  const repeatPassChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRepeatPass(event.target.value)
-  }
-
-  const handleClickShowPassword = () => setShowPass(show => !show)
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-  }
-
-  const handleClickShowRepeatPassword = () => setShowRepeatPass(show => !show)
-
-  const handleMouseDownRepeatPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-  }
-
-  const handleOpenEgg = async () => {
-    if (pass !== repeatPass) {
-      toast.warn('密码不一致，请重新输入')
-      return
-    }
-    setLoading(true)
+  const handleOpenEgg = async passParams => {
     if (eggType === 'open') {
       try {
         const res: any = await openEgg({
-          game_member_id: pass,
-          password: repeatPass,
+          password: passParams.pass,
         })
         console.log('res')
         if (res.code === 0) {
-          setVisible(false)
-          setPass('')
-          setRepeatPass('')
+          setPassVisible(false)
+          setEggVisible(false)
           fetchGameEgg()
           toast.success('打开成功')
         } else {
-          toast.warn('网络错误')
+          toast.warn(res.msg)
         }
       } catch (e) {
-        console.log('e')
+        console.log('e', e)
         toast.warn('网络错误')
-      } finally {
-        setLoading(false)
       }
     } else {
       try {
         const res: any = await eggIncomeReinvestment({
           id: '',
-          game_member_id: pass,
-          password: repeatPass,
+          password: passParams.pass,
         })
         console.log('res')
         if (res.code === 0) {
-          setVisible(false)
-          setPass('')
-          setRepeatPass('')
+          setPassVisible(false)
+          setEggVisible(false)
           fetchGameEgg()
           toast.success('升级成功')
         } else {
-          toast.warn('网络错误')
+          toast.warn(res.msg)
         }
       } catch (e) {
-        console.log('e')
+        console.log('e', e)
         toast.warn('网络错误')
-      } finally {
-        setLoading(false)
       }
     }
   }
 
-  const closeDialog = async () => {
-    setVisible(false)
-    setPass('')
-    setRepeatPass('')
-  }
   const handleEggConfirm = async () => {
-    setEggVisible(false)
-    setVisible(true)
+    if (userInfo.pay_password) {
+      setEggLoading(true)
+      await handleOpenEgg({})
+      setEggLoading(false)
+    } else {
+      setEggVisible(false)
+      setPassVisible(true)
+    }
   }
+
   const closeEggModal = async () => {
     setEggVisible(false)
+  }
+
+  const passOK = async passParams => {
+    await handleOpenEgg(passParams)
   }
 
   useEffect(() => {
@@ -713,92 +684,7 @@ const UserPanel = () => {
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
-      <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
-        <ModalMain>
-          <div className="title">密码</div>
-          <CountInput
-            type={showPass ? 'text' : 'password'}
-            id="outlined-adornment-password"
-            value={pass}
-            onChange={passChange}
-            variant="standard"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPass ? (
-                      <VisibilityOff
-                        sx={{
-                          color: '#fff',
-                          marginRight: '10px',
-                        }}
-                      />
-                    ) : (
-                      <Visibility
-                        sx={{
-                          color: '#fff',
-                          marginRight: '10px',
-                        }}
-                      />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <div className="title">确认密码</div>
-          <CountInput
-            type={showRepeatPass ? 'text' : 'password'}
-            value={repeatPass}
-            onChange={repeatPassChange}
-            variant="standard"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowRepeatPassword}
-                    onMouseDown={handleMouseDownRepeatPassword}
-                    edge="end"
-                  >
-                    {showRepeatPass ? (
-                      <VisibilityOff
-                        sx={{
-                          color: '#fff',
-                          marginRight: '10px',
-                        }}
-                      />
-                    ) : (
-                      <Visibility
-                        sx={{
-                          color: '#fff',
-                          marginRight: '10px',
-                        }}
-                      />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <BtnWrap>
-            <BuyBtn
-              className="confirm"
-              isCancel={loading}
-              disabled={loading}
-              onClick={handleOpenEgg}
-            >
-              {loading ? 'Loading...' : '确定'}
-            </BuyBtn>
-            <BuyBtn onClick={closeDialog}>{'取消'}</BuyBtn>
-          </BtnWrap>
-        </ModalMain>
-      </CommonModal>
+      <PasswordModal visible={passVisible} setVisible={setPassVisible} onOk={passOK} />
       <CommonModal visible={eggVisible} setVisible={setEggVisible} footer={<span></span>}>
         <ModalMain>
           {eggType === 'open' ? (
@@ -849,7 +735,7 @@ const UserPanel = () => {
           )}
           <BtnWrap>
             <BuyBtn className="confirm" onClick={handleEggConfirm}>
-              是
+              {!userInfo.pay_password ? '是' : eggLoading ? 'Loading...' : '是'}
             </BuyBtn>
             <BuyBtn onClick={closeEggModal}>否</BuyBtn>
           </BtnWrap>
@@ -858,4 +744,5 @@ const UserPanel = () => {
     </UserPanelWrap>
   )
 }
+
 export default UserPanel
