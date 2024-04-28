@@ -14,6 +14,8 @@ import { config } from '../wagmi/wagmi'
 import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import Layout from '../components/Layout'
 import { ToastContainer } from 'react-toastify'
+import { appWithTranslation } from 'next-i18next';
+import nextI18NextConfig from '../../next-i18next.config';
 import store from '@store/index'
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -59,4 +61,4 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   )
 }
 
-export default MyApp
+export default  appWithTranslation(MyApp, nextI18NextConfig);
