@@ -8,6 +8,15 @@ const getUserInfo = async () => {
     method: 'get',
   })
 }
+
+// 更新用信息
+const UpdateUserInfo = async (params:{pay_password:any,pay_password_v:any}) => {
+  return request({
+    url: '/api/user/info',
+    method: 'post',
+    params
+  })
+}
 // 用户登录
 const submitUserLogin = async (data: ParamsUser) => {
   return request({
@@ -92,6 +101,32 @@ const getCoin = async (params: any) => {
   })
 }
 
+//获取等级排行榜api/user/rankingLevel
+const getRankingLevel = async () => {
+  return request({
+    url: '/api/user/rankingLevel',
+    method: 'get',
+  })
+}
+
+// 获取育龙榜 /api/user/rankingYuLong
+const getRankingYuLong = async (type:number) => {
+  return request({
+    url: '/api/user/rankingYuLong',
+    method: 'get',
+    params: {type}
+  })
+}
+// 查询订单状态 /api/order/orderStatus
+const getOrderStatus = async (params: any) => {
+  return request({
+    url: '/api/order/orderStatus',
+    method: 'get',
+    params,
+  })
+}
+
+
 export {
   getUserInfo,
   submitUserLogin,
@@ -103,5 +138,9 @@ export {
   eggIncomeReinvestment,
   queryTotalNet,
   buyEgg,
-  getCoin
+  getCoin,
+  UpdateUserInfo,
+  getRankingLevel,
+  getRankingYuLong,
+  getOrderStatus
 }
