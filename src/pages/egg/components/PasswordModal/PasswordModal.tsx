@@ -98,7 +98,7 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
 interface Props {}
 
 const PasswordModal = (props: any) => {
-  const { visible, setVisible, onOk, onClose, type = 'input' } = props
+  const { visible, setVisible, onOk, onClose, type } = props
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showRepeatPass, setShowRepeatPass] = useState(false)

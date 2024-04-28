@@ -17,12 +17,15 @@ import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { useBalance, useAccount } from 'wagmi'
+import { useBalance, useAccount, useWriteContract } from 'wagmi'
 import { formatTeamNumber, getFullDisplayBalance } from '@utils/formatterBalance'
 import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { buyEgg, getCoin, eggIncomeReinvestment } from '@utils/api'
+import useStake from '@hooks/useStake'
+import eggAbi from '../../../../config/abi/eggAbi.json'
+import { MainContractAddr } from '@config/contants'
 
 const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
@@ -233,6 +236,21 @@ const BuyEgg = () => {
     address: account.address,
   })
   const userInfo: any = useSelector(selectUserInfo)
+  // const { isPreparing, error, estimatedGas, handleStake, isLoading } = useStake()
+  const {
+    data: hash,
+    isPending,
+    error,
+    writeContract,
+  } = useWriteContract({
+    mutation: {
+      onError: (error: Error) => onError(error),
+    },
+  })
+
+  const onError = (error: any) => {
+    setLoading(false)
+  }
 
   useEffect(() => {
     if (result && result.data?.value) {
@@ -259,52 +277,27 @@ const BuyEgg = () => {
     }
     if (coinType === '2') {
       // usdt
+      if (userInfo.pay_password) {
+        // 需输入密码
+        setInputPassVisible(true)
+      } else {
+        setFirstBuyVisible(true)
+      }
     }
     if (coinType === '1') {
       // babyloong
     }
     if (coinType === '0') {
       // matic
-      if (userInfo.pay_password) {
-        setInputPassVisible(true)
-        // 需输入密码
-        // try {
-        //   const res: any = await eggIncomeReinvestment({
-        //     id: '',
-        //     password: passParams.pass,
-        //   })
-        //   console.log('res')
-        //   if (res.code === 0) {
-        //     setPassVisible(false)
-        //     setEggVisible(false)
-        //     fetchGameEgg()
-        //     toast.success('升级成功')
-        //   } else {
-        //     toast.warn(res.msg)
-        //   }
-        // } catch (e) {
-        //   console.log('e', e)
-        //   toast.warn('网络错误')
-        // }
-      } else {
-        setFirstBuyVisible(true)
-        // const res: any = await buyEgg({
-        //   type: 1,
-        // })
-        // if (res.code === 0) {
-        //   setFirstBuyVisible(true)
-        // } else {
-        //   toast.warn(res.msg)
-        // }
-      }
+      // handleStake()
+      await writeContract({
+        address: MainContractAddr,
+        abi: eggAbi,
+        functionName: 'stake',
+        args: [],
+        // value: buyNum * 1e13
+      })
     }
-    // if (!userInfo.pay_password) {
-    //   setFirstBuyVisible(true)
-    //   // setPassVisible(true)
-    // } else {
-    //   handleBuyEgg()
-    // }
-    // setBuyShow(true)
   }
 
   const closeDialog = () => {
@@ -315,16 +308,39 @@ const BuyEgg = () => {
     setDescShow(true)
   }
 
-  const handleBuyEgg = async () => {
+  const handleBuyEgg = async params => {
     try {
-      const res: any = await buyEgg({
-        type: userInfo.pay_password ? 0 : 1,
-        number: buyNum,
-        id: 0,
+      // handleStake()
+      // const res: any = await buyEgg(params)
+      // console.log('res')
+      // if (res.code === 0) {
+      //   // setPassVisible(false)
+      //   // toast.success('购买成功')
+      //   handleStake()
+      // } else {
+      //   toast.warn(res.msg)
+      // }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }
+
+  const passOK = async () => {
+    await handleBuyEgg({
+      type: 1,
+    })
+  }
+
+  const inputPassOK = async passParams => {
+    try {
+      const res: any = await eggIncomeReinvestment({
+        id: '',
+        password: passParams.pass,
       })
       console.log('res')
       if (res.code === 0) {
-        setPassVisible(false)
+        setInputPassVisible(false)
         toast.success('购买成功')
       } else {
         toast.warn(res.msg)
@@ -333,10 +349,6 @@ const BuyEgg = () => {
       console.log('e', e)
       toast.warn('网络错误')
     }
-  }
-
-  const passOK = async () => {
-    await handleBuyEgg()
   }
 
   const firstBuyClose = () => {
@@ -478,7 +490,7 @@ const BuyEgg = () => {
       <PasswordModal
         visible={inputPassVisible}
         setVisible={setInputPassVisible}
-        onOk={passOK}
+        onOk={inputPassOK}
         type={'input'}
       />
     </BuyEggWrap>
