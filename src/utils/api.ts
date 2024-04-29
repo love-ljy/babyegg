@@ -10,11 +10,11 @@ const getUserInfo = async () => {
 }
 
 // 更新用信息
-const UpdateUserInfo = async (params:{pay_password:any,pay_password_v:any}) => {
+const updateUserInfo = async (data) => {
   return request({
     url: '/api/user/info',
     method: 'post',
-    params
+    data
   })
 }
 // 用户登录
@@ -156,7 +156,7 @@ export {
   queryTotalNet,
   buyEgg,
   getCoin,
-  UpdateUserInfo,
+  updateUserInfo,
   getRankingLevel,
   getRankingYuLong,
   getOrderStatus,
