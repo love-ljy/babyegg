@@ -4,6 +4,7 @@ import distributePng from '@imgs/distribute.png'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
 import Image from 'next/image'
+import { useTranslation } from 'next-i18next'
 
 const ParticipationWrap = styled.div`
   border-radius: 5px;
@@ -52,21 +53,23 @@ const Bot = styled.div`
 `
 
 const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
+     // @ts-ignore
+     const { t } = useTranslation('common')
   return (
     <ParticipationWrap>
       <Top>
         <div className="parti">
-          <span className="label">Master Participation</span>
+          <span className="label">{t('Master Participation')}</span>
           <span className="count">{allNet?.loong_user_count}</span>
         </div>
         <div className="parti">
-          <span className="label">Egg Participation</span>
+          <span className="label">{t('Egg Participation')}</span>
           <span className="count">{allNet?.dragon_egg_count}</span>
         </div>
       </Top>
       <Mid>
         <Typography fontSize={15} fontWeight={700}>
-          Total Distribute
+          {t('Total Distribute')}
         </Typography>
         <div className="bot">
           <span className="count">{allNet?.wait_out_babyloong}</span>
@@ -77,7 +80,7 @@ const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
       </Mid>
       <Bot>
         <Typography fontSize={15} fontWeight={700}>
-          Total Prize Pool
+          {t('Total Prize Pool')}
         </Typography>
         <div className="bot">
           <span className="count">0</span>

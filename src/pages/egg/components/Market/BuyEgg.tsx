@@ -23,7 +23,7 @@ import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { buyEgg, getCoin, eggIncomeReinvestment } from '@utils/api'
-import useStake from '@hooks/useStake'
+import { useTranslation } from 'next-i18next'
 import eggAbi from '../../../../config/abi/eggAbi.json'
 import { MainContractAddr } from '@config/contants'
 
@@ -218,7 +218,8 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
 )
 
 const BuyEgg = () => {
-  const [values, setValues] = useState('')
+      // @ts-ignore
+      const { t } = useTranslation('common')
   const [coinType, setCoinType] = useState('2')
   const [loading, setLoading] = useState(false)
   const [descShow, setDescShow] = useState(false)
@@ -405,7 +406,7 @@ const BuyEgg = () => {
           <RemoveIcon sx={{ color: '#fff' }} />
         </IconButton>
       </BuyNumStep>
-      <span className="buying">Buying Methods</span>
+      <span className="buying">{t('Buying Methods')}</span>
       <CountInput
         value={buyNum}
         onChange={handleChange}
@@ -431,7 +432,7 @@ const BuyEgg = () => {
         variant="standard"
       />
       <div className="available">
-        <span className="buying">Your Current $Matic available :</span>
+        <span className="buying">{t('Your Current $Matic available')} :</span>
         <span className="count">{balance}</span>
       </div>
       <BuyBtn isCancel={loading} disabled={loading} onClick={handleBuy}>
@@ -442,14 +443,14 @@ const BuyEgg = () => {
           <Image width={15} height={15} src={detailedPng} alt="detailed" />
         </div>
         <span className="desc" onClick={openDescDialog}>
-          Detailed Description
+         {t('Detailed Description')}
         </span>
       </div>
       <CommonModal visible={descShow} setVisible={setDescShow}>
         <DescContent>
-          <div>Detailed Description: </div>
-          <div>Each Egg Costs 10 $Matic</div>
-          <div className="minimum">*Minimum initial purchase requirement: </div>
+          <div>{t('Detailed Description')}: </div>
+          <div>{t("Each Egg Costs 10 $Matic")}</div>
+          <div className="minimum">{t('*Minimum initial purchase requirement')}: </div>
           <div className="matic">30 $Matic.</div>
         </DescContent>
       </CommonModal>
@@ -460,7 +461,7 @@ const BuyEgg = () => {
       >
         <DescContent className="firstBuy">
           <Image src={firstBuyPng} alt={'firstBuy'} />
-          <div>首次购买龙蛋需使用 $Matic 解锁</div>
+          <div>{t('The first time you purchase a dragon egg, you need to use $Matic to unlock it.')}</div>
         </DescContent>
       </CommonModal>
       <CommonModal
@@ -475,7 +476,7 @@ const BuyEgg = () => {
         }
         footer={
           <DialogFooter onClick={closeDialog}>
-            <span>receive now</span>
+            <span>{t('receive now')}</span>
           </DialogFooter>
         }
       >
@@ -483,7 +484,7 @@ const BuyEgg = () => {
           <div>
             <Image src={congratulationsTxtPng} alt="txt" />
           </div>
-          <div>you have received $BabyLoong</div>
+          <div>{t('you have received $BabyLoong')}</div>
           <div className="countWrap">
             <span>10,000</span>
             <div>

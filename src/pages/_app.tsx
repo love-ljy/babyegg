@@ -12,10 +12,9 @@ import { CacheProvider } from '@emotion/react'
 import createEmotionCache from '../createEmotionCache'
 import { config } from '../wagmi/wagmi'
 import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
+import { appWithTranslation } from 'next-i18next'
 import Layout from '../components/Layout'
 import { ToastContainer } from 'react-toastify'
-import { appWithTranslation } from 'next-i18next';
-import nextI18NextConfig from '../../next-i18next.config.mjs';
 import store from '@store/index'
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -61,4 +60,4 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   )
 }
 
-export default  appWithTranslation(MyApp, nextI18NextConfig);
+export default appWithTranslation(MyApp) ;

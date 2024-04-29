@@ -8,6 +8,7 @@ import CommonTab from '../commonTab/commonTab'
 import Last from './Last'
 import Traffic from './Traffic'
 import BuyEgg from './BuyEgg'
+import { useTranslation } from 'next-i18next'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 
 const MarketWrap = styled.div`
@@ -87,6 +88,8 @@ interface tabItem {
 }
 
 const Market = () => {
+        // @ts-ignore
+        const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [marketShow, setMarketShow] = useState(false)
   const [dataSource, setDataSource] = useState([
@@ -153,7 +156,7 @@ const Market = () => {
       <div className="top">
         <div className="bg"></div>
         <div className="title">
-          <span>Egg Market</span>
+          <span>{t('Egg Market')}</span>
           <div className="icon" onClick={openMarketDialog}>
             <Image src={markitipPng} width={25} alt="markitip" height={25} />
           </div>
@@ -170,7 +173,7 @@ const Market = () => {
             <div>
               <Image src={desctipPng} width={25} height={25} alt="desc" />
             </div>
-            <span>Description</span>
+            <span>{t('Description')}</span>
           </DialogTitle>
         }
         footer={
@@ -178,14 +181,14 @@ const Market = () => {
             <div>
               <Image src={closePng} width={13} height={13} alt="close" />
             </div>
-            <span>Close</span>
+            <span>{t('Close')}</span>
           </DialogFooter>
         }
       >
         <DialogMain>
-          <div className="mechanism"> Mechanism Explanation: </div>
+          <div className="mechanism"> {t("Mechanism Explanation")}: </div>
           <div>
-            Lucky Reward: Each egg purchase provides a chance to win an airdrop reward of 100-1000
+            {t(`Lucky Reward: Each egg purchase provides a chance to win an airdrop reward of 100-1000
             $MATIC (1% probability).Initial Value: After purchase, the egg's initial value is zero,
             which increases as more people buy.Early Opening: Before the end of the current game
             round, players can choose to open their egg to claim double the current value, after
@@ -197,7 +200,7 @@ const Market = () => {
             a prize pool, and the very last buyer receives an extra large reward.Automatic Opening:
             When the countdown ends, all eggs automatically open, and players receive the current
             value of $BabyLoong contained within.Game Reset: After the round ends, a new game round
-            begins.
+            begins.`)}
           </div>
         </DialogMain>
       </CommonModal>

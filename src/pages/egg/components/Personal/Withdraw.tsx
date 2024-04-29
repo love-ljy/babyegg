@@ -8,6 +8,7 @@ import { selectWalletInfo } from '@store/user'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
+import { useTranslation } from 'next-i18next'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -150,6 +151,8 @@ const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
 `
 
 const Withdraw = () => {
+        // @ts-ignore
+const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [withdrawType, setWithdrawType] = useState('')
   const walletInfo = useSelector(selectWalletInfo)
@@ -171,14 +174,14 @@ const Withdraw = () => {
 
   return (
     <InvitationWrap>
-      <div className="title">Your Current Earning Balance</div>
+      <div className="title">{t('Your Current Earning Balance')}</div>
       <div className="row">
         <RowLeft>
           <span className="text">10,000.00</span>
           <MaticIcon />
         </RowLeft>
         <div className="draw" onClick={() => openModal('babyloong')}>
-          Withdraw
+          {t('Withdraw')}
         </div>
       </div>
       <div className="row">
@@ -187,32 +190,32 @@ const Withdraw = () => {
           <EggTokenIcon />
         </RowLeft>
         <div className="draw2" onClick={() => openModal('Matic')}>
-          Withdraw
+        {t('Withdraw')}
         </div>
       </div>
       <div className="noteWrap">
-        <div className="note">Note:</div>
+        <div className="note">{t('Note')}:</div>
         <div>
-          The platform will charge a 5% fee on withdrawals as revenue.When choosing to withdraw
-          $Matic, a portion of the amount will be automatically reinvested.
+          {t(`The platform will charge a 5% fee on withdrawals as revenue.When choosing to withdraw
+          $Matic, a portion of the amount will be automatically reinvested.`)}
         </div>
       </div>
       <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
         <ModalMain>
           {withdrawType === 'babyloong' ? (
             <div>
-              <div className="title">*提现数量的5%作为手续费</div>
+              <div className="title">{t('The platform will charge a 5% fee on withdrawals as revenue')}</div>
               <div className="countWrap">
-                <span className="label">提现的 $BabyLoong 数量</span>
+                <span className="label">{t('Withdrawal $ Babyloong Amount')}</span>
                 <span>100</span>
               </div>
               <div className="countWrap">
-                <span className="label">手续费</span>
+                <span className="label">{t('Fee')}</span>
                 <span>10,000,00</span>
               </div>
               <div className="divied"></div>
               <div className="countWrap">
-                <span>实际到账</span>
+                <span>{t('Actual Amout Received"')}</span>
                 <div className="r">
                   <span>10,000,00</span>
                   <EggTokenIcon />
@@ -221,27 +224,27 @@ const Withdraw = () => {
             </div>
           ) : (
             <div>
-              <div className="title">*提现数量的5%作为手续费</div>
+              <div className="title">{t('*5%Fee On Withdrawal Amount')}</div>
               <div className="countWrap">
-                <span className="label">提现的 $Matic 数量</span>
+                <span className="label">{t('Withdrawal $Matic  Amount')}</span>
                 <span>100</span>
               </div>
               <div className="countWrap">
-                <span className="label">手续费</span>
+                <span className="label">{t('Fee')}</span>
                 <span>10,000,00</span>
               </div>
               <div className="countWrap">
-                <span className="label">总计</span>
-                <span>10,000,00</span>
-              </div>
-              <div className="divied"></div>
-              <div className="countWrap">
-                <span className="label">自动复投 (60%)</span>
+                <span className="label">{t('Total')}</span>
                 <span>10,000,00</span>
               </div>
               <div className="divied"></div>
               <div className="countWrap">
-                <span>实际到账</span>
+                <span className="label">{t('Automatic reinvestment')} (60%)</span>
+                <span>10,000,00</span>
+              </div>
+              <div className="divied"></div>
+              <div className="countWrap">
+                <span>{t('Actual Amout Received')}</span>
                 <div className="r">
                   <span>10,000,00</span>
                   <EggTokenIcon />
@@ -251,9 +254,9 @@ const Withdraw = () => {
           )}
           <BtnWrap>
             <BuyBtn className="confirm" onClick={handleWithdraw}>
-              是
+              {t('YES')}
             </BuyBtn>
-            <BuyBtn onClick={closeModal}>否</BuyBtn>
+            <BuyBtn onClick={closeModal}>{t('NO')}</BuyBtn>
           </BtnWrap>
         </ModalMain>
       </CommonModal>

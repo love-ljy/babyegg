@@ -9,6 +9,7 @@ import Invitation from './Invitation'
 import Withdraw from './Withdraw'
 import Rank from './Rank'
 import WeekMonth from './WeekMonth'
+import { useTranslation } from 'next-i18next'
 
 const MarketWrap = styled.div`
   .top {
@@ -68,6 +69,8 @@ const tabList: tabItem[] = [
 ]
 
 const Personal = () => {
+  // @ts-ignore
+const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [dataSource, setDataSource] = useState([
     // {
@@ -103,7 +106,7 @@ const Personal = () => {
       <div className="top">
         <div className="bg"></div>
         <div className="title">
-          <span>Personal Center</span>
+          <span>{t('Personal Center')}</span>
         </div>
       </div>
       <div className="tab">

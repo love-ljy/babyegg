@@ -98,6 +98,8 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
 interface Props {}
 
 const PasswordModal = (props: any) => {
+     // @ts-ignore
+     const { t } = useTranslation('common')
   const { visible, setVisible, onOk, onClose, type } = props
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)

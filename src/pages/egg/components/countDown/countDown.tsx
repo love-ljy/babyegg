@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import quotePng from '@imgs/quote.png'
 import Image from 'next/image'
+import { useTranslation } from 'next-i18next'
 
 const TimeWrap = styled.div`
   border-radius: 5px;
@@ -35,6 +36,8 @@ interface Props {
 }
 
 function CountDown({ initialTimeInSeconds }: Props) {
+    // @ts-ignore
+    const { t } = useTranslation('common')
   const calculateTimeLeft = (): { days: number, hours: number, minutes: number, seconds: number } => {
     const difference = +new Date(initialTimeInSeconds) - +new Date();
 
@@ -66,17 +69,17 @@ function CountDown({ initialTimeInSeconds }: Props) {
   return <div> <TimeWrap>
     <div className="time-item">
       <span className="counter">{pad(timeLeft.hours)}</span>
-      <span className="label">hours</span>
+      <span className="label">{t('hours')}</span>
     </div>
     <Image src={quotePng} width={3} height={12} alt=":" />
     <div className="time-item">
       <span className="counter">{pad(timeLeft.minutes)}</span>
-      <span className="label">minute</span>
+      <span className="label">{t('minute')}</span>
     </div>
     <Image src={quotePng} width={3} height={12} alt=":" />
     <div className="time-item">
       <span className="counter">{pad(timeLeft.seconds)}</span>
-      <span className="label">second</span>
+      <span className="label">{t('second')}</span>
     </div>
   </TimeWrap></div>
 }

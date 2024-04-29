@@ -7,6 +7,8 @@ import closePng from '@imgs/close.png'
 import desctipPng from '@imgs/desctip.png'
 import CommonTab from '../commonTab/commonTab'
 import MaticIcon from '@icons/matic.svg'
+import { useTranslation } from 'next-i18next'
+
 const MarketWrap = styled.div`
   .top {
     position: relative;
@@ -205,12 +207,14 @@ const SourceItem = styled.div`
 `
 
 const Comp = (props: CompProps) => {
+      // @ts-ignore
+const { t } = useTranslation('common')
   const { dataSource } = props
   return (
     <ContentWrap>
       <Bot>
         <Typography fontSize={15} fontWeight={700}>
-          Total Prize Pool
+          {t('Total Prize Pool')}
         </Typography>
         <div className="bot">
           <span className="count">100,000,000</span>
@@ -227,9 +231,9 @@ const Comp = (props: CompProps) => {
         >
           <Column>
             <div className="No">No.</div>
-            <div className="address">Address</div>
-            <div className="amount">Amount</div>
-            <div className="time">Time</div>
+            <div className="address">{t('Address')}</div>
+            <div className="amount">{t('Amount')}</div>
+            <div className="time">{t('Time')}</div>
           </Column>
           <Source>
             {dataSource.length ? (
@@ -244,7 +248,7 @@ const Comp = (props: CompProps) => {
                 )
               })
             ) : (
-              <div className="empty">No Data</div>
+              <div className="empty">{t('No Data')}</div>
             )}
           </Source>
         </div>
@@ -254,6 +258,8 @@ const Comp = (props: CompProps) => {
 }
 
 const WeekMonth = () => {
+        // @ts-ignore
+const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [marketShow, setMarketShow] = useState(false)
   const [dataSource, setDataSource] = useState([
@@ -322,7 +328,7 @@ const WeekMonth = () => {
           selectedColor={'rgba(184, 3, 139, 1)'}
         />
       </div>
-      <div className="seeMore">See More</div>
+      <div className="seeMore">{t('See More')}</div>
     </MarketWrap>
   )
 }

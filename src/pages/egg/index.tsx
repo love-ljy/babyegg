@@ -25,6 +25,7 @@ import eggAbi from '../../config/abi/eggAbi.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { MainContractAddr } from '@config/contants'
 import { formatUnits } from 'viem'
+import { useTranslation } from 'next-i18next'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -89,6 +90,8 @@ const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
 `
 
 function LongEgg() {
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState('')
   const [inviteCode, setInviteCode] = useState('')
@@ -266,7 +269,7 @@ function LongEgg() {
     return (
       <LongEggWrap>
         <Typography fontWeight={700} fontSize={25}>
-          {gameEnd ? '等待下一轮开启中' : 'Countdown'}
+          {gameEnd ?t( 'Waiting for the next round to start') : t('Countdown')}
         </Typography>
         {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />}
         <Box mt={2}>
@@ -289,10 +292,10 @@ function LongEgg() {
       </Content>
       <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
         <ModalMain>
-          <div className="title">绑定上级钱包地址</div>
+          <div className="title">{t('Bind superior address')}</div>
           <CountInput type="text" value={bindAddress} onChange={handleChange} variant="standard" />
           <BuyBtn isCancel={loading} disabled={loading} onClick={handleBind}>
-            {loading ? 'Loading...' : '确定'}
+            {loading ? 'Loading...' : t('confirm')}
           </BuyBtn>
         </ModalMain>
       </CommonModal>

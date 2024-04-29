@@ -7,6 +7,8 @@ import rankBgPng from '@imgs/rankBg.png'
 import CommonTab from '../commonTab/commonTab'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import EggTokenIcon from '@icons/eggToken.svg'
+import { useTranslation } from 'next-i18next'
+
 const MarketWrap = styled.div`
   .top {
     position: relative;
@@ -226,15 +228,16 @@ interface Props {
 }
 
 const Rank = (props: Props) => {
+    // @ts-ignore
+const { t } = useTranslation('common')
   const { dataSource = [] } = props
   const userInfo = getState('user').userInfo
-  console.info(userInfo,'userInfo')
   return (
     <MarketWrap>
       <div className="top">
         <div className="bg"></div>
         <div className="title">
-          <span>Ranking</span>
+          <span>{t('Ranking')}</span>
         </div>
       </div>
       <RankMain>
@@ -244,8 +247,8 @@ const Rank = (props: Props) => {
             <span className="big">10,000</span>
             <EggTokenIcon width={24} />
           </div>
-          <div className="second">10 Grandmaster</div>
-          <div className="third">Current Grandmaster Prize Pool</div>
+          <div className="second">10 {t('Grandmaster')}</div>
+          <div className="third">{t('Current Grandmaster Prize Pool')}</div>
         </RankItem>
         <div className="row">
           <RankItem>
@@ -253,16 +256,16 @@ const Rank = (props: Props) => {
               <span>10,000</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
               <span>10,000</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
         <div className="row">
@@ -271,20 +274,20 @@ const Rank = (props: Props) => {
               <span>10,000</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
               <span>10,000</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
         <div>
-          <div>Loong Egg Rank</div>
+          <div>{t('Loong Egg Rank')}</div>
         </div>
         <LastWrap>
           <div
@@ -294,9 +297,9 @@ const Rank = (props: Props) => {
           >
             <Column>
               <div className="No">No.</div>
-              <div className="address">Address</div>
-              <div className="amount">Amount</div>
-              <div className="time">Time</div>
+              <div className="address">{t('Address')}</div>
+              <div className="amount">{t('Amount')}</div>
+              <div className="time">{t('Time')}</div>
             </Column>
             <Source>
               {dataSource.length ? (
@@ -311,7 +314,7 @@ const Rank = (props: Props) => {
                   )
                 })
               ) : (
-                <div className="empty">No Data</div>
+                <div className="empty">{t('No Data')}</div>
               )}
             </Source>
           </div>

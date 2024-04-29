@@ -21,6 +21,7 @@ import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import PasswordModal from '../PasswordModal/PasswordModal'
+import { useTranslation } from 'next-i18next'
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -391,6 +392,8 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
 
 
 const UserPanel = () => {
+      // @ts-ignore
+const { t } = useTranslation('common')
   const LevelList = [
     {name:'育龙实习',count:0,imgSrc:<Image src={VIP0} width={61} height={66} alt=''/>},
     {name:'育龙新锐',count:100,imgSrc:<Image src={VIP1} width={61} height={66} alt=''/>},
@@ -558,27 +561,27 @@ const UserPanel = () => {
       <Expenditure>
         <div className="row mar">
           <div className="group">
-            <span className="title">个人总消费额度</span>
+            <span className="title">{t('Total Personal Expenditure')}</span>
             <span className="count">{userInfo.my_performance || 0}</span>
           </div>
           <div className="group group2">
-            <span className="title">购买龙蛋总量</span>
+            <span className="title">{t('Total Eggs Purchased')}</span>
             <span className="count">{userInfo.dragon_egg_total || 0}</span>
           </div>
         </div>
         <div className="row mar">
           <div className="group">
-            <span className="title">当前持有龙蛋总量</span>
+            <span className="title">{t('Current Eggs Held')}</span>
             <span className="count">{userInfo.dragon_egg}</span>
           </div>
           <div className="group group2">
-            <span className="title">您的育龙师序列</span>
+            <span className="title">{t('Your Master Rank')}</span>
             <span className="count">{userInfo.last_sort_num}</span>
           </div>
         </div>
       </Expenditure>
       <EggStatusWrap>
-        <div className="eggTitle">Current Egg Status</div>
+        <div className="eggTitle">{t('Current Egg Status')}</div>
         <div className="eggStatus">
           <SwipeItem>
             <div>
@@ -586,7 +589,7 @@ const UserPanel = () => {
             </div>
             <div className="longEgg">
               <div className="infoItem">
-                <div className="title">龙蛋持有总额</div>
+                <div className="title">{t('Number Dragon Eggs')}</div>
                 <div className="bot">
                   <div>
                     <Image src={eggIconPng} alt="egg" />
@@ -595,7 +598,7 @@ const UserPanel = () => {
                 </div>
               </div>
               <div className="infoItem">
-                <div className="title">龙蛋当前收益</div>
+                <div className="title">{t('Egg Income')}</div>
                 <div className="rit-bot">
                   <div className="t">
                     <EggTokenIcon />
@@ -610,10 +613,10 @@ const UserPanel = () => {
             </div>
             <div className="btnWrap">
               <div className="open" onClick={() => openDialog('open')}>
-                打开龙蛋
+                {t('Open Egg')}
               </div>
               <div className="repu" onClick={() => openDialog('up')}>
-                升级龙蛋
+                {t('Upgrade')}
               </div>
             </div>
           </SwipeItem>
@@ -621,14 +624,14 @@ const UserPanel = () => {
       </EggStatusWrap>
       <RewardStatusWrap>
         <div className="title">
-          <div>Reward Status</div>
+          <div>{t('Reward Status')}</div>
           <div>
-            <span className="history">{'History >'}</span>
+            <span className="history">{t('History')}</span>
           </div>
         </div>
         <CommonRow>
           <div className="topTxt">
-            <span>Egg Earnings</span>
+            <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
             <span>10,000.00</span>
@@ -638,7 +641,7 @@ const UserPanel = () => {
         <CommWrap>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>Public Seq Earnings</span>
+              <span>{t('Public Seq Earnings')}</span>
             </div>
             <div className="bot">
               <span>10,000.00</span>
@@ -647,7 +650,7 @@ const UserPanel = () => {
           </CommonRow>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>Lucky Reward</span>
+              <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
               <span>10,000.00</span>
@@ -667,7 +670,7 @@ const UserPanel = () => {
           </CommonRow>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>Last Master Reward</span>
+              <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
               <span>10,000.00</span>
@@ -677,7 +680,7 @@ const UserPanel = () => {
         </CommWrap>
         <CommonRow className="row">
           <div className="topTxt">
-            <span>Egg Rank Reward</span>
+            <span>{t('Egg Rank Reward')}</span>
           </div>
           <div className="bot">
             <span>10,000.00</span>
@@ -687,7 +690,7 @@ const UserPanel = () => {
         <CommWrap>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>Weekly Rank Reward</span>
+              <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
               <span>10,000.00</span>
@@ -696,7 +699,7 @@ const UserPanel = () => {
           </CommonRow>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>Monthly Rank Reward</span>
+              <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
               <span>10,000.00</span>
@@ -713,24 +716,24 @@ const UserPanel = () => {
               <div className="img">
                 <Image src={openEggPng} alt="egg" />
               </div>
-              <div className="title">当前您的所有龙蛋收益</div>
+              <div className="title">{t('Current total earnings from all eggs')}</div>
               <div className="countWrap">
                 <span>10,000,00</span>
                 <EggTokenIcon />
               </div>
-              <div className="title">打开所有龙蛋可获得双倍收益</div>
+              <div className="title">{t('Open all eggs to receive double earnings')}</div>
               <div className="countWrap">
                 <span>10,000,00</span>
                 <EggTokenIcon />
               </div>
-              <div className="txt">确认打开所有龙蛋？</div>
+              <div className="txt">{t('Confirm to open all eggs?')}</div>
             </div>
           ) : (
             <div>
               <div className="img">
                 <Image src={eggUpPng} alt="egg" />
               </div>
-              <div className="title">当前您的所有龙蛋收益</div>
+              <div className="title">{t('Current total earnings from all eggs')}</div>
               <div className="countWrap">
                 <span>10,000,00</span>
                 <EggTokenIcon />
@@ -746,19 +749,19 @@ const UserPanel = () => {
                   <EggTokenIcon />
                 </div>
               </div>
-              <div className="title">当前您可升级</div>
+              <div className="title">{t('You can currently upgrade')}</div>
               <div className="countWrap">
                 <span>10,000,00</span>
                 <EggTokenIcon />
               </div>
-              <div className="txt">确认升级 ?</div>
+              <div className="txt">{t('Confirm upgrade')} ?</div>
             </div>
           )}
           <BtnWrap>
             <BuyBtn className="confirm" onClick={handleEggConfirm}>
-              {!userInfo.pay_password ? '是' : eggLoading ? 'Loading...' : '是'}
+              {!userInfo.pay_password ? t("Yes") : eggLoading ? 'Loading...' : t("Yes")}
             </BuyBtn>
-            <BuyBtn onClick={closeEggModal}>否</BuyBtn>
+            <BuyBtn onClick={closeEggModal}>{t('No')}</BuyBtn>
           </BtnWrap>
         </ModalMain>
       </CommonModal>

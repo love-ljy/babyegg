@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import CommonPage from '../commonPage/commonPage'
 import { Box } from '@mui/material'
+import { useTranslation } from 'next-i18next'
 
 const LastWrap = styled.div`
   display: flex;
@@ -90,6 +91,8 @@ interface Props {
 }
 
 const Traffic = (props: Props) => {
+          // @ts-ignore
+          const { t } = useTranslation('common')
   const { dataSource = [] } = props
   return (
     <LastWrap>
@@ -100,9 +103,9 @@ const Traffic = (props: Props) => {
       >
         <Column>
           <div className="No">No.</div>
-          <div className="address">Address</div>
-          <div className="amount">Amount</div>
-          <div className="time">Time</div>
+          <div className="address">{t('Address')}</div>
+          <div className="amount">{t('Amount')}</div>
+          <div className="time">{t('Time')}</div>
         </Column>
         <Source>
           {dataSource.length ? (
@@ -117,7 +120,7 @@ const Traffic = (props: Props) => {
               )
             })
           ) : (
-            <div className="empty">No Data</div>
+            <div className="empty">{t('No Data')}</div>
           )}
         </Source>
       </div>
