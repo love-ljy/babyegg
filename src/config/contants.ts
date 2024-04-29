@@ -1,3 +1,3 @@
-export const MainContractAddr = '0x51703D3FA039A01Ff778E994a24AA69C9Ec398f7'
+export const MainContractAddr = '0x0D35083B441c0F6deb0dFa8861D9B383f9A5b55f'
 export const NULL_ADDRESS: `0x${string}` =
   "0x0000000000000000000000000000000000000000"
