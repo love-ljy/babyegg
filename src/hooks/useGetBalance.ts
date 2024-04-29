@@ -16,7 +16,7 @@ const useGetBalance = () => {
     if (userBalance && userBalance.data?.formatted) {
       dispatch(
         setWalletInfo({
-          balance: (+userBalance.data.formatted),
+          balance: +userBalance.data.formatted,
           decimals: userBalance.data?.decimals,
           symbol: userBalance.data?.symbol,
         })

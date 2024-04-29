@@ -408,7 +408,7 @@ const BuyEgg = () => {
       />
       <div className="available">
         <span className="buying">{t('Your Current $Matic available')} :</span>
-        <span className="count">{walletInfo?.balance}</span>
+        <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
       </div>
       <BuyBtn isCancel={isLoading} disabled={isLoading} onClick={handleBuy}>
         {isLoading ? 'Loading...' : 'Buy'}
