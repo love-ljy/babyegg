@@ -1,15 +1,22 @@
-// next-i18next.config.mjs
-import path from 'path';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import Backend from "i18next-http-backend";
 
-const nextI18NextConfig = {
-  i18n: {
-    defaultLocale: 'zh',
-    locales: ['en', 'zh'],
-    localePath: path.resolve('./public/locales')
-  },
-  fallbackLng: {
-    default: ['zh'],
-  },
-};
 
-export default nextI18NextConfig;
+
+i18n
+  .use(Backend)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: "zh",
+    interpolation: {
+      escapeValue: false,
+    },
+    defaultLocale:'zh', 
+    locales: ["en", "zh"],
+    backend: {
+      loadPath: './public/locales/{{lng}}/{{ns}}.json'
+    },
+  });
+
+export default i18n;

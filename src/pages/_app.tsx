@@ -13,6 +13,7 @@ import createEmotionCache from '../createEmotionCache'
 import { config } from '../wagmi/wagmi'
 import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import { appWithTranslation } from 'next-i18next'
+import nextI18NextConfig from '../../next-i18next.config.mjs'
 import Layout from '../components/Layout'
 import { ToastContainer } from 'react-toastify'
 import store from '@store/index'
@@ -26,6 +27,7 @@ globalThis.Buffer = Buffer
 
 const queryClient = new QueryClient()
 // 客户端的 Emotion 缓存实例
+
 const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (

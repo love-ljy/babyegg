@@ -20,6 +20,7 @@ import grounp6 from '@imgs/Group_9.png'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
 
+
 const LayBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -192,19 +193,12 @@ const ecologyLits = [
 const Parteners = [
   grounp1, grounp2, grounp3, grounp4, grounp5, grounp6
 ]
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
-}
+
+
 
 const Home: React.FC = () => {
-  // @ts-ignore
-  const { t } = useTranslation('common')
+  const { t,i18n } = useTranslation('common')
   const router = useRouter();
   const HandleGoGame = (e:any)=>{
     if(!e.isComing){
