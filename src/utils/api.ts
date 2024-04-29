@@ -126,6 +126,23 @@ const getOrderStatus = async (params: any) => {
   })
 }
 
+// 获取最后100  /api/dragonegg/last100
+const getLast100 = async (params:any) => {
+  return request({
+    url: '/api/dragonegg/last100',
+    method: 'get',
+    params
+  })
+}
+
+// 实时流量 /api/dragonegg/realTimeTraffic
+const getRealTimeTraffic = async (params:any) => {
+  return request({
+    url: '/api/dragonegg/realTimeTraffic',
+    method: 'get',
+    params
+  })
+}
 
 export {
   getUserInfo,
@@ -142,5 +159,7 @@ export {
   UpdateUserInfo,
   getRankingLevel,
   getRankingYuLong,
-  getOrderStatus
+  getOrderStatus,
+  getLast100,
+  getRealTimeTraffic
 }
