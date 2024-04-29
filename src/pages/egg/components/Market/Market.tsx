@@ -16,7 +16,6 @@ const MarketWrap = styled.div`
     position: relative;
     height: 80px;
     .bg {
-    
       height: 80px;
       opacity: 1;
       background: radial-gradient(

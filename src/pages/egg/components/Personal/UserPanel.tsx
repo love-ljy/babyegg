@@ -461,6 +461,7 @@ const { t } = useTranslation('common')
     }
   }, [walletInfo?.address])
 
+  // todo
   const openDialog = (type: string) => {
     if (!walletInfo) {
       toast.warn('请链接钱包')
