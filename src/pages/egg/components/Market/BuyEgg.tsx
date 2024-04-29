@@ -228,7 +228,7 @@ const BuyEgg = () => {
   const [firstBuyVisible, setFirstBuyVisible] = useState(false)
   const walletInfo = useSelector(selectWalletInfo)
   const account = useAccount()
-  const [buyNum, setBuyNum] = useState(0)
+  const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
   const [balance, setBalance] = useState<string>('0')
   const isBindParent: any = useSelector(selectIsBindParent)
@@ -263,7 +263,7 @@ const BuyEgg = () => {
   }, [result])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues(event.target.value)
+    setBuyNum(Number(event.target.value))
   }
 
   const selectChange = (option: any) => {
@@ -407,7 +407,7 @@ const BuyEgg = () => {
       </BuyNumStep>
       <span className="buying">Buying Methods</span>
       <CountInput
-        value={values}
+        value={buyNum}
         onChange={handleChange}
         name="numberformat"
         id="formatted-numberformat-input"

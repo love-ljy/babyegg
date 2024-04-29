@@ -36,7 +36,7 @@ interface Props {
 
 function CountDown({ initialTimeInSeconds }: Props) {
   const calculateTimeLeft = (): { days: number, hours: number, minutes: number, seconds: number } => {
-    const difference = +new Date(initialTimeInSeconds)+212220000 - +new Date();
+    const difference = +new Date(initialTimeInSeconds) - +new Date();
 
     let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
