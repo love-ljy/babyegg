@@ -22,11 +22,14 @@ import { formatTeamNumber, getFullDisplayBalance } from '@utils/formatterBalance
 import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
 import PasswordModal from '../PasswordModal/PasswordModal'
-import { buyEgg, getCoin, eggIncomeReinvestment } from '@utils/api'
+import { buyEgg, getCoin, eggIncomeReinvestment, getOrderStatus } from '@utils/api'
+import useStake from '@hooks/useStake'
 import { useTranslation } from 'next-i18next'
 import eggAbi from '../../../../config/abi/eggAbi.json'
 import { MainContractAddr } from '@config/contants'
-
+import { formatUnits } from 'viem'
+import useBind2 from '@hooks/useBind2'
+import useGetBalance from '@hooks/useGetBalance'
 const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 40px;
@@ -218,50 +221,34 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
 )
 
 const BuyEgg = () => {
-      // @ts-ignore
-      const { t } = useTranslation('common')
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const [coinType, setCoinType] = useState('2')
-  const [loading, setLoading] = useState(false)
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
   const [passVisible, setPassVisible] = useState(false)
   const [inputPassVisible, setInputPassVisible] = useState(false)
   const [firstBuyVisible, setFirstBuyVisible] = useState(false)
-  const walletInfo = useSelector(selectWalletInfo)
-  const account = useAccount()
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
-  const [balance, setBalance] = useState<string>('0')
+
   const isBindParent: any = useSelector(selectIsBindParent)
-  const result = useBalance({
-    address: account.address,
-  })
+  const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
-  // const { isPreparing, error, estimatedGas, handleStake, isLoading } = useStake()
-  const {
-    data: hash,
-    isPending,
-    error,
-    writeContract,
-  } = useWriteContract({
-    mutation: {
-      onError: (error: Error) => onError(error),
+
+  const { userBalance } = useGetBalance()
+  const { handleStake, isLoading } = useStake({
+    value: BigInt(buyNum * 1e13),
+    actualMoney: +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals),
+    onSuccess() {
+      toast.success('购买成功')
+      userBalance.refetch()
+    },
+    onError(error, rawError) {
+      console.log('rawError', rawError)
+      toast.warn('购买失败')
     },
   })
-
-  const onError = (error: any) => {
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    if (result && result.data?.value) {
-      const value = getFullDisplayBalance(
-        new BigNumber(result.data?.value.toString()),
-        result.data?.decimals
-      )
-      setBalance(value)
-    }
-  }, [result])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBuyNum(Number(event.target.value))
@@ -288,22 +275,10 @@ const BuyEgg = () => {
     if (coinType === '1') {
       // babyloong
     }
-    console.info(332323,coinType === '0')
+
     if (coinType === '0') {
       // matic
-      // handleStake()
-      try {
-        writeContract({
-          address: MainContractAddr,
-          abi: eggAbi,
-          functionName: 'stake',
-          args: [],
-          value: BigInt(buyNum * 1e13)
-        })
-      } catch (error) {
-        console.info(error)
-      }
-     
+      handleStake()
     }
   }
 
@@ -433,23 +408,23 @@ const BuyEgg = () => {
       />
       <div className="available">
         <span className="buying">{t('Your Current $Matic available')} :</span>
-        <span className="count">{balance}</span>
+        <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
       </div>
-      <BuyBtn isCancel={loading} disabled={loading} onClick={handleBuy}>
-        {loading ? 'Loading...' : 'Buy'}
+      <BuyBtn isCancel={isLoading} disabled={isLoading} onClick={handleBuy}>
+        {isLoading ? 'Loading...' : 'Buy'}
       </BuyBtn>
       <div className="detailed">
         <div>
           <Image width={15} height={15} src={detailedPng} alt="detailed" />
         </div>
         <span className="desc" onClick={openDescDialog}>
-         {t('Detailed Description')}
+          {t('Detailed Description')}
         </span>
       </div>
       <CommonModal visible={descShow} setVisible={setDescShow}>
         <DescContent>
           <div>{t('Detailed Description')}: </div>
-          <div>{t("Each Egg Costs 10 $Matic")}</div>
+          <div>{t('Each Egg Costs 10 $Matic')}</div>
           <div className="minimum">{t('*Minimum initial purchase requirement')}: </div>
           <div className="matic">30 $Matic.</div>
         </DescContent>
@@ -461,7 +436,9 @@ const BuyEgg = () => {
       >
         <DescContent className="firstBuy">
           <Image src={firstBuyPng} alt={'firstBuy'} />
-          <div>{t('The first time you purchase a dragon egg, you need to use $Matic to unlock it.')}</div>
+          <div>
+            {t('The first time you purchase a dragon egg, you need to use $Matic to unlock it.')}
+          </div>
         </DescContent>
       </CommonModal>
       <CommonModal

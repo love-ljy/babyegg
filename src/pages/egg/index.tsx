@@ -19,13 +19,9 @@ import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
 import { toast } from 'react-toastify'
 import md5 from 'md5'
-// import useBind from '@hooks/useBind'
 import useBind2 from '@hooks/useBind2'
-import eggAbi from '../../config/abi/eggAbi.json'
-import { useReadContract, useWriteContract } from 'wagmi'
-import { MainContractAddr } from '@config/contants'
-import { formatUnits } from 'viem'
 import { useTranslation } from 'next-i18next'
+import useGetBalance from '@hooks/useGetBalance'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -95,38 +91,29 @@ function LongEgg() {
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState('')
   const [inviteCode, setInviteCode] = useState('')
-  const [loading, setLoading] = useState(false)
   const [gameInfo, setGameInfo] = useState<any>({})
   const [gameEnd, setGameEnd] = useState(false)
   const [allNet, setAllNet] = useState<any>({})
   const [countDown, setCountDown] = useState<number>(0)
-  const walletInfo: any = useSelector(selectWalletInfo)
   const router = useRouter()
-  // const {
-  //   data: hash,
-  //   isPending,
-  //   error,
-  //   writeContractAsync,
-  // } = useWriteContract({
-  //   mutation: {
-  //     onError: (error: Error) => onError(error),
-  //   },
-  // })
 
-  const result = useReadContract({
-    address: MainContractAddr,
-    abi: eggAbi,
-    functionName: 'referrers',
-    args: [walletInfo?.address],
+  const walletInfo: any = useSelector(selectWalletInfo)
+
+  const { userBalance } = useGetBalance()
+
+  const { bindParent, isLoading } = useBind2({
+    args: [bindAddress],
+    actualMoney: 0,
+    onSuccess() {
+      toast.success('绑定上级成功')
+      login(inviteCode)
+      userBalance.refetch()
+    },
+    onError(error, rawError) {
+      console.log('rawError', rawError)
+      toast.warn('绑定上级失败')
+    },
   })
-
-  const { isPreparing, error, estimatedGas, bindParent, isLoading } = useBind2(bindAddress)
-
-  const onError = (error: any) => {
-    setLoading(false)
-  }
-
-  // const { checkParent } = useBind()
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBindAddress(event.target.value)
@@ -167,7 +154,6 @@ function LongEgg() {
         dispatch(setIsBindParent(true))
         fetchEggCountDown()
         setVisible(false)
-        setLoading(false)
       } else {
         toast.warn('网络错误')
       }
@@ -198,29 +184,7 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
-    try {
-      setLoading(true)
-      console.log('estimatedGas', estimatedGas)
-      const estimatedGasInFloat = estimatedGas ? parseFloat(formatUnits(estimatedGas, 18)) : null // 这个精度可以斟酌下
-      console.log('estimatedGasInFloat', estimatedGasInFloat)
-
-      if (estimatedGas) {
-        // 这里处理gas不足的情况
-      }
-
-      bindParent()
-
-      // await writeContractAsync({
-      //   address: MainContractAddr,
-      //   abi: eggAbi,
-      //   functionName: 'bind',
-      //   args: [bindAddress],
-      // })
-      login(inviteCode)
-    } catch (error) {
-      console.log('bind error', error)
-      onError(error)
-    }
+    bindParent()
   }
 
   const fetchEggCountDown = async () => {
@@ -269,7 +233,7 @@ function LongEgg() {
     return (
       <LongEggWrap>
         <Typography fontWeight={700} fontSize={25}>
-          {gameEnd ?t( 'Waiting for the next round to start') : t('Countdown')}
+          {gameEnd ? t('Waiting for the next round to start') : t('Countdown')}
         </Typography>
         {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />}
         <Box mt={2}>
@@ -294,8 +258,8 @@ function LongEgg() {
         <ModalMain>
           <div className="title">{t('Bind superior address')}</div>
           <CountInput type="text" value={bindAddress} onChange={handleChange} variant="standard" />
-          <BuyBtn isCancel={loading} disabled={loading} onClick={handleBind}>
-            {loading ? 'Loading...' : t('confirm')}
+          <BuyBtn isCancel={isLoading} disabled={isLoading} onClick={handleBind}>
+            {isLoading ? 'Loading...' : t('confirm')}
           </BuyBtn>
         </ModalMain>
       </CommonModal>

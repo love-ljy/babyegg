@@ -2,24 +2,27 @@ import useSubmitTransaction from './useSubmitTransaction'
 import eggAbi from '../config/abi/eggAbi.json'
 import { MainContractAddr } from '../config/contants'
 
-const useBind2 = (bindAddress: string) => {
+interface Props {
+  args: any[]
+  onSuccess: () => void
+  onError: (error, rawError) => void
+  actualMoney?: number
+}
+
+const useBind2 = ({ args, onSuccess, onError, actualMoney = 0 }: Props) => {
   const contractCallParams = {
     abi: eggAbi,
     address: MainContractAddr,
     functionName: 'bind',
-    args: [bindAddress],
+    args: [...args],
   } as const
 
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(
     contractCallParams,
+    actualMoney,
     {
-      customErrorsMap: {
-        VaultDoesNotExist: "Vault doesn't exist",
-        TransferFailed: 'Transfer failed',
-        AlreadyPaid: "You've already paid to this vault",
-      },
-      onError: (errorMessage, rawError) => {},
-      onSuccess: () => {},
+      onError,
+      onSuccess,
     }
   )
 

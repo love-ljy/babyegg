@@ -2,25 +2,28 @@ import useSubmitTransaction from './useSubmitTransaction'
 import eggAbi from '../config/abi/eggAbi.json'
 import { MainContractAddr } from '../config/contants'
 
-const useStake = () => {
+interface Props {
+  value: bigint
+  onSuccess: () => void
+  onError: (error, rawError) => void
+  actualMoney: number
+}
+
+const useStake = ({ value, onSuccess, onError, actualMoney }: Props) => {
   const contractCallParams = {
     abi: eggAbi,
     address: MainContractAddr,
     functionName: 'stake',
     args: [],
+    value,
   } as const
 
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(
     contractCallParams,
+    actualMoney,
     {
-      customErrorsMap: {
-        VaultDoesNotExist: "Vault doesn't exist",
-        TransferFailed: 'Transfer failed',
-        AlreadyPaid: "You've already paid to this vault",
-      },
-      onError: (errorMessage, rawError) => {},
-      onSuccess: (error) => {console.log('stake error', error);
-      },
+      onError,
+      onSuccess,
     }
   )
 
