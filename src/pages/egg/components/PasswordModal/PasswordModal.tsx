@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'next-i18next'
 
 const ModalMain = styled.div`
   width: 260px;

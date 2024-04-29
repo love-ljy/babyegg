@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import quotePng from '@imgs/quote.png'
 import Image from 'next/image'
+import Countdown from 'react-countdown';
 import { useTranslation } from 'next-i18next'
 
 const TimeWrap = styled.div`
@@ -38,50 +39,38 @@ interface Props {
 function CountDown({ initialTimeInSeconds }: Props) {
     // @ts-ignore
     const { t } = useTranslation('common')
-  const calculateTimeLeft = (): { days: number, hours: number, minutes: number, seconds: number } => {
-    const difference = +new Date(initialTimeInSeconds) - +new Date();
+    const Completionist = () => <span>You are good to go!</span>;
 
-    let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
-
-    if (difference > 0) {
-      timeLeft = {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60)
-      };
+    // Renderer callback with condition
+    const renderer = ({ hours, minutes, seconds, completed }) => {
+      if (completed) {
+        // Render a completed state
+        return <Completionist />;
+      } else {
+        // Render a countdown
+        return <div> <TimeWrap>
+        <div className="time-item">
+          <span className="counter">{hours}</span>
+          <span className="label">{t('hours')}</span>
+        </div>
+        <Image src={quotePng} width={3} height={12} alt=":" />
+        <div className="time-item">
+          <span className="counter">{minutes}</span>
+          <span className="label">{t('minute')}</span>
+        </div>
+        <Image src={quotePng} width={3} height={12} alt=":" />
+        <div className="time-item">
+          <span className="counter">{seconds}</span>
+          <span className="label">{t('second')}</span>
+        </div>
+      </TimeWrap></div>;
+      }
     }
 
-    return timeLeft;
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  });
-  const pad = (num: number) => `0${num}`.slice(-2)
-
-
-  return <div> <TimeWrap>
-    <div className="time-item">
-      <span className="counter">{pad(timeLeft.hours)}</span>
-      <span className="label">{t('hours')}</span>
-    </div>
-    <Image src={quotePng} width={3} height={12} alt=":" />
-    <div className="time-item">
-      <span className="counter">{pad(timeLeft.minutes)}</span>
-      <span className="label">{t('minute')}</span>
-    </div>
-    <Image src={quotePng} width={3} height={12} alt=":" />
-    <div className="time-item">
-      <span className="counter">{pad(timeLeft.seconds)}</span>
-      <span className="label">{t('second')}</span>
-    </div>
-  </TimeWrap></div>
+  return <div><Countdown
+  date={initialTimeInSeconds/1000}
+  renderer={renderer}
+/></div>
 }
 
 export default CountDown
