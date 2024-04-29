@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import processViemContractError from './processViemContractError'
 import {
   Abi,
@@ -7,14 +7,13 @@ import {
   DecodeEventLogReturnType,
   TransactionReceipt,
   decodeEventLog,
+  formatUnits,
 } from 'viem'
-import {
-  UseSimulateContractParameters,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from 'wagmi'
+import { useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import useEstimateGas from './useEstimateGas'
+import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
+import { selectWalletInfo } from '@store/user'
 
 const getEvents = (
   contractCallConfig: any,
@@ -36,6 +35,7 @@ const getEvents = (
 
 const useSubmitTransaction = (
   contractCallConfig: any,
+  actualMoney,
   options?: {
     setContext?: boolean
     customErrorsMap?: Record<string, string>
@@ -48,6 +48,7 @@ const useSubmitTransaction = (
       query: { enabled: contractCallConfig.query?.enabled ?? true },
       ...contractCallConfig,
     })
+  const walletInfo = useSelector(selectWalletInfo)
 
   const {
     estimatedGas,
@@ -89,6 +90,7 @@ const useSubmitTransaction = (
 
   const isError = isContractWriteError || isWaitForTransactionError
   const { onSuccess, onError } = options ?? {}
+
   useEffect(() => {
     if (!transactionReceipt && !isSuccess && !isError) return
 
@@ -110,9 +112,20 @@ const useSubmitTransaction = (
   }, [transactionReceipt, isSuccess, isError])
 
   return {
-    onSubmitTransaction: () => {
+    onSubmitTransaction: async () => {
       if (!writeContract && error) {
         onError?.(error, rawError)
+        return
+      }
+      const estimatedGasInFloat = estimatedGas
+        ? parseFloat(formatUnits(estimatedGas, walletInfo?.decimals))
+        : null
+      if (!estimatedGasInFloat) {
+        toast.warn("Couldn't estimate gas")
+        return
+      }
+      if (actualMoney + estimatedGasInFloat > walletInfo?.balance) {
+        toast.warn('Insufficient balance for gas')
         return
       }
       writeContract(contractCallConfig)
