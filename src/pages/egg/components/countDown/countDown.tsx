@@ -68,7 +68,7 @@ function CountDown({ initialTimeInSeconds }: Props) {
     }
 
   return <div><Countdown
-  date={initialTimeInSeconds/1000}
+  date={initialTimeInSeconds}
   renderer={renderer}
 /></div>
 }
