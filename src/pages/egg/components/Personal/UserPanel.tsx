@@ -20,12 +20,14 @@ import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin,updateUserInfo,createOrder } from '@utils/api'
+import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin,getIncomeReceiveNumber,createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import {getDecimalAmount} from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
+import { resolve } from 'path'
+import { rejects } from 'assert'
 
 
 const UserPanelWrap = styled.div`
@@ -407,6 +409,7 @@ const { t } = useTranslation('common')
     {name:'育龙大师',count:1000,imgSrc:<Image src={VIP4} width={61} height={66} alt=''/>},
     {name:'育龙宗师',count:3000,imgSrc:<Image src={VIP5} width={61} height={66} alt=''/>}
   ]
+  
 
   const [loading, setLoading] = useState(false)
   const [orderId,setOrderId] = useState(0)
@@ -542,14 +545,24 @@ const { t } = useTranslation('common')
     setEggVisible(false)
   }
 
-  // const pollApi = async () => {
-  //   try {
-  //     const response = await axios.get(apiUrl);
-  //     console.log('Received data:', response.data);
-  //   } catch (error) {
-  //     console.error('Error occurred while polling API:', error);
-  //   }
-  // };
+const fecthUserRewardInfo = async()=>{
+   try {
+    const array = Array.from({ length: 8 }, (_, index) => index);
+    const resolve =  array.map(async(e)=>{
+      const res :any= await getIncomeReceiveNumber(e)
+      if(res.code===0){
+        return res.data
+      }else{
+        return null
+      }
+      
+    })
+      const res = await Promise.all(resolve)
+      console.info(res.flat())
+   } catch (error) {
+    
+   }
+}
   // 设置密码，先调用扣币接口获取签名，然后拿到签名跟合约交互后，调用orderstatus接口轮询倒计时，拿到status成功后，调用updateuserInfo接口，然后再调用获取用户信息接口看看是否设置成功
 
 
@@ -565,6 +578,7 @@ const { t } = useTranslation('common')
   useEffect(() => {
     if (walletInfo?.address && isBindParent) {
       fetchGameEgg()
+      fecthUserRewardInfo()
     }
   }, [walletInfo?.address, isBindParent])
   const LevlImg = useMemo(()=>{
