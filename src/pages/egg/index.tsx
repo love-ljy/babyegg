@@ -13,7 +13,7 @@ import {
   queryTotalNet,
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo, setIsBindParent } from '@store/user'
+import { selectWalletInfo, setUserInfo, setIsBindParent, setGamingId } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
@@ -197,6 +197,7 @@ function LongEgg() {
         const startDate = new Date().getTime()
         console.log('endDate', endDate, 'startDate', startDate)
         setCountDown(Math.ceil(startDate - endDate))
+        dispatch(setGamingId(res.data.id))
       } else if (res.code === 1) {
         setGameEnd(true)
       }

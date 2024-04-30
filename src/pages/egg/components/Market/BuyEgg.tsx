@@ -16,7 +16,7 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
+import { selectWalletInfo, selectUserInfo, selectIsBindParent, selectGamingId } from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { getCoin, eggIncomeReinvestment, getOrderStatus, buyEgg, updateUserInfo } from '@utils/api'
@@ -26,6 +26,10 @@ import { formatUnits } from 'viem'
 import useGetBalance from '@hooks/useGetBalance'
 import useBalanceInvest from '@hooks/useBalanceInvest'
 import useBabyLong from '@hooks/useBabyLong'
+import { getDecimalAmount } from '@utils/formatterBalance'
+import { useWriteContract } from 'wagmi'
+import burnTokenAbi from '@config/abi/burnToken.json'
+import { BurnContractAddr } from '@config/contants'
 
 const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
   width: 80%;
@@ -230,10 +234,12 @@ const BuyEgg = () => {
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
   const [timer, setTimer] = useState<any>(null)
+  const [babyArgs, setBabyArgs] = useState<any>([])
 
   const isBindParent: any = useSelector(selectIsBindParent)
   const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
+  const gamingId: any = useSelector(selectGamingId)
 
   const { userBalance } = useGetBalance()
   const { handleStake, isLoading } = useStake({
@@ -264,17 +270,34 @@ const BuyEgg = () => {
   })
 
   const { orderBabyLong, isLoading: babyLoading } = useBabyLong({
-    value: BigInt(1 * 1e13),
     actualMoney: +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals),
     onSuccess() {
-      toast.success('下单成功')
-      userBalance.refetch()
+      if(coinType === '2' && !userInfo.pay_password){
+        fetchOrderStatus()
+      } else {
+        toast.success('下单成功')
+        userBalance.refetch()
+      }
     },
     onError(error, rawError) {
       console.log('rawError', rawError)
       toast.warn('下单失败')
+      setLoading(false)
     },
-    args: [],
+    args:babyArgs
+  })
+
+  const {
+    data: hash,
+    isPending,
+    error,
+    writeContractAsync,
+  } = useWriteContract({
+    mutation: {
+      onSuccess: () => {
+        fetchOrderStatus()
+      }
+    },
   })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,6 +323,7 @@ const BuyEgg = () => {
       }
     }
     if (coinType === '1') {
+      // babyloong
       handleBabyLong()
     }
 
@@ -314,10 +338,20 @@ const BuyEgg = () => {
     try {
       const res: any = await buyEgg({
         type: 0,
+        number:buyNum,
+        id: gamingId
       })
-      // todo
       if (res.code === 0) {
-        orderBabyLong()
+        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
+        const bigAmount = getDecimalAmount(amount, 18)
+        setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
+        // orderBabyLong()
+        // await writeContractAsync({
+        //   address: BurnContractAddr,
+        //   abi: burnTokenAbi,
+        //   functionName: 'deposit',
+        //   args: [coin_token, bigAmount, type, id, sign_out_time, v, r, s],
+        // })
       } else {
         toast.warn(res.msg)
       }
@@ -367,13 +401,16 @@ const BuyEgg = () => {
       const res: any = await buyEgg(params)
       console.log('res')
       if (res.code === 0) {
-        // todo
-        orderCreate()
+        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
+        const bigAmount = getDecimalAmount(amount, 18)
+        setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
+        orderBabyLong([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
       } else {
         toast.warn(res.msg)
       }
     } catch (e) {
       console.log('e', e)
+      setLoading(false)
       toast.warn('网络错误')
     }
   }
@@ -392,7 +429,7 @@ const BuyEgg = () => {
     try {
       // todo passLoading
       const res: any = await eggIncomeReinvestment({
-        id: '',
+        id: gamingId,
         password: passParams.pass,
       })
       if (res.code === 0) {
