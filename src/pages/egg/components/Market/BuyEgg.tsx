@@ -527,7 +527,7 @@ const BuyEgg = () => {
         variant="standard"
       />
       <div className="available">
-        <span className="buying">{t('Your Current $Matic available')} :</span>
+        <span className="buying">{t('Current $Matic available')} :</span>
         <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
       </div>
       <BuyBtn
@@ -535,7 +535,7 @@ const BuyEgg = () => {
         disabled={isLoading || loading || orderLoading || babyLoading}
         onClick={handleBuy}
       >
-        {isLoading || loading || orderLoading || babyLoading ? 'Loading...' : 'Buy'}
+        {isLoading || loading || orderLoading || babyLoading ? t('Loading...') : t('BUY')}
       </BuyBtn>
       <div className="detailed">
         <div>

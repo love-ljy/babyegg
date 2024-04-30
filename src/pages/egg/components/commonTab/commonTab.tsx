@@ -4,6 +4,7 @@ import SwipeViews from 'react-swipeable-views'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useTheme } from '@mui/material/styles'
+import { useTranslation } from 'next-i18next'
 
 const TabItem = styled(Tab)<{ selectedColor: string }>`
   min-height: 0;
@@ -69,6 +70,7 @@ const CommonTab = (props: Props) => {
   const { tabList = [], tabChange, swipeChange, selectedColor = 'rgba(91, 0, 183, 1)' } = props
   const [currIndex, setCurrIndex] = useState(0)
   const theme = useTheme()
+  const { t } = useTranslation('common')
 
   const handleChange = (_event: React.SyntheticEvent, i: number) => {
     setCurrIndex(i)
@@ -107,7 +109,7 @@ const CommonTab = (props: Props) => {
         }}
       >
         {tabList.map((v: Record<string, string>, i: number) => (
-          <TabItem label={v.label} key={i} selectedColor={selectedColor} />
+          <TabItem label={t(v.label)} key={i} selectedColor={selectedColor} />
         ))}
       </Tabs>
       <SwipeViewsWrap

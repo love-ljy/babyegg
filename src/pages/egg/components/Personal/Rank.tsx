@@ -86,10 +86,12 @@ const RankMain = styled.div`
   box-shadow: inset 0px 0px 12.1px rgba(246, 26, 126, 1);
   padding: 25px 17px 25px 17px;
   .row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
   .row:nth-child(1) {
-    margin-right: 10px;
+    /* margin-right: 10px; */
   }
 `
 const RankItem = styled.div`
@@ -117,7 +119,7 @@ const RankItem = styled.div`
     right: -30px;
   }
   &:nth-child(2) {
-    margin-left: 10px;
+    /* margin-left: 10px; */
   }
   .countIcon {
     display: flex;
@@ -327,7 +329,7 @@ const Rank = (props: Props) => {
           </Flex>
         </MyRank>
         <div>
-          <div>{t('Loong Egg Rank')}</div>
+          <div>{t('Loong EGG Rank')}</div>
         </div>
         <LastWrap>
           <div

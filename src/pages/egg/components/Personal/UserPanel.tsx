@@ -702,7 +702,7 @@ const UserPanel = () => {
         <CommWrap>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>{t('Public Seq Earnings')}</span>
+              <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
               <span>{userReward[1]?.number}</span>
@@ -722,7 +722,7 @@ const UserPanel = () => {
         <CommWrap>
           <CommonRow className="row">
             <div className="topTxt">
-              <span>Last 100 Reward</span>
+              <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
               <span>{userReward[3]?.number}</span>

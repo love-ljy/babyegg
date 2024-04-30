@@ -240,7 +240,7 @@ const Comp = (props: CompProps) => {
     <ContentWrap>
       <Bot>
         <Typography fontSize={15} fontWeight={700}>
-          {t('Total Prize Pool')}
+          {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
           <span className="count">100,000,000</span>

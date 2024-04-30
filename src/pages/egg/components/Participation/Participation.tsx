@@ -69,7 +69,7 @@ const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
       </Top>
       <Mid>
         <Typography fontSize={15} fontWeight={700}>
-          {t('Total Distribute')}
+          {t('TOTAL DISTRIBUTE')}
         </Typography>
         <div className="bot">
           <span className="count">{allNet?.wait_out_babyloong}</span>
@@ -80,7 +80,7 @@ const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
       </Mid>
       <Bot>
         <Typography fontSize={15} fontWeight={700}>
-          {t('Total Prize Pool')}
+          {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
           <span className="count">0</span>

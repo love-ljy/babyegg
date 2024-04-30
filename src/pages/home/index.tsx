@@ -178,14 +178,14 @@ const slides = [
     path:'/egg',
     isComing:false
   },
-  { title: 'Are you ready', name: 'Go', desc: 'Let the baby dragon release its passion quickly', imageUrl: '/img/image2.png', path:'/egg',
+  { title: 'Are you ready', name: 'Go', desc: 'Let the release speed of Babylong passion', imageUrl: '/img/image2.png', path:'/egg',
   isComing:true },
-  { title: 'Carnival', name: '', desc: 'Feed your baby dragon!', imageUrl: '/img/image3.png', path:'/egg',
+  { title: 'Carnival', name: '', desc: 'Feed your Babylong', imageUrl: '/img/image3.png', path:'/egg',
   isComing:true },
 ]
 
 const ecologyLits = [
-  { title: 'The Egg Hatchathon', comingsoon: false, image: hatch, description: 'the last 100 players, enhancing profit possibilities. This innovative game blends social and strategic elements on the Polygon chain for wealth growth' },
+  { title: 'The Egg Hatchathon', comingsoon: false, image: hatch, description: 'Players use $MATIC to buy BabyLoong eggs, which hatch in 24 hours to release more tokens.The game offers rewards, double income, and asset accumulation.The final prize pool is divided among the last 100 players, enhancing profit possibilities. This innovative game blends social and strategic elements on the Polygon chain for wealth growth' },
   { title: 'BabyLoong Dash', comingsoon: true, image: runlong, description: 'BabyLoong Dash2' },
   { title: 'BabyLoong Raising Saga', comingsoon: true, image: develop, description: 'In this unique raising game, players feed BabyLoongs daily with tokens, increasing the prize pot. Largest and smallest BabyLoongs claim prizes after each cycle. The game blends nurturing and strategic investment for an engaging experience' }
 
@@ -305,7 +305,7 @@ const Home: React.FC = () => {
       <EcologyCard>
           {ecologyLits.map(e => {
             return (
-              <GameCard key={e.title} title={e.title} image={e.image} description={e.description} comingsoon={e.comingsoon} />
+              <GameCard key={e.title} title={t(e.title)} image={e.image} description={t(e.description)} comingsoon={e.comingsoon} />
             )
           })}
         </EcologyCard>
