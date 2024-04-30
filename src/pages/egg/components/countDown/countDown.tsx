@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import quotePng from '@imgs/quote.png'
+import { Typography } from '@mui/material'
 import Image from 'next/image'
 import Countdown from 'react-countdown';
 import { useTranslation } from 'next-i18next'
@@ -37,18 +38,22 @@ interface Props {
 }
 
 function CountDown({ initialTimeInSeconds }: Props) {
-    // @ts-ignore
-    const { t } = useTranslation('common')
-    const Completionist = () => <span>You are good to go!</span>;
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const Completionist = (completed) => {
+    return <Typography fontWeight={700} fontSize={25}>
+      {completed ? t('Waiting for the next round to start') : t('Countdown')}
+    </Typography>;
+  }
 
-    // Renderer callback with condition
-    const renderer = ({ hours, minutes, seconds, completed }) => {
-      if (completed) {
-        // Render a completed state
-        return <Completionist />;
-      } else {
-        // Render a countdown
-        return <div> <TimeWrap>
+  // Renderer callback with condition
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      return <Completionist />;
+    } else {
+      // Render a countdown
+      return <div> <TimeWrap>
         <div className="time-item">
           <span className="counter">{hours}</span>
           <span className="label">{t('hours')}</span>
@@ -64,13 +69,13 @@ function CountDown({ initialTimeInSeconds }: Props) {
           <span className="label">{t('second')}</span>
         </div>
       </TimeWrap></div>;
-      }
     }
+  }
 
-  return <div><Countdown
-  date={initialTimeInSeconds}
-  renderer={renderer}
-/></div>
+  return <div>{initialTimeInSeconds && <Countdown
+    date={initialTimeInSeconds}
+    renderer={renderer}
+  />}</div>
 }
 
 export default CountDown

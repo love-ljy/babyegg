@@ -230,12 +230,14 @@ function LongEgg() {
   }, [walletInfo?.address])
 
   const LongHeader = () => {
+    const timer = gameInfo?.end_time?new Date(gameInfo.end_time):null
     return (
       <LongEggWrap>
-        <Typography fontWeight={700} fontSize={25}>
-          {gameEnd ? t('Waiting for the next round to start') : t('Countdown')}
-        </Typography>
-        {!gameEnd && <CountDown initialTimeInSeconds={new Date(gameInfo.end_time)} />}
+       
+       <Typography fontWeight={700} fontSize={25}>
+      {gameEnd ? t('Waiting for the next round to start') : t('Countdown')}
+      {timer &&<CountDown initialTimeInSeconds={timer} />}
+    </Typography>
         <Box mt={2}>
           <Participation allNet={allNet} />
         </Box>

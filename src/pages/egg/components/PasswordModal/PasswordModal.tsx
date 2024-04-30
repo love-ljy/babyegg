@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import CommonModal from '../commonModal/commonModal'
 import styled from '@emotion/styled'
-import { TextField, Button } from '@mui/material'
+import { TextField, Button, Typography } from '@mui/material'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import Visibility from '@mui/icons-material/Visibility'
@@ -75,7 +75,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -96,11 +96,11 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
   display: flex;
 `
 
-interface Props {}
+interface Props { }
 
 const PasswordModal = (props: any) => {
-     // @ts-ignore
-     const { t } = useTranslation('common')
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const { visible, setVisible, onOk, onClose, type } = props
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -116,8 +116,8 @@ const PasswordModal = (props: any) => {
     setLoading(true)
     onOk &&
       (await onOk({
-        pass,
-        repeatPass,
+        pay_password: pass,
+        pay_password_v: repeatPass,
       }))
     setLoading(false)
   }
@@ -147,7 +147,9 @@ const PasswordModal = (props: any) => {
 
   return (
     <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
+
       <ModalMain>
+        <Typography>{type === 'input' ? '打开龙蛋需要输入密码' : '打开龙蛋需要先设置密码'}</Typography>
         <div className="title">密码</div>
         <CountInput
           type={showPass ? 'text' : 'password'}
@@ -223,7 +225,7 @@ const PasswordModal = (props: any) => {
             />
           </div>
         )}
-
+        {type !== 'input' && <Typography fontSize="12px" textAlign="left" >设置支付密码前需要支付 1 $babylong</Typography>}
         <BtnWrap>
           <BuyBtn className="confirm" isCancel={loading} disabled={loading} onClick={handleClick}>
             {loading ? 'Loading...' : '确定'}

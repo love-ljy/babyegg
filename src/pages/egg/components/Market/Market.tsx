@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
-import markitipPng from '@imgs/markitip.png'
-import closePng from '@imgs/close.png'
-import desctipPng from '@imgs/desctip.png'
 import CommonTab from '../commonTab/commonTab'
 import Last from './Last'
 import Traffic from './Traffic'
 import BuyEgg from './BuyEgg'
+import GameDesc from './GameDesc'
 import { useTranslation } from 'next-i18next'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 
 const MarketWrap = styled.div`
+margin-top: 40px;
   .top {
     position: relative;
     height: 80px;
@@ -42,43 +41,7 @@ const MarketWrap = styled.div`
     /* max-height: 500px; */
   }
 `
-const DialogMain = styled.div`
-  /* height: 600px; */
-  /* max-height: 400px; */
-  text-align: left;
-  /* padding-bottom: 10px; */
-`
-const DialogFooter = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto 0;
-  width: 99px;
-  height: 29px;
-  border-radius: 39px;
-  background: rgba(135, 135, 135, 1);
-  padding: 6px 20px 6px 20px;
-  img {
-    margin-right: 20px;
-  }
-`
-const DialogTitle = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto 0;
-  width: 99px;
-  height: 29px;
-  border-radius: 39px;
-  padding: 6px 20px 6px 20px;
-  margin-bottom: 10px;
-  img {
-    margin-right: 40px;
-  }
-  span {
-    font-size: 25px;
-  }
-`
+
 
 interface tabItem {
   label: string
@@ -121,6 +84,11 @@ const Market = () => {
       value: 'traffic',
       component: <Traffic dataSource={dataSource2} />,
     },
+    {
+      label: 'MeExplan',
+      value: 'gameInfo',
+      component: <GameDesc/>,
+    },
   ]
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
     if (loading) return
@@ -156,15 +124,15 @@ const Market = () => {
         <div className="bg"></div>
         <div className="title">
           <span>{t('Egg Market')}</span>
-          <div className="icon" onClick={openMarketDialog}>
+          {/* <div className="icon" onClick={openMarketDialog}>
             <Image src={markitipPng} width={25} alt="markitip" height={25} />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="tab">
         <CommonTab tabList={tabList} tabChange={tabChange} swipeChange={swipeChange} />
       </div>
-      <CommonModal
+      {/* <CommonModal
         visible={marketShow}
         setVisible={setMarketShow}
         title={
@@ -202,7 +170,7 @@ const Market = () => {
             begins.`)}
           </div>
         </DialogMain>
-      </CommonModal>
+      </CommonModal> */}
     </MarketWrap>
   )
 }

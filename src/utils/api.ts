@@ -91,7 +91,13 @@ const buyEgg = async (data: any) => {
     data,
   })
 }
-
+const createOrder = async (data: any) => {
+  return request({
+    url: '/api/order/create',
+    method: 'post',
+    data,
+  })
+}
 // 获取币种信息
 const getCoin = async (params: any) => {
   return request({
@@ -156,6 +162,7 @@ export {
   queryTotalNet,
   buyEgg,
   getCoin,
+  createOrder,
   updateUserInfo,
   getRankingLevel,
   getRankingYuLong,

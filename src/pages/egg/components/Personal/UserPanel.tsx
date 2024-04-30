@@ -16,12 +16,17 @@ import eggIconPng from '@imgs/eggIcon.png'
 import LinearProgress from '@mui/material/LinearProgress'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
+import { BurnContractAddr } from '@config/contants'
+import burnABI from '@config/abi/burnToken.json'
+import { useReadContract, useWriteContract } from 'wagmi'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin } from '@utils/api'
+import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin,updateUserInfo,createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
+import {getDecimalAmount} from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
+
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -402,6 +407,8 @@ const { t } = useTranslation('common')
     {name:'育龙大师',count:1000,imgSrc:<Image src={VIP4} width={61} height={66} alt=''/>},
     {name:'育龙宗师',count:3000,imgSrc:<Image src={VIP5} width={61} height={66} alt=''/>}
   ]
+
+  const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
@@ -414,7 +421,19 @@ const { t } = useTranslation('common')
   const walletInfo: any = useSelector(selectWalletInfo)
   const isBindParent: any = useSelector(selectIsBindParent)
   const [eggVisible, setEggVisible] = useState(false)
-
+const {
+    data: hash,
+    isPending,
+    error,
+    writeContractAsync,
+  } = useWriteContract({
+    mutation: {
+      onError: (error: Error) => onError(error),
+    },
+  })
+  const onError = (error: any) => {
+    setLoading(false)
+  }
   const fetchGameEgg = useCallback(async () => {
     try {
       const res: any = await getGameEgg()
@@ -438,6 +457,7 @@ const { t } = useTranslation('common')
   }, [walletInfo?.address])
 
   const fetCoin = useCallback(async () => {
+   
     try {
       const res: any = await getCoin({
         type: -1,
@@ -467,15 +487,20 @@ const { t } = useTranslation('common')
       toast.warn('请链接钱包')
       return
     }
-    setEggVisible(true)
-    setEggType(type)
+    if(userInfo.pay_password){
+      setEggVisible(true)
+      setEggType(type)
+    }else{
+      setPassVisible(true)
+    }
+   
   }
 
   const handleOpenEgg = async passParams => {
     if (eggType === 'open') {
       try {
         const res: any = await openEgg({
-          password: passParams.pass,
+         ...passParams
         })
         console.log('res')
         if (res.code === 0) {
@@ -527,7 +552,60 @@ const { t } = useTranslation('common')
     setEggVisible(false)
   }
 
-  const passOK = async passParams => {
+  // const pollApi = async () => {
+  //   try {
+  //     const response = await axios.get(apiUrl);
+  //     console.log('Received data:', response.data);
+  //   } catch (error) {
+  //     console.error('Error occurred while polling API:', error);
+  //   }
+  // };
+  // 设置密码，先调用扣币接口获取签名，然后拿到签名跟合约交互后，调用orderstatus接口轮询倒计时，拿到status成功后，调用updateuserInfo接口，然后再调用获取用户信息接口看看是否设置成功
+
+
+  const createEggOrder = async(type:number,id?:number,number?:number)=>{
+    try {
+      if(type===1){
+        const res: any = await createOrder({
+          type:type
+        })
+        if(res.code===0){
+          return res.data
+        }
+      }else{
+        const res: any = await createOrder({
+          type:type,
+          id:id,
+          number:number
+        })
+        if(res.code===0){
+          return res.data
+        }
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }
+
+  const passOK = async (passParams) => {
+    const res = await createEggOrder(1);
+    if(res){
+      const {r,v,s,id,type,amount,coin_token,sign_out_time} = res
+      const bigAmount = getDecimalAmount(amount,18)
+      console.info({
+        coin_token,bigAmount,type,id,sign_out_time,v,r,s
+      })
+      await writeContractAsync({
+        address: BurnContractAddr,
+        abi: burnABI,
+        functionName: 'deposit',
+        args: [coin_token,bigAmount,type,id,sign_out_time,v,r,s],
+      })
+    }
+  
+    console.info(hash)
+     await updateUserInfo(passParams)
     await handleOpenEgg(passParams)
   }
 
@@ -709,7 +787,7 @@ const { t } = useTranslation('common')
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
-      <PasswordModal visible={passVisible} setVisible={setPassVisible} onOk={passOK} />
+      <PasswordModal visible={passVisible} type={userInfo.pay_password ? 'input' : 'set'} onClose={() => setPassVisible(false)} setVisible={setPassVisible} onOk={passOK} />
       <CommonModal visible={eggVisible} setVisible={setEggVisible} footer={<span></span>}>
         <ModalMain>
           {eggType === 'open' ? (
