@@ -75,6 +75,9 @@ interface Props {
 const Last = (props: Props) => {
       // @ts-ignore
       const { t } = useTranslation('common')
+      useEffect(()=>{
+        fetchLast100
+      },[])
       const[list,setList] = useState([])
       const fetchLast100 = async()=>{
         const res:any = await getLast100({page:1,limit:100})
@@ -82,9 +85,7 @@ const Last = (props: Props) => {
           setList(res.data)
         }
       }
-      useEffect(()=>{
-        fetchLast100
-      },[])
+     
   const { dataSource = [] } = props
   return (
     <LastWrap>
@@ -98,12 +99,12 @@ const Last = (props: Props) => {
           <div>{t('Address')}</div>
         </Column>
         <Source>
-          {list.length ? (
-            list.map((item: any) => {
+          {dataSource.length ? (
+            dataSource.map((item: any, index:number) => {
               return (
                 <SourceItem>
-                  <div className="No">{item.no}</div>
-                  <div className="address">{item.address}</div>
+                  <div className="No">{index}</div>
+                  <div className="address">{item}</div>
                 </SourceItem>
               )
             })

@@ -238,11 +238,12 @@ const Flex = styled.div`
   align-items: center;
   gap: 15px;
 `
-
+interface MYRANK{my_egg:string,my_ranking:string}
 interface Props {
   dataSource: any[]
-  myRank:{my_egg:string,my_ranking:string}
+  myRank?:MYRANK
 }
+
 
 const Rank = (props: Props) => {
     // @ts-ignore

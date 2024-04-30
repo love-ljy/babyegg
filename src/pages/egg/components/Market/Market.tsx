@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
 import CommonTab from '../commonTab/commonTab'
@@ -7,7 +7,7 @@ import Traffic from './Traffic'
 import BuyEgg from './BuyEgg'
 import GameDesc from './GameDesc'
 import { useTranslation } from 'next-i18next'
-import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
+import { getLast100, getRealTimeTraffic } from '@utils/api'
 
 const MarketWrap = styled.div`
 margin-top: 40px;
@@ -49,9 +49,23 @@ interface tabItem {
   component: any
 }
 
+interface TrafficProps{
+  list:{
+    id:string,
+    event:string,
+    created_at:string,
+    username:string
+  }[],
+  page:{
+    total_count:string
+    total_page:number
+    current_page:number
+  }
+}
+
 const Market = () => {
-        // @ts-ignore
-        const { t } = useTranslation('common')
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [marketShow, setMarketShow] = useState(false)
   const [dataSource, setDataSource] = useState([
@@ -60,14 +74,9 @@ const Market = () => {
     //   address: '0x9a4E864aF8E...C71c88f1782bD',
     // },
   ])
-  const [dataSource2, setDataSource2] = useState([
-    // {
-    //   no: 100,
-    //   address: '0x4Bc48...3B98fD',
-    //   amount: 1000,
-    //   time: '12 hours ago',
-    // },
-  ])
+  const [currentPage,setCurrentPage] = useState(1)
+  const [tabNum,setTabNum] = useState(0)
+  const [dataSource2, setDataSource2] = useState<TrafficProps>()
   const tabList: tabItem[] = [
     {
       label: 'Buy Egg',
@@ -82,22 +91,43 @@ const Market = () => {
     {
       label: 'Traffic',
       value: 'traffic',
-      component: <Traffic dataSource={dataSource2} />,
+      component: <Traffic changePage={setCurrentPage} dataSource={dataSource2} />,
     },
     {
       label: 'MeExplan',
       value: 'gameInfo',
-      component: <GameDesc/>,
+      component: <GameDesc />,
     },
   ]
+  const fetchLast100 = async (i: number) => {
+    console.info(i)
+    let res: any
+   
+    if (i === 1) {
+      res = await getLast100({ page: currentPage, limit: 10 })
+      if (res.code === 0) {
+        setDataSource(res.data)
+      }
+    } else if (i === 2) {
+      res = await getRealTimeTraffic({ page: currentPage, limit: 10 })
+      if (res.code === 0) {
+        setDataSource2(res.data)
+      }
+    }
+   
+
+  }
+
+  useEffect(()=>{
+    if(tabNum===1||tabNum===2){
+      fetchLast100(tabNum)
+    }
+    
+  },[currentPage,tabNum])
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   // setPageIndex(1);
-    //   // setList(rankAllList[i].list);
-    //   // setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    console.info(i)
+    setTabNum(i)
+    if (i === 1 || i === 2) { fetchLast100(i) }
   }
 
   const swipeChange = (i: number) => {
@@ -132,45 +162,7 @@ const Market = () => {
       <div className="tab">
         <CommonTab tabList={tabList} tabChange={tabChange} swipeChange={swipeChange} />
       </div>
-      {/* <CommonModal
-        visible={marketShow}
-        setVisible={setMarketShow}
-        title={
-          <DialogTitle>
-            <div>
-              <Image src={desctipPng} width={25} height={25} alt="desc" />
-            </div>
-            <span>{t('Description')}</span>
-          </DialogTitle>
-        }
-        footer={
-          <DialogFooter onClick={closeDialog}>
-            <div>
-              <Image src={closePng} width={13} height={13} alt="close" />
-            </div>
-            <span>{t('Close')}</span>
-          </DialogFooter>
-        }
-      >
-        <DialogMain>
-          <div className="mechanism"> {t("Mechanism Explanation")}: </div>
-          <div>
-            {t(`Lucky Reward: Each egg purchase provides a chance to win an airdrop reward of 100-1000
-            $MATIC (1% probability).Initial Value: After purchase, the egg's initial value is zero,
-            which increases as more people buy.Early Opening: Before the end of the current game
-            round, players can choose to open their egg to claim double the current value, after
-            which the egg will disappear.Repurchase: Players can use the $BabyLoong from opened eggs
-            to buy more eggs. The old eggs still exist but their value resets to zero. Once
-            activated, you can use held $BabyLoong to purchase eggs.Countdown Increase: Each
-            purchase or opening of an egg increases the countdown timer by 30 seconds (initially set
-            at 24 hours). When the timer reaches zero, the last 100 players to buy eggs evenly split
-            a prize pool, and the very last buyer receives an extra large reward.Automatic Opening:
-            When the countdown ends, all eggs automatically open, and players receive the current
-            value of $BabyLoong contained within.Game Reset: After the round ends, a new game round
-            begins.`)}
-          </div>
-        </DialogMain>
-      </CommonModal> */}
+
     </MarketWrap>
   )
 }

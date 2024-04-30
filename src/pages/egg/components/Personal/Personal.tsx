@@ -68,8 +68,7 @@ const tabList: tabItem[] = [
     component: <Withdraw />,
   },
 ]
-interface MYRANK
-  {my_egg:string,my_ranking:string}
+interface MYRANK{my_egg:string,my_ranking:string}
 
 const Personal = () => {
   // @ts-ignore
