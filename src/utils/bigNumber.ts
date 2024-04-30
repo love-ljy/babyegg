@@ -8,5 +8,5 @@ export const ONE_BILLION = new BigNumber(1_000_000_000)
  * @param hexNumberString
  */
 export default function isZero(hexNumberString: string) {
-  return /^0x0*$/.test(hexNumberString)
+  return /^0x0*$/.test(hexNumberString);
 }

@@ -16,7 +16,7 @@ const GameCard: React.FC<GameCardProps> = ({title,comingsoon,description,image,o
     const { t } = useTranslation('common')
   return (
     <Box >
-      <Image  objectFit='contain' objectPosition="center"  src={image}   alt=""/>
+      <Image layout="responsive" objectPosition="center"  src={image}   alt=""/>
       <Container>
       <Typography textAlign="left" color="#fff" fontSize="20px" fontWeight={900} mt={3}>{title}</Typography>
       {comingsoon&&<Typography textAlign="left" color="#D209AC" fontSize="15px">{t('Coming Soon')}</Typography>}

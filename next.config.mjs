@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
 /** @type {import('next').NextConfig} */
-import nextI18NextConfig from './next-i18next.config.mjs';
+import nextI18nConfig from './next-i18next.config.mjs';
+
 const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig = {
   reactStrictMode: true,
-  i18n: nextI18NextConfig.i18n,
+  i18n:nextI18nConfig.i18n,
   swcMinify: true, // 开启 SWC 编译器来提升构建性能
   experimental: {
     // 开启 React 18 特性支持
