@@ -110,7 +110,7 @@ const getCoin = async (params: any) => {
 const getRankingLevel = async () => {
   return request({
     url: '/api/user/rankingLevel',
-    method: 'get',
+    method: 'get'
   })
 }
 
@@ -149,6 +149,15 @@ const getRealTimeTraffic = async (params:any) => {
   })
 }
 
+// 获取用户各种奖励 /api/user/incomeReceiveNumber
+const getIncomeReceiveNumber = async (type:number) => {
+  return request({
+    url: '/api/user/incomeReceiveNumber',
+    method: 'get',
+    params: {type}
+  })
+}
+
 export {
   getUserInfo,
   submitUserLogin,
@@ -167,5 +176,6 @@ export {
   getRankingYuLong,
   getOrderStatus,
   getLast100,
-  getRealTimeTraffic
+  getRealTimeTraffic,
+  getIncomeReceiveNumber
 }

@@ -20,12 +20,14 @@ import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin,updateUserInfo,createOrder } from '@utils/api'
+import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin,getIncomeReceiveNumber,createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import {getDecimalAmount} from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
+import { resolve } from 'path'
+import { rejects } from 'assert'
 
 
 const UserPanelWrap = styled.div`
@@ -407,10 +409,12 @@ const { t } = useTranslation('common')
     {name:'育龙大师',count:1000,imgSrc:<Image src={VIP4} width={61} height={66} alt=''/>},
     {name:'育龙宗师',count:3000,imgSrc:<Image src={VIP5} width={61} height={66} alt=''/>}
   ]
+  
 
   const [loading, setLoading] = useState(false)
   const [orderId,setOrderId] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [userReward,setUserReward] = useState<any>([])
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
   const [eggType, setEggType] = useState('')
@@ -542,14 +546,25 @@ const { t } = useTranslation('common')
     setEggVisible(false)
   }
 
-  // const pollApi = async () => {
-  //   try {
-  //     const response = await axios.get(apiUrl);
-  //     console.log('Received data:', response.data);
-  //   } catch (error) {
-  //     console.error('Error occurred while polling API:', error);
-  //   }
-  // };
+const fecthUserRewardInfo = async()=>{
+   try {
+    const array =[-1,0,4,5,6,7,8,9];
+    const resolve =  array.map(async(e)=>{
+      const res :any= await getIncomeReceiveNumber(e)
+      if(res.code===0){
+        return res.data
+      }else{
+        return null
+      }
+      
+    })
+      const res = await Promise.all(resolve)
+      setUserReward(res?.flat())
+      console.info(res.flat())
+   } catch (error) {
+    
+   }
+}
   // 设置密码，先调用扣币接口获取签名，然后拿到签名跟合约交互后，调用orderstatus接口轮询倒计时，拿到status成功后，调用updateuserInfo接口，然后再调用获取用户信息接口看看是否设置成功
 
 
@@ -565,6 +580,7 @@ const { t } = useTranslation('common')
   useEffect(() => {
     if (walletInfo?.address && isBindParent) {
       fetchGameEgg()
+      fecthUserRewardInfo()
     }
   }, [walletInfo?.address, isBindParent])
   const LevlImg = useMemo(()=>{
@@ -666,7 +682,7 @@ const { t } = useTranslation('common')
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>10,000.00</span>
+            <span>{userReward[0]?.number}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -676,7 +692,7 @@ const { t } = useTranslation('common')
               <span>{t('Public Seq Earnings')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[1]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -685,7 +701,7 @@ const { t } = useTranslation('common')
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[2]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -696,7 +712,7 @@ const { t } = useTranslation('common')
               <span>Last 100 Reward</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[3]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -705,7 +721,7 @@ const { t } = useTranslation('common')
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[4]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -715,7 +731,7 @@ const { t } = useTranslation('common')
             <span>{t('Egg Rank Reward')}</span>
           </div>
           <div className="bot">
-            <span>10,000.00</span>
+            <span>{userReward[5]?.number}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -725,7 +741,7 @@ const { t } = useTranslation('common')
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[6]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -734,7 +750,7 @@ const { t } = useTranslation('common')
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[7]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -772,7 +788,7 @@ const { t } = useTranslation('common')
               </div>
               <div className="mid">
                 <div className="box">
-                  <span>10,000.00</span>
+                  <span>{userReward[0]?.number}</span>
                   <EggTokenIcon />
                 </div>
                 <span className="equ">=</span>

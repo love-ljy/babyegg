@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
-import {Typography} from '@mui/material'
-import {getState} from '@store/index'
+import { Typography } from '@mui/material'
+import { getState } from '@store/index'
 import rankBgPng from '@imgs/rankBg.png'
 import CommonTab from '../commonTab/commonTab'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
@@ -238,17 +238,25 @@ const Flex = styled.div`
   align-items: center;
   gap: 15px;
 `
-interface MYRANK{my_egg:string,my_ranking:string}
+interface MYRANK { my_egg: string, my_ranking: string }
 interface Props {
   dataSource: any[]
-  myRank?:MYRANK
+  myRank?: MYRANK
+  rankLevel?: Level[]
+}
+type Level = {
+  "grade": string
+  "rate": string
+  "user_num": number
+  "total_reward_babyloong": string
+  "total_reward_babyloong_matic": string
 }
 
 
 const Rank = (props: Props) => {
-    // @ts-ignore
-const { t } = useTranslation('common')
-  const { dataSource = [],myRank } = props
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const { dataSource = [], myRank, rankLevel } = props
   const userInfo = getState('user').userInfo
   return (
     <MarketWrap>
@@ -262,61 +270,61 @@ const { t } = useTranslation('common')
         <RankItem className="special">
           <Image src={rankBgPng} alt="rank" />
           <div className="countIcon">
-            <span className="big">10,000</span>
+            <span className="big">{rankLevel && rankLevel[4]?.total_reward_babyloong_matic}</span>
             <EggTokenIcon width={24} />
           </div>
-          <div className="second">10 {t('Grandmaster')}</div>
+          <div className="second">{rankLevel && rankLevel[4]?.user_num} {t('Grandmaster')}</div>
           <div className="third">{t('Current Grandmaster Prize Pool')}</div>
         </RankItem>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel && rankLevel[3]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel && rankLevel[3]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel && rankLevel[2]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel && rankLevel[2]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel && rankLevel[1]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel && rankLevel[1]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel && rankLevel[0]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel && rankLevel[0]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
         <MyRank>
-        <Flex>
-          <Image width={60} src={VIP4} alt="rank" />
-          <div>
-            <Typography fontSize="12px">您的排位</Typography>
-            <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">育龙宗师</Typography>
-            <Typography fontSize="12px">龙蛋数额{myRank?.my_egg}</Typography>
-          </div>
-        </Flex>
-      <Flex>
-      <Typography fontSize="12px">NO</Typography>
-      <Typography fontWeight="bold" fontSize="44px">{myRank?.my_ranking}</Typography>
-      </Flex>
+          <Flex>
+            <Image width={60} src={VIP4} alt="rank" />
+            <div>
+              <Typography fontSize="12px">您的排位</Typography>
+              <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">育龙宗师</Typography>
+              <Typography fontSize="12px">龙蛋数额{myRank?.my_egg}</Typography>
+            </div>
+          </Flex>
+          <Flex>
+            <Typography fontSize="12px">NO</Typography>
+            <Typography fontWeight="bold" fontSize="44px">{myRank?.my_ranking}</Typography>
+          </Flex>
         </MyRank>
         <div>
           <div>{t('Loong Egg Rank')}</div>

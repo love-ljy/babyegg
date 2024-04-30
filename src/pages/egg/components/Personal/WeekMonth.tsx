@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 import styled from '@emotion/styled'
@@ -8,6 +8,7 @@ import desctipPng from '@imgs/desctip.png'
 import CommonTab from '../commonTab/commonTab'
 import MaticIcon from '@icons/matic.svg'
 import { useTranslation } from 'next-i18next'
+import { getUserRanking, getRankingYuLong } from '@utils/api'
 
 const MarketWrap = styled.div`
   .top {
@@ -101,7 +102,14 @@ const ContentWrap = styled.div`
   .bot {
     display: flex;
     justify-content: space-between;
-    align-items: end;
+    align-items: center;
+    .count {
+      font-size: 30px;
+      font-weight: 700;
+    }
+    .img {
+      margin-left: 10px;
+    }
   }
 `
 
@@ -113,13 +121,16 @@ interface tabItem {
 
 interface CompProps {
   dataSource: any[]
+  myInfo?:MyInfo
 }
 const Bot = styled.div`
-  margin-top: 15px;
-  margin-bottom: 20px;
-  padding: 6px 36px;
-  border-radius: 51px;
-  background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
+  border-radius: 5px;
+background: rgba(184, 3, 139, 1);
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 6px 15px 6px 15px;
 `
 const LastWrap = styled.div`
   margin-top: 10px;
@@ -180,6 +191,21 @@ const Source = styled.div`
     /* transform: translateY(50%); */
   }
 `
+const MyRank = styled.div`
+opacity: 1;
+background: rgba(22, 34, 54, 1);
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-radius: 3px;
+padding: 15px 15px 15px 15px;
+margin:20px 0%;
+`
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+`
 
 const SourceItem = styled.div`
   width: 100%;
@@ -207,9 +233,9 @@ const SourceItem = styled.div`
 `
 
 const Comp = (props: CompProps) => {
-      // @ts-ignore
-const { t } = useTranslation('common')
-  const { dataSource } = props
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const { dataSource,myInfo } = props
   return (
     <ContentWrap>
       <Bot>
@@ -223,6 +249,17 @@ const { t } = useTranslation('common')
           </div>
         </div>
       </Bot>
+      <MyRank>
+        <div>
+          <Typography fontSize="12px">您当前的预计分红</Typography>
+          <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">{myInfo?.my_reward_matic}</Typography>
+          <Typography fontSize="12px">您的小区新增业绩 {myInfo?.my_min_son_team_performance}</Typography>
+        </div>
+        <Flex>
+          <Typography fontSize="12px">NO</Typography>
+          <Typography fontWeight="bold" fontSize="44px">{myInfo?.my_ranking}</Typography>
+        </Flex>
+      </MyRank>
       <LastWrap>
         <div
           style={{
@@ -257,9 +294,18 @@ const { t } = useTranslation('common')
   )
 }
 
+interface MyInfo{
+  my_min_son_team_performance:string
+my_ranking:string
+my_reward:string
+my_reward_matic:string
+total_reward:string
+total_reward_matic:string
+}
+
 const WeekMonth = () => {
-        // @ts-ignore
-const { t } = useTranslation('common')
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [marketShow, setMarketShow] = useState(false)
   const [dataSource, setDataSource] = useState([
@@ -270,6 +316,7 @@ const { t } = useTranslation('common')
     //   time: '12 hours ago',
     // },
   ])
+  const [myInfo,setMyInfo] = useState<MyInfo>()
   const [dataSource2, setDataSource2] = useState([
     {
       no: 100,
@@ -282,24 +329,33 @@ const { t } = useTranslation('common')
     {
       label: 'Weekly',
       value: 'Weekly',
-      component: <Comp dataSource={dataSource} />,
+      component: <Comp myInfo={myInfo} dataSource={dataSource} />,
     },
     {
       label: 'Monthly',
       value: 'Monthly',
-      component: <Comp dataSource={dataSource} />,
+      component: <Comp myInfo={myInfo} dataSource={dataSource} />,
     },
   ]
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   // setPageIndex(1);
-    //   // setList(rankAllList[i].list);
-    //   // setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    FetchRankingLevel(i)
   }
-
+  const FetchRankingLevel = async (i) => {
+    console.info(2222)
+    const res: any = await getRankingYuLong(i)
+    if (res.code === 0) {
+      setDataSource(res.data.list)
+      const {my_min_son_team_performance,my_ranking,my_reward,my_reward_matic,total_reward,total_reward_matic} = res.data
+      setMyInfo({
+        my_min_son_team_performance,
+        my_ranking,
+        my_reward,
+        my_reward_matic,
+        total_reward,
+        total_reward_matic
+      })
+    }
+  }
   const swipeChange = (i: number) => {
     if (loading) return
     // if (rankAllList.length) {
@@ -309,17 +365,13 @@ const { t } = useTranslation('common')
     // }
     // setRankTitle(selectList[i].label);
   }
+  useEffect(() => {
 
-  const openMarketDialog = () => {
-    setMarketShow(true)
-  }
-
-  const closeDialog = () => {
-    setMarketShow(false)
-  }
-
+    FetchRankingLevel(0)
+  }, [])
   return (
     <MarketWrap>
+      
       <div className="tab">
         <CommonTab
           tabList={tabList}
