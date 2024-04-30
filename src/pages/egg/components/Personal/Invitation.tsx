@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux'
 import { selectWalletInfo, selectUserInfo } from '@store/user'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import copy from 'copy-to-clipboard'
+import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
 
 const InvitationWrap = styled.div`
@@ -78,12 +80,17 @@ const { t } = useTranslation('common')
   const toHistory = () => {
     router.push('invite')
   }
+  
   const isDev = process.env.NODE_ENV === 'development'
   const invateLink = isDev?"https://test.web.babyloong.org/":window.location.href
+  const copyLink = () => {
+    copy(`${invateLink}?inviter=${userInfo?.invite}`)
+    toast.success('复制成功')
+  }
   return (
     <InvitationWrap>
       <div className="title">{t('Your Invitation Link')}</div>
-      <Copy>
+      <Copy onClick={copyLink}>
         <span className="text">{`${invateLink}?inviter=${userInfo?.invite}`}</span>
         <CopyIcon />
       </Copy>

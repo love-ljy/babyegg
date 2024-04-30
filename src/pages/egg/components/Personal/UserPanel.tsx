@@ -1,4 +1,4 @@
-import { useState, useEffect,useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Box, TextField, Button } from '@mui/material'
 import Image from 'next/image'
@@ -20,10 +20,10 @@ import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin,getIncomeReceiveNumber,createOrder } from '@utils/api'
+import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin, getIncomeReceiveNumber, createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
-import {getDecimalAmount} from '@utils/formatterBalance'
+import { getDecimalAmount } from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
 import { resolve } from 'path'
@@ -63,8 +63,9 @@ const UserPanelWrap = styled.div`
         background: linear-gradient(180deg, rgba(210, 9, 172, 1) 0%, rgba(86, 0, 154, 1) 100%);
       }
       .title {
-        font-size: 10px;
-        color: rgba(255, 255, 255, 0.5);
+        font-size: 20px;
+        font-weight: 900;
+        color: #fff;
       }
       .masterWrap {
         width: 100%;
@@ -75,6 +76,7 @@ const UserPanelWrap = styled.div`
         .master {
           font-size: 20px;
           font-weight: 900;
+          color: #fff;
         }
         .percent {
           font-size: 10px;
@@ -375,7 +377,7 @@ const ModalMain = styled.div`
   }
 `
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -399,22 +401,22 @@ const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
 
 
 const UserPanel = () => {
-      // @ts-ignore
-const { t } = useTranslation('common')
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const LevelList = [
-    {name:'育龙实习',count:0,imgSrc:<Image src={VIP0} width={61} height={66} alt=''/>},
-    {name:'育龙新锐',count:100,imgSrc:<Image src={VIP1} width={61} height={66} alt=''/>},
-    {name:'育龙精英',count:300,imgSrc:<Image src={VIP2} width={61} height={66} alt=''/>},
-    {name:'育龙专家',count:500,imgSrc:<Image src={VIP3} width={61} height={66} alt=''/>},
-    {name:'育龙大师',count:1000,imgSrc:<Image src={VIP4} width={61} height={66} alt=''/>},
-    {name:'育龙宗师',count:3000,imgSrc:<Image src={VIP5} width={61} height={66} alt=''/>}
+    { name: '育龙实习', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
+    { name: '育龙新锐', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
+    { name: '育龙精英', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
+    { name: '育龙专家', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
+    { name: '育龙大师', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
+    { name: '育龙宗师', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
   ]
-  
+
 
   const [loading, setLoading] = useState(false)
-  const [orderId,setOrderId] = useState(0)
+  const [orderId, setOrderId] = useState(0)
   const [progress, setProgress] = useState(0)
-  const [userReward,setUserReward] = useState<any>([])
+  const [userReward, setUserReward] = useState<any>([])
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
   const [eggType, setEggType] = useState('')
@@ -452,7 +454,7 @@ const { t } = useTranslation('common')
   }, [walletInfo?.address])
 
   const fetCoin = useCallback(async () => {
-   
+
     try {
       const res: any = await getCoin({
         type: -1,
@@ -482,20 +484,20 @@ const { t } = useTranslation('common')
       toast.warn('请链接钱包')
       return
     }
-    if(userInfo.pay_password){
+    if (userInfo.pay_password) {
       setEggVisible(true)
       setEggType(type)
-    }else{
+    } else {
       setPassVisible(true)
     }
-   
+
   }
 
   const handleOpenEgg = async passParams => {
     if (eggType === 'open') {
       try {
         const res: any = await openEgg({
-         password:passParams.password
+          password: passParams.password
         })
         if (res.code === 0) {
           setPassVisible(false)
@@ -546,32 +548,32 @@ const { t } = useTranslation('common')
     setEggVisible(false)
   }
 
-const fecthUserRewardInfo = async()=>{
-   try {
-    const array =[-1,0,4,5,6,7,8,9];
-    const resolve =  array.map(async(e)=>{
-      const res :any= await getIncomeReceiveNumber(e)
-      if(res.code===0){
-        return res.data
-      }else{
-        return null
-      }
-      
-    })
+  const fecthUserRewardInfo = async () => {
+    try {
+      const array = [-1, 0, 4, 5, 6, 7, 8, 9];
+      const resolve = array.map(async (e) => {
+        const res: any = await getIncomeReceiveNumber(e)
+        if (res.code === 0) {
+          return res.data
+        } else {
+          return null
+        }
+
+      })
       const res = await Promise.all(resolve)
       setUserReward(res?.flat())
       console.info(res.flat())
-   } catch (error) {
-    
-   }
-}
+    } catch (error) {
+
+    }
+  }
   // 设置密码，先调用扣币接口获取签名，然后拿到签名跟合约交互后，调用orderstatus接口轮询倒计时，拿到status成功后，调用updateuserInfo接口，然后再调用获取用户信息接口看看是否设置成功
 
 
-  const passOK = async (passParams:any) => {
+  const passOK = async (passParams: any) => {
     setPassVisible(false)
-    const {id,password} = passParams
-    if(id){
+    const { id, password } = passParams
+    if (id) {
       setOrderId(id)
     }
     await handleOpenEgg(passParams)
@@ -583,26 +585,37 @@ const fecthUserRewardInfo = async()=>{
       fecthUserRewardInfo()
     }
   }, [walletInfo?.address, isBindParent])
-  const LevlImg = useMemo(()=>{
-    return LevelList.find(item=>item.count>=userInfo.level_grade)?.imgSrc
-  },[userInfo.level_grade])
-  const LevlName = useMemo(()=>{
-    return LevelList.find(item=>item.count>=userInfo.level_grade)?.name
-  },[userInfo.level_grade])
+  const variable = Number(userInfo.dragon_egg)
+  const level = useMemo(()=>{
+    const level = LevelList.find(level => level.count > Number(userInfo.dragon_egg));
+
+    // 如果找到，返回前一个元素的 imgSrc
+    if (level) {
+        const index = LevelList.indexOf(level);
+        return index > 0 ? LevelList[index - 1] : null;
+    }
+
+    // 如果没有找到符合条件的元素，返回数组最后一个元素的 imgSrc
+    return LevelList[LevelList.length - 1];
+  },[Number(userInfo.dragon_egg)])
+
+  const imgSrc = level ? level?.imgSrc : null;
+  const LevlName = level ? level?.name : null;
+  console.info(level, 'userInfo.level_grade',Number(userInfo.dragon_egg))
   return (
     <UserPanelWrap>
       <div className="header">
         <div>
-         {LevlImg}
+          {imgSrc}
         </div>
         <div className="prograssWrap">
-          <div className="title">{LevlName}</div>
+
           <div className="masterWrap">
-            <span className="master">{userInfo.level_name}</span>
-            <span className="percent">{userInfo.level_grade || 0}/1000</span>
+            <div className="title">{LevlName}</div>
+            <span className="percent">{userInfo.dragon_egg || 0}/1000</span>
           </div>
           <Box sx={{ width: '100%' }}>
-            <LinearProgress variant="determinate" value={progress} />
+            <LinearProgress variant="determinate" value={Number(userInfo.dragon_egg) / 100} />
           </Box>
         </div>
       </div>
