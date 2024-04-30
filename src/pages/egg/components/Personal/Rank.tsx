@@ -242,13 +242,21 @@ interface MYRANK{my_egg:string,my_ranking:string}
 interface Props {
   dataSource: any[]
   myRank?:MYRANK
+  rankLevel?:Level[]
+}
+type Level = {
+  "grade": string
+  "rate": string
+  "user_num": number
+  "total_reward_babyloong": string
+  "total_reward_babyloong_matic": string
 }
 
 
 const Rank = (props: Props) => {
     // @ts-ignore
 const { t } = useTranslation('common')
-  const { dataSource = [],myRank } = props
+  const { dataSource = [],myRank,rankLevel } = props
   const userInfo = getState('user').userInfo
   return (
     <MarketWrap>
@@ -262,45 +270,45 @@ const { t } = useTranslation('common')
         <RankItem className="special">
           <Image src={rankBgPng} alt="rank" />
           <div className="countIcon">
-            <span className="big">10,000</span>
+            <span className="big">{rankLevel&&rankLevel[4]?.total_reward_babyloong_matic}</span>
             <EggTokenIcon width={24} />
           </div>
-          <div className="second">10 {t('Grandmaster')}</div>
+          <div className="second">{rankLevel&&rankLevel[4]?.user_num} {t('Grandmaster')}</div>
           <div className="third">{t('Current Grandmaster Prize Pool')}</div>
         </RankItem>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+            <span className="big">{rankLevel&&rankLevel[3]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel&&rankLevel[3]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+            <span className="big">{rankLevel&&rankLevel[2]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel&&rankLevel[2]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+            <span className="big">{rankLevel&&rankLevel[1]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel&&rankLevel[1]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+            <span className="big">{rankLevel&&rankLevel[0]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 {t('Grandmaster')}</div>
+            <div className="second">{rankLevel&&rankLevel[0]?.user_num} {t('Grandmaster')}</div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>

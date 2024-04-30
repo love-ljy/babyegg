@@ -107,10 +107,11 @@ const getCoin = async (params: any) => {
 }
 
 //获取等级排行榜api/user/rankingLevel
-const getRankingLevel = async () => {
+const getRankingLevel = async (params:any) => {
   return request({
     url: '/api/user/rankingLevel',
     method: 'get',
+    params
   })
 }
 

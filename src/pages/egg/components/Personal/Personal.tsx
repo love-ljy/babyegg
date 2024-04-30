@@ -10,7 +10,7 @@ import Withdraw from './Withdraw'
 import Rank from './Rank'
 import WeekMonth from './WeekMonth'
 import { useTranslation } from 'next-i18next'
-import {getUserRanking} from '@utils/api'
+import {getUserRanking,getRankingLevel} from '@utils/api'
 
 const MarketWrap = styled.div`
   .top {
@@ -68,6 +68,13 @@ const tabList: tabItem[] = [
     component: <Withdraw />,
   },
 ]
+type Level = {
+  "grade": string
+  "rate": string
+  "user_num": number
+  "total_reward_babyloong": string
+  "total_reward_babyloong_matic": string
+}
 interface MYRANK{my_egg:string,my_ranking:string}
 
 const Personal = () => {
@@ -75,6 +82,7 @@ const Personal = () => {
 const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [myRank,setMyRank] = useState<MYRANK>()
+  const [rankLevel,setRankLevel] = useState<Level[]>()
   const [dataSource, setDataSource] = useState([
     // {
     //   no: 100,
@@ -91,8 +99,18 @@ const { t } = useTranslation('common')
       setDataSource(res.data.list)
       setMyRank({my_egg:res.data.my_egg,my_ranking:res.data.my_ranking})
     }
+    const ress:any = await getRankingLevel()
+    if(ress.code===0){
+      setRankLevel(ress.data)
+    } 
   }
-  
+
+  const FetchRankingLevel = async() => {
+    const res:any = await getRankingLevel()
+    if(res.code===0){
+
+    }
+    }
 
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
     if (loading) return
@@ -115,6 +133,7 @@ const { t } = useTranslation('common')
   }
   useEffect(()=>{
     fetchEggRanking()
+    FetchRankingLevel()
   },[])
 
   return (
@@ -133,7 +152,7 @@ const { t } = useTranslation('common')
           selectedColor={'rgba(50, 32, 208, 1)'}
         />
       </div>
-      <Rank myRank={myRank} dataSource={dataSource} />
+      <Rank myRank={myRank} rankLevel={rankLevel} dataSource={dataSource} />
       <Box mt={2}>
         <WeekMonth />
       </Box>

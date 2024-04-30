@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import Image from 'next/image'
 import styled from '@emotion/styled'
@@ -8,6 +8,7 @@ import desctipPng from '@imgs/desctip.png'
 import CommonTab from '../commonTab/commonTab'
 import MaticIcon from '@icons/matic.svg'
 import { useTranslation } from 'next-i18next'
+import {getUserRanking,getRankingYuLong} from '@utils/api'
 
 const MarketWrap = styled.div`
   .top {
@@ -291,15 +292,14 @@ const { t } = useTranslation('common')
     },
   ]
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   // setPageIndex(1);
-    //   // setList(rankAllList[i].list);
-    //   // setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    FetchRankingLevel(i)
   }
-
+  const FetchRankingLevel = async(i) => {
+    const res:any = await getRankingYuLong(i)
+    if(res.code===0){
+      setDataSource(res.data)
+    }
+    }
   const swipeChange = (i: number) => {
     if (loading) return
     // if (rankAllList.length) {
@@ -309,15 +309,9 @@ const { t } = useTranslation('common')
     // }
     // setRankTitle(selectList[i].label);
   }
-
-  const openMarketDialog = () => {
-    setMarketShow(true)
-  }
-
-  const closeDialog = () => {
-    setMarketShow(false)
-  }
-
+  useEffect(()=>{
+    FetchRankingLevel(0)
+  },[])
   return (
     <MarketWrap>
       <div className="tab">
