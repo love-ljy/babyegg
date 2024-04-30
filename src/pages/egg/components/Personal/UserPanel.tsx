@@ -414,6 +414,7 @@ const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
   const [orderId,setOrderId] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [userReward,setUserReward] = useState<any>([])
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
   const [eggType, setEggType] = useState('')
@@ -547,7 +548,7 @@ const { t } = useTranslation('common')
 
 const fecthUserRewardInfo = async()=>{
    try {
-    const array = Array.from({ length: 8 }, (_, index) => index);
+    const array =[-1,0,4,5,6,7,8,9];
     const resolve =  array.map(async(e)=>{
       const res :any= await getIncomeReceiveNumber(e)
       if(res.code===0){
@@ -558,6 +559,7 @@ const fecthUserRewardInfo = async()=>{
       
     })
       const res = await Promise.all(resolve)
+      setUserReward(res?.flat())
       console.info(res.flat())
    } catch (error) {
     
@@ -680,7 +682,7 @@ const fecthUserRewardInfo = async()=>{
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>10,000.00</span>
+            <span>{userReward[0]?.number}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -690,7 +692,7 @@ const fecthUserRewardInfo = async()=>{
               <span>{t('Public Seq Earnings')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[1]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -699,7 +701,7 @@ const fecthUserRewardInfo = async()=>{
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[2]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -710,7 +712,7 @@ const fecthUserRewardInfo = async()=>{
               <span>Last 100 Reward</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[3]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -719,7 +721,7 @@ const fecthUserRewardInfo = async()=>{
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[4]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -729,7 +731,7 @@ const fecthUserRewardInfo = async()=>{
             <span>{t('Egg Rank Reward')}</span>
           </div>
           <div className="bot">
-            <span>10,000.00</span>
+            <span>{userReward[5]?.number}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -739,7 +741,7 @@ const fecthUserRewardInfo = async()=>{
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[6]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -748,7 +750,7 @@ const fecthUserRewardInfo = async()=>{
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>10,000.00</span>
+              <span>{userReward[7]?.number}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -786,7 +788,7 @@ const fecthUserRewardInfo = async()=>{
               </div>
               <div className="mid">
                 <div className="box">
-                  <span>10,000.00</span>
+                  <span>{userReward[0]?.number}</span>
                   <EggTokenIcon />
                 </div>
                 <span className="equ">=</span>
