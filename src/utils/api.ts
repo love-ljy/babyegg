@@ -34,11 +34,10 @@ const getUserHadParent = async (params: CheckUser) => {
   })
 }
 // 获取龙蛋排名
-const getUserRanking = async (params: PageInfo) => {
+const getUserRanking = async () => {
   return request({
     url: '/api/user/ranking',
     method: 'get',
-    params,
   })
 }
 // 获取龙蛋倒计时 /api/dragonegg/gameinfo

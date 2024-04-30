@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
-import markitipPng from '@imgs/markitip.png'
+import {Typography} from '@mui/material'
 import {getState} from '@store/index'
 import rankBgPng from '@imgs/rankBg.png'
 import CommonTab from '../commonTab/commonTab'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
+import VIP4 from '@imgs/3000.png'
 
 const MarketWrap = styled.div`
   .top {
@@ -182,6 +183,16 @@ const Column = styled.div`
     text-align: center;
   }
 `
+const MyRank = styled.div`
+opacity: 1;
+background: rgba(22, 34, 54, 1);
+display: flex;
+justify-content: space-between;
+align-items: center;
+border-radius: 3px;
+padding: 15px 15px 15px 15px;
+margin:20px 0%;
+`
 
 const Source = styled.div`
   width: 100%;
@@ -222,15 +233,21 @@ const SourceItem = styled.div`
     text-align: center;
   }
 `
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+`
 
 interface Props {
   dataSource: any[]
+  myRank:{my_egg:string,my_ranking:string}
 }
 
 const Rank = (props: Props) => {
     // @ts-ignore
 const { t } = useTranslation('common')
-  const { dataSource = [] } = props
+  const { dataSource = [],myRank } = props
   const userInfo = getState('user').userInfo
   return (
     <MarketWrap>
@@ -286,6 +303,20 @@ const { t } = useTranslation('common')
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
+        <MyRank>
+        <Flex>
+          <Image width={60} src={VIP4} alt="rank" />
+          <div>
+            <Typography fontSize="12px">您的排位</Typography>
+            <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">育龙宗师</Typography>
+            <Typography fontSize="12px">龙蛋数额{myRank?.my_egg}</Typography>
+          </div>
+        </Flex>
+      <Flex>
+      <Typography fontSize="12px">NO</Typography>
+      <Typography fontWeight="bold" fontSize="44px">{myRank?.my_ranking}</Typography>
+      </Flex>
+        </MyRank>
         <div>
           <div>{t('Loong Egg Rank')}</div>
         </div>

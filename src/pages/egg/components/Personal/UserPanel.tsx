@@ -409,6 +409,7 @@ const { t } = useTranslation('common')
   ]
 
   const [loading, setLoading] = useState(false)
+  const [orderId,setOrderId] = useState(0)
   const [progress, setProgress] = useState(0)
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
@@ -421,16 +422,6 @@ const { t } = useTranslation('common')
   const walletInfo: any = useSelector(selectWalletInfo)
   const isBindParent: any = useSelector(selectIsBindParent)
   const [eggVisible, setEggVisible] = useState(false)
-const {
-    data: hash,
-    isPending,
-    error,
-    writeContractAsync,
-  } = useWriteContract({
-    mutation: {
-      onError: (error: Error) => onError(error),
-    },
-  })
   const onError = (error: any) => {
     setLoading(false)
   }
@@ -500,9 +491,8 @@ const {
     if (eggType === 'open') {
       try {
         const res: any = await openEgg({
-         ...passParams
+         password:passParams.password
         })
-        console.log('res')
         if (res.code === 0) {
           setPassVisible(false)
           setEggVisible(false)
@@ -518,8 +508,8 @@ const {
     } else {
       try {
         const res: any = await eggIncomeReinvestment({
-          id: '',
-          password: passParams.pass,
+          id: orderId,
+          password: passParams.password,
         })
         console.log('res')
         if (res.code === 0) {
@@ -540,8 +530,8 @@ const {
   const handleEggConfirm = async () => {
     if (userInfo.pay_password) {
       setEggLoading(true)
-      await handleOpenEgg({})
-      setEggLoading(false)
+      setPassVisible(true)
+      // setEggLoading(false)
     } else {
       setEggVisible(false)
       setPassVisible(true)
@@ -563,49 +553,12 @@ const {
   // 设置密码，先调用扣币接口获取签名，然后拿到签名跟合约交互后，调用orderstatus接口轮询倒计时，拿到status成功后，调用updateuserInfo接口，然后再调用获取用户信息接口看看是否设置成功
 
 
-  const createEggOrder = async(type:number,id?:number,number?:number)=>{
-    try {
-      if(type===1){
-        const res: any = await createOrder({
-          type:type
-        })
-        if(res.code===0){
-          return res.data
-        }
-      }else{
-        const res: any = await createOrder({
-          type:type,
-          id:id,
-          number:number
-        })
-        if(res.code===0){
-          return res.data
-        }
-      }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
+  const passOK = async (passParams:any) => {
+    setPassVisible(false)
+    const {id,password} = passParams
+    if(id){
+      setOrderId(id)
     }
-  }
-
-  const passOK = async (passParams) => {
-    const res = await createEggOrder(1);
-    if(res){
-      const {r,v,s,id,type,amount,coin_token,sign_out_time} = res
-      const bigAmount = getDecimalAmount(amount,18)
-      console.info({
-        coin_token,bigAmount,type,id,sign_out_time,v,r,s
-      })
-      await writeContractAsync({
-        address: BurnContractAddr,
-        abi: burnABI,
-        functionName: 'deposit',
-        args: [coin_token,bigAmount,type,id,sign_out_time,v,r,s],
-      })
-    }
-  
-    console.info(hash)
-     await updateUserInfo(passParams)
     await handleOpenEgg(passParams)
   }
 
@@ -787,7 +740,7 @@ const {
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
-      <PasswordModal visible={passVisible} type={userInfo.pay_password ? 'input' : 'set'} onClose={() => setPassVisible(false)} setVisible={setPassVisible} onOk={passOK} />
+      <PasswordModal visible={passVisible} type={userInfo.pay_password ? 'setpass' : 'inputpass'} onClose={() => setPassVisible(false)} setVisible={setPassVisible} onOk={passOK} />
       <CommonModal visible={eggVisible} setVisible={setEggVisible} footer={<span></span>}>
         <ModalMain>
           {eggType === 'open' ? (

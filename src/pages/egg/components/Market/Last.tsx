@@ -2,6 +2,8 @@ import styled from '@emotion/styled'
 import CommonPage from '../commonPage/commonPage'
 import { Box } from '@mui/material'
 import { useTranslation } from 'next-i18next'
+import {getLast100} from '@utils/api'
+import { useEffect,useState } from 'react'
 
 const LastWrap = styled.div`
   display: flex;
@@ -73,6 +75,16 @@ interface Props {
 const Last = (props: Props) => {
       // @ts-ignore
       const { t } = useTranslation('common')
+      const[list,setList] = useState([])
+      const fetchLast100 = async()=>{
+        const res:any = await getLast100({page:1,limit:100})
+        if(res.code===0){
+          setList(res.data)
+        }
+      }
+      useEffect(()=>{
+        fetchLast100
+      },[])
   const { dataSource = [] } = props
   return (
     <LastWrap>
@@ -86,8 +98,8 @@ const Last = (props: Props) => {
           <div>{t('Address')}</div>
         </Column>
         <Source>
-          {dataSource.length ? (
-            dataSource.map((item: any) => {
+          {list.length ? (
+            list.map((item: any) => {
               return (
                 <SourceItem>
                   <div className="No">{item.no}</div>
@@ -100,7 +112,7 @@ const Last = (props: Props) => {
           )}
         </Source>
       </div>
-      <Box mt={2}>{dataSource.length ? <CommonPage /> : null}</Box>
+      <Box mt={2}>{list.length ? <CommonPage /> : null}</Box>
     </LastWrap>
   )
 }

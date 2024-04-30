@@ -8,6 +8,13 @@ import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
+import useAllowance from '@hooks/useAllowance'
+import { BabyToken, BurnContractAddr } from '@config/contants'
+import { useReadContract, useWriteContract } from 'wagmi'
+import { updateUserInfo,getOrderStatus, createOrder } from '@utils/api'
+import burnABI from '@config/abi/burnToken.json'
+import { getDecimalAmount } from '@utils/formatterBalance'
+import Countdown from 'react-countdown';
 
 const ModalMain = styled.div`
   width: 260px;
@@ -101,13 +108,34 @@ interface Props { }
 const PasswordModal = (props: any) => {
   // @ts-ignore
   const { t } = useTranslation('common')
+  const { allowSpendingTokens, allowance } = useAllowance(BabyToken, BurnContractAddr)
   const { visible, setVisible, onOk, onClose, type } = props
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showRepeatPass, setShowRepeatPass] = useState(false)
   const [pass, setPass] = useState('')
+  const [orderId,setOrderId] = useState(0)
   const [repeatPass, setRepeatPass] = useState('')
+  const [status,setStatus] = useState(0)
+  const [expirationTime,setExpirationTime] = useState(0)
+  const {
+    data: hash,
+    isPending,
+    error,
+    writeContractAsync,
+  } = useWriteContract({
+    mutation: {
+      onError: (error: Error) => onError(error),
+      onSuccess: () => {
+        PollFetchStatus()
+      }
+    },
+  })
 
+  const onError = (error: Error) => {
+    toast.error(error.message)
+    setLoading(false)
+  }
   const handleClick = async () => {
     if (pass !== repeatPass && type !== 'input') {
       toast.warn('密码不一致，请重新输入')
@@ -144,12 +172,87 @@ const PasswordModal = (props: any) => {
   const handleClickShowPassword = () => setShowPass(show => !show)
 
   const handleClickShowRepeatPassword = () => setShowRepeatPass(show => !show)
+  const HandlerApprove = async () => {
+    setLoading(true)
+    await allowSpendingTokens()
+    setLoading(false)
+  }
+ 
+  
+  const PollFetchStatus = async()=>{
+    const poll = async() => {
+    if (Date.now() >= expirationTime*1000||status===1) {
+      clearInterval(pollingInterval);
+      return;
+    }
+    const res:any = await getOrderStatus({id:orderId})
+    if(res.code===0){
+      const {state,expire_time} = res.data
+      setExpirationTime(expire_time)
+      setStatus(state)
+      if(Number(state)===1){
+        clearInterval(pollingInterval);
+        const result:any = await updateUserInfo({
+          pay_password:pass,
+          pay_password_v:repeatPass
+        })
+        toast.success('密码设置成功')
+        setLoading(false)
+        if(result.code===0){
+          onOk && onOk({
+            id:orderId,
+            password:pass
+          })
+        }
+      }
+    }}
+    const pollingInterval = setInterval(poll, 10000);
+    poll(); // 立即执行一次
+  
+    return () => clearInterval(pollingInterval); 
+  }
+  
+  const HandleSetPassword = async () => {
+    if (pass !== repeatPass && type !== 'setpass') {
+      toast.warn('密码不一致，请重新输入')
+      return
+    }
+    setLoading(true)
+    if (type === 'setpass') {
+      onOk && onOk({id:0,password:pass})
+    } else {
+      const res: any = await createOrder({
+        type: 1
+      })
+      if (res.code === 0) {
+        console.info(res)
+        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
+        const bigAmount = getDecimalAmount(amount, 18)
+        setExpirationTime(sign_out_time)
+        setOrderId(id)
+        console.info({
+          coin_token, bigAmount, type, id, sign_out_time, v, r, s
+        })
+        await writeContractAsync({
+          address: BurnContractAddr,
+          abi: burnABI,
+          functionName: 'deposit',
+          args: [coin_token, bigAmount, type, id, sign_out_time, v, r, s],
+        })
 
+       
+      }else{
+        
+      }
+    }
+
+  }
   return (
     <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
 
       <ModalMain>
-        <Typography>{type === 'input' ? '打开龙蛋需要输入密码' : '打开龙蛋需要先设置密码'}</Typography>
+        <Typography>{type === 'setpass' ? '打开龙蛋需要输入密码' : '打开龙蛋需要先设置密码'}</Typography>
+        {expirationTime>0&&status===0&&<Countdown date={expirationTime*1000} />}
         <div className="title">密码</div>
         <CountInput
           type={showPass ? 'text' : 'password'}
@@ -186,7 +289,7 @@ const PasswordModal = (props: any) => {
             ),
           }}
         />
-        {type !== 'input' && (
+        {type !== 'setpass' && (
           <div>
             <div className="title">确认密码</div>
             <CountInput
@@ -225,11 +328,14 @@ const PasswordModal = (props: any) => {
             />
           </div>
         )}
-        {type !== 'input' && <Typography fontSize="12px" textAlign="left" >设置支付密码前需要支付 1 $babylong</Typography>}
+        {type !== 'setpass' && <Typography fontSize="12px" textAlign="left" >设置支付密码前需要支付 1 $babylong</Typography>}
         <BtnWrap>
-          <BuyBtn className="confirm" isCancel={loading} disabled={loading} onClick={handleClick}>
+          {Number(allowance) > 0 ? <BuyBtn className="confirm" isCancel={loading} disabled={loading} onClick={HandleSetPassword}>
             {loading ? 'Loading...' : '确定'}
-          </BuyBtn>
+          </BuyBtn> : <BuyBtn className="confirm" isCancel={loading} disabled={loading} onClick={HandlerApprove}>
+            {loading ? 'Loading...' : 'Approve'}
+          </BuyBtn>}
+
           <BuyBtn onClick={handleClose}>{'取消'}</BuyBtn>
         </BtnWrap>
       </ModalMain>

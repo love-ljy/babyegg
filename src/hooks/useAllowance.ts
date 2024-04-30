@@ -7,7 +7,6 @@ const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`) => {
   const { address, chainId } = useAccount()
 
   const enabled = Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS)
-
   const {
     data: allowance,
     isLoading: isAllowanceLoading,
@@ -22,6 +21,7 @@ const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`) => {
       enabled,
     },
   })
+
 
   const { isLoading: isAllowing, onSubmitTransaction: allowSpendingTokens } = useSubmitTransaction(
     {

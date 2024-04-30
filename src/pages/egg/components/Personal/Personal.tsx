@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
 import { Box } from '@mui/material'
@@ -10,6 +10,7 @@ import Withdraw from './Withdraw'
 import Rank from './Rank'
 import WeekMonth from './WeekMonth'
 import { useTranslation } from 'next-i18next'
+import {getUserRanking} from '@utils/api'
 
 const MarketWrap = styled.div`
   .top {
@@ -67,11 +68,14 @@ const tabList: tabItem[] = [
     component: <Withdraw />,
   },
 ]
+interface MYRANK
+  {my_egg:string,my_ranking:string}
 
 const Personal = () => {
   // @ts-ignore
 const { t } = useTranslation('common')
   const [loading, setLoading] = useState(false)
+  const [myRank,setMyRank] = useState<MYRANK>()
   const [dataSource, setDataSource] = useState([
     // {
     //   no: 100,
@@ -80,6 +84,16 @@ const { t } = useTranslation('common')
     //   time: '12 hours ago',
     // },
   ])
+
+  const fetchEggRanking = async()=>{
+    setLoading(true)
+    const res:any =  await getUserRanking()
+    if(res.code===0){
+      setDataSource(res.data.list)
+      setMyRank({my_egg:res.data.my_egg,my_ranking:res.data.my_ranking})
+    }
+  }
+  
 
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
     if (loading) return
@@ -100,6 +114,9 @@ const { t } = useTranslation('common')
     // }
     // setRankTitle(selectList[i].label);
   }
+  useEffect(()=>{
+    fetchEggRanking()
+  },[])
 
   return (
     <MarketWrap>
@@ -117,7 +134,7 @@ const { t } = useTranslation('common')
           selectedColor={'rgba(50, 32, 208, 1)'}
         />
       </div>
-      <Rank dataSource={dataSource} />
+      <Rank myRank={myRank} dataSource={dataSource} />
       <Box mt={2}>
         <WeekMonth />
       </Box>
