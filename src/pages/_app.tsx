@@ -13,6 +13,7 @@ import createEmotionCache from '../createEmotionCache'
 import { config } from '../wagmi/wagmi'
 import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import { appWithTranslation } from 'next-i18next'
+import nextI18NextConfig from '../../next-i18next.config.js'
 import Layout from '../components/Layout'
 import { ToastContainer } from 'react-toastify'
 import store from '@store/index'
@@ -61,4 +62,4 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   )
 }
 
-export default appWithTranslation(MyApp) ;
+export default appWithTranslation(MyApp,nextI18NextConfig) ;

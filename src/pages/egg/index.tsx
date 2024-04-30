@@ -22,6 +22,9 @@ import md5 from 'md5'
 import useBind2 from '@hooks/useBind2'
 import { useTranslation } from 'next-i18next'
 import useGetBalance from '@hooks/useGetBalance'
+import  {serverSideTranslations} from 'next-i18next/serverSideTranslations'
+
+import nextI18NextConfig from '../../../next-i18next.config.js'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -271,3 +274,13 @@ function LongEgg() {
 }
 
 export default LongEgg
+
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(
+      locale,
+      ['common'],
+      nextI18NextConfig
+    )),
+  },
+})
