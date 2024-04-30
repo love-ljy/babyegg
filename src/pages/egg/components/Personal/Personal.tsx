@@ -105,12 +105,7 @@ const { t } = useTranslation('common')
     } 
   }
 
-  const FetchRankingLevel = async() => {
-    const res:any = await getRankingLevel()
-    if(res.code===0){
 
-    }
-    }
 
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
     if (loading) return
@@ -133,7 +128,6 @@ const { t } = useTranslation('common')
   }
   useEffect(()=>{
     fetchEggRanking()
-    FetchRankingLevel()
   },[])
 
   return (
