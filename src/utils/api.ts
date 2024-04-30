@@ -158,6 +158,14 @@ const getIncomeReceiveNumber = async (type:number) => {
   })
 }
 
+// 获取用户7层 /api/user/infoByTeam
+const queryUserInfoByTeam = async () => {
+  return request({
+    url: '/api/user/infoByTeam',
+    method: 'get',
+  })
+}
+
 export {
   getUserInfo,
   submitUserLogin,
@@ -177,5 +185,6 @@ export {
   getOrderStatus,
   getLast100,
   getRealTimeTraffic,
-  getIncomeReceiveNumber
+  getIncomeReceiveNumber,
+  queryUserInfoByTeam
 }

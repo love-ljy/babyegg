@@ -78,12 +78,13 @@ const { t } = useTranslation('common')
   const toHistory = () => {
     router.push('invite')
   }
-
+  const isDev = process.env.NODE_ENV === 'development'
+  const invateLink = isDev?"https://test.web.babyloong.org/":window.location.href
   return (
     <InvitationWrap>
       <div className="title">{t('Your Invitation Link')}</div>
       <Copy>
-        <span className="text">www.babyloongworld.com/2fw718sfg</span>
+        <span className="text">{`${invateLink}?inviter=${userInfo?.invite}`}</span>
         <CopyIcon />
       </Copy>
       <CommonRow>
@@ -91,7 +92,7 @@ const { t } = useTranslation('common')
           <span>{t('Current Number of Your Valid Referral Addresses')}</span>
         </div>
         <div className="bot">
-          <span>10,000.00</span>
+          <span>{userInfo?.true_son_num||0}</span>
         </div>
       </CommonRow>
       <CommonRow>
