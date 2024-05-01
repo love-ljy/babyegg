@@ -4,8 +4,10 @@ import { getUserHadParent,submitUserLogin,getUserInfo } from '@utils/api'
 import { useConnect, useAccount } from 'wagmi'
 import md5 from 'md5'
 import { toast } from 'react-toastify'
-import {  setUserInfo } from '@store/user'
+import {  setUserInfo,setAuthToken,selectAuthToken } from '@store/user'
+import { useSelector } from 'react-redux'
 import { dispatch } from '@store/index'
+
 
 let globalToken: string | null = null;  // 添加一个全局变量来存储 token
 
@@ -18,7 +20,7 @@ type AuthContextType = {
     setToken: (token: string | null) => void;
     isAuthenticated: boolean;
   };
-const GetInvateContext = React.createContext<AuthContextType>({token:'' ,userParent: '', setToken: () => { },isAuthenticated:false })
+const GetInvateContext = React.createContext<AuthContextType>({token:'' ,userParent: '', setToken: (token) => { globalToken=token},isAuthenticated:false })
 
 
 interface Props {
@@ -27,6 +29,7 @@ interface Props {
 
 const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const [inviteCode, setInviteCode] = useState<any>('BABYLONG')
+    const authToken = useSelector(selectAuthToken)
     const [token, setToken] = useState<string | null>(globalToken);
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
@@ -59,6 +62,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             
             setToken(res.data.Token)
             globalToken = res.data.Token; 
+            dispatch(setAuthToken(res.data.Token))
             window.localStorage.setItem('token', res.data.Token || '');
             dispatch(setUserInfo({ token: res.data.Token, }))
             await  fetchLoginUserInfo()
@@ -72,11 +76,9 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
       }, [address,token])
       useEffect(() => {
         const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-          setToken(storedToken);
+        setToken(authToken?authToken:storedToken);
           globalToken = storedToken;
-        }
-      }, []);
+      }, [token,authToken]);
 
       const isAuthenticated = token !== null;
 

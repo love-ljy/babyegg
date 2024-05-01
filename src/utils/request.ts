@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { getToken } from '../contexts/GetInvateContext';
+
 // create an axios instance
 const service = axios.create({
   baseURL: '', // url = base url + request url
