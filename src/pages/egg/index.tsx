@@ -25,6 +25,7 @@ import { useTranslation } from 'next-i18next'
 import useGetBalance from '@hooks/useGetBalance'
 import  {serverSideTranslations} from 'next-i18next/serverSideTranslations'
 import {setAuthToken} from '@utils/request'
+import { formatUnits } from 'viem'
 import nextI18NextConfig from '../../../next-i18next.config.js'
 
 const LongEggWrap = styled.div`
@@ -105,13 +106,15 @@ function LongEgg() {
 
   const { userBalance } = useGetBalance()
 
-  const { bindParent, isLoading } = useBind2({
+  const {
+    estimatedGas: bindEstimatedGas,
+    bindParent,
+    isLoading,
+  } = useBind2({
     args: [bindAddress],
-    actualMoney: 0,
     onSuccess() {
       toast.success('绑定上级成功')
       login(inviteCode)
-      userBalance.refetch()
     },
     onError(error, rawError) {
       console.log('rawError', rawError)
@@ -122,7 +125,6 @@ function LongEgg() {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBindAddress(event.target.value)
   }
-
 
 
   const fetchUserInfo = async () => {
@@ -164,6 +166,17 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
+    const estimatedGasInFloat = bindEstimatedGas
+      ? parseFloat(formatUnits(bindEstimatedGas, walletInfo?.decimals))
+      : null
+    if (!estimatedGasInFloat) {
+      toast.warn("Couldn't estimate gas")
+      return
+    }
+    if (0 + estimatedGasInFloat > walletInfo?.balance) {
+      toast.warn('Insufficient balance for gas')
+      return
+    }
     bindParent()
   }
 
@@ -207,14 +220,13 @@ function LongEgg() {
   }, [walletInfo?.address])
 
   const LongHeader = () => {
-    const timer = gameInfo?.end_time?new Date(gameInfo.end_time):null
+    const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null
     return (
       <LongEggWrap>
-       
-       <Typography fontWeight={700} fontSize={25}>
-      {gameEnd ? t('Waiting for the next round to start') : t('Countdown')}
-      {timer &&<CountDown initialTimeInSeconds={timer} />}
-    </Typography>
+        <Typography fontWeight={700} fontSize={25}>
+          {gameEnd ? t('Waiting for the next round to start') : t('Countdown')}
+          {timer && <CountDown initialTimeInSeconds={timer} />}
+        </Typography>
         <Box mt={2}>
           <Participation allNet={allNet} />
         </Box>
@@ -250,10 +262,6 @@ export default LongEgg
 
 export const getStaticProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(
-      locale,
-      ['common'],
-      nextI18NextConfig
-    )),
+    ...(await serverSideTranslations(locale, ['common'], nextI18NextConfig)),
   },
 })

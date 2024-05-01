@@ -6,10 +6,9 @@ interface Props {
   args: any[]
   onSuccess: () => void
   onError: (error, rawError) => void
-  actualMoney?: number
 }
 
-const useBind2 = ({ args, onSuccess, onError, actualMoney = 0 }: Props) => {
+const useBind2 = ({ args, onSuccess, onError }: Props) => {
   const contractCallParams = {
     abi: eggAbi,
     address: MainContractAddr,
@@ -19,7 +18,6 @@ const useBind2 = ({ args, onSuccess, onError, actualMoney = 0 }: Props) => {
 
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(
     contractCallParams,
-    actualMoney,
     {
       onError,
       onSuccess,

@@ -1,27 +1,23 @@
 import useSubmitTransaction from './useSubmitTransaction'
-import eggAbi from '../config/abi/eggAbi.json'
-import { MainContractAddr } from '../config/contants'
+import burnTokenAbi from '../config/abi/burnToken.json'
+import { BurnContractAddr } from '../config/contants'
 
 interface Props {
-  value: bigint
-  args: any[]
+  args?: any[]
   onSuccess: () => void
   onError: (error, rawError) => void
-  actualMoney?: number
 }
 
-const useBalanceInvest = ({ value, args, onSuccess, onError, actualMoney = 0 }: Props) => {
+const useBalanceInvest = ({ args = [], onSuccess, onError }: Props) => {
   const contractCallParams = {
-    abi: eggAbi,
-    address: MainContractAddr,
-    functionName: 'bind',
-    args: [...args],
-    value
+    abi: burnTokenAbi,
+    address: BurnContractAddr,
+    functionName: 'deposit',
+    args,
   } as const
 
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(
     contractCallParams,
-    actualMoney,
     {
       onError,
       onSuccess,

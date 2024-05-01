@@ -19,17 +19,17 @@ import { useSelector } from 'react-redux'
 import { selectWalletInfo, selectUserInfo, selectIsBindParent, selectGamingId } from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
-import { getCoin, eggIncomeReinvestment, getOrderStatus, buyEgg, updateUserInfo } from '@utils/api'
+import {
+  getCoin,
+  eggIncomeReinvestment,
+  createOrder,
+} from '@utils/api'
 import useStake from '@hooks/useStake'
 import { useTranslation } from 'next-i18next'
 import { formatUnits } from 'viem'
 import useGetBalance from '@hooks/useGetBalance'
-import useBalanceInvest from '@hooks/useBalanceInvest'
 import useBabyLong from '@hooks/useBabyLong'
 import { getDecimalAmount } from '@utils/formatterBalance'
-import { useWriteContract } from 'wagmi'
-import burnTokenAbi from '@config/abi/burnToken.json'
-import { BurnContractAddr } from '@config/contants'
 
 const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
@@ -101,11 +101,13 @@ const BuyEggWrap = styled.div`
     }
   }
 `
+
 const AdornmentWrap = styled.div`
   display: flex;
   align-items: center;
   width: 140px;
 `
+
 const BuyNumStep = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -173,6 +175,7 @@ const CongContent = styled.div`
     }
   }
 `
+
 const DialogFooter = styled.div`
   width: 250px;
   height: 40px;
@@ -233,7 +236,6 @@ const BuyEgg = () => {
   const [firstBuyVisible, setFirstBuyVisible] = useState(false)
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
-  const [timer, setTimer] = useState<any>(null)
   const [babyArgs, setBabyArgs] = useState<any>([])
 
   const isBindParent: any = useSelector(selectIsBindParent)
@@ -242,71 +244,39 @@ const BuyEgg = () => {
   const gamingId: any = useSelector(selectGamingId)
 
   const { userBalance } = useGetBalance()
-  const { handleStake, isLoading } = useStake({
+
+  const {
+    estimatedGas: stakeEstimatedGas,
+    handleStake,
+    isLoading: stakeLoading,
+  } = useStake({
     value: BigInt(buyNum * 1e13),
-    actualMoney: +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals),
     onSuccess() {
       toast.success('下单成功')
       userBalance.refetch()
     },
     onError(error, rawError) {
-      console.log('rawError', rawError)
+      console.log('stake error', rawError)
       toast.warn('下单失败')
       setLoading(false)
     },
-  })
-
-  const { orderCreate, isLoading: orderLoading } = useBalanceInvest({
-    value: BigInt(1 * 1e13),
-    actualMoney: +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals),
-    onSuccess() {
-      fetchOrderStatus()
-    },
-    onError(error, rawError) {
-      console.log('rawError', rawError)
-      toast.warn('下单失败')
-    },
-    args: [],
-  })
-
-  const { orderBabyLong, isLoading: babyLoading } = useBabyLong({
-    actualMoney: +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals),
-    onSuccess() {
-      if(coinType === '2' && !userInfo.pay_password){
-        fetchOrderStatus()
-      } else {
-        toast.success('下单成功')
-        userBalance.refetch()
-      }
-    },
-    onError(error, rawError) {
-      console.log('rawError', rawError)
-      toast.warn('下单失败')
-      setLoading(false)
-    },
-    args:babyArgs
   })
 
   const {
-    data: hash,
-    isPending,
-    error,
-    writeContractAsync,
-  } = useWriteContract({
-    mutation: {
-      onSuccess: () => {
-        fetchOrderStatus()
-      }
+    estimatedGas: babyLongEstimatedGas,
+    orderBabyLong,
+    isLoading: babyLoading,
+  } = useBabyLong({
+    onSuccess() {
+      toast.success('下单成功')
+      userBalance.refetch()
     },
+    onError(error, rawError) {
+      console.log('babyLong rawError', rawError)
+      toast.warn('下单失败')
+    },
+    args: babyArgs,
   })
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBuyNum(Number(event.target.value))
-  }
-
-  const selectChange = (option: any) => {
-    setCoinType(option.value)
-  }
 
   const handleBuy = async () => {
     if (!walletInfo) {
@@ -323,35 +293,65 @@ const BuyEgg = () => {
       }
     }
     if (coinType === '1') {
-      // babyloong
+      // babyLong
       handleBabyLong()
     }
-
     if (coinType === '0') {
       // matic
-      handleStake()
+      handleMatic()
     }
+  }
+
+  const handleMatic = () => {
+    const estimatedGasInFloat = stakeEstimatedGas
+      ? parseFloat(formatUnits(stakeEstimatedGas, walletInfo?.decimals))
+      : null
+    if (!estimatedGasInFloat) {
+      toast.warn("Couldn't estimate gas")
+      return
+    }
+    if (
+      +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals) + estimatedGasInFloat >
+      walletInfo?.balance
+    ) {
+      toast.warn('Insufficient balance for gas')
+      return
+    }
+    handleStake()
   }
 
   const handleBabyLong = async () => {
     setLoading(true)
     try {
-      const res: any = await buyEgg({
+      const res: any = await createOrder({
         type: 0,
-        number:buyNum,
-        id: gamingId
+        number: buyNum,
+        id: gamingId,
       })
       if (res.code === 0) {
         const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
         const bigAmount = getDecimalAmount(amount, 18)
         setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
-        // orderBabyLong()
-        // await writeContractAsync({
-        //   address: BurnContractAddr,
-        //   abi: burnTokenAbi,
-        //   functionName: 'deposit',
-        //   args: [coin_token, bigAmount, type, id, sign_out_time, v, r, s],
-        // })
+        setTimeout(() => {
+          console.log('handleBabyLong, babyLongEstimatedGas', babyLongEstimatedGas)
+          const estimatedGasInFloat = babyLongEstimatedGas
+            ? parseFloat(formatUnits(babyLongEstimatedGas, walletInfo?.decimals))
+            : null
+          if (!estimatedGasInFloat) {
+            toast.warn("Couldn't estimate gas")
+            setLoading(false)
+            return
+          }
+          if (
+            +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals) + estimatedGasInFloat >
+            walletInfo?.balance
+          ) {
+            toast.warn('Insufficient balance for gas')
+            setLoading(false)
+            return
+          }
+          orderBabyLong()
+        }, 200)
       } else {
         toast.warn(res.msg)
       }
@@ -369,60 +369,16 @@ const BuyEgg = () => {
     setDescShow(true)
   }
 
-  const fetchOrderStatus = async () => {
-    const t = setInterval(async () => {
-      try {
-        const res: any = await getOrderStatus({
-          id: '',
-        })
-        if (res.code === 0) {
-          if (res.data.state === 1) {
-            setPassVisible(true)
-            setTimer(null)
-          }
-        } else {
-          toast.error('查询订单状态失败')
-          setTimer(null)
-          clearInterval(timer)
-        }
-      } catch (e) {
-        console.log('order status', e)
-        toast.error('查询订单状态失败')
-        setTimer(null)
-        clearInterval(timer)
-      }
-    }, 500)
-    setTimer(t)
-  }
-
-  const handleBuyEgg = async params => {
-    setLoading(true)
-    try {
-      const res: any = await buyEgg(params)
-      console.log('res')
-      if (res.code === 0) {
-        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
-        const bigAmount = getDecimalAmount(amount, 18)
-        setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
-        orderBabyLong([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
-      } else {
-        toast.warn(res.msg)
-      }
-    } catch (e) {
-      console.log('e', e)
-      setLoading(false)
-      toast.warn('网络错误')
-    }
-  }
-
   const passOK = async passParams => {
-    const res: any = await updateUserInfo({
-      pay_password: passParams.pass,
-      pay_password_v: passParams.repeatPass,
-    })
-    if (res.code === 0) {
-      handleReinvestment(passParams)
-    }
+    handleReinvestment(passParams)
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBuyNum(Number(event.target.value))
+  }
+
+  const selectChange = (option: any) => {
+    setCoinType(option.value)
   }
 
   const handleReinvestment = async passParams => {
@@ -447,15 +403,10 @@ const BuyEgg = () => {
     }
   }
 
-  const inputPassOK = async passParams => {
-    handleReinvestment(passParams)
-  }
 
   const firstBuyClose = async () => {
     setFirstBuyVisible(false)
-    handleBuyEgg({
-      type: 1,
-    })
+    setPassVisible(true)
   }
 
   const fetCoin = useCallback(async () => {
@@ -531,11 +482,11 @@ const BuyEgg = () => {
         <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
       </div>
       <BuyBtn
-        iscancel={isLoading || loading || orderLoading || babyLoading}
-        disabled={isLoading || loading || orderLoading || babyLoading}
+        iscancel={stakeLoading || loading || babyLoading}
+        disabled={stakeLoading || loading || babyLoading}
         onClick={handleBuy}
       >
-        {isLoading || loading || orderLoading || babyLoading ? t('Loading...') : t('BUY')}
+        {stakeLoading || loading || babyLoading ? t('Loading...') : t('BUY')}
       </BuyBtn>
       <div className="detailed">
         <div>
@@ -594,12 +545,11 @@ const BuyEgg = () => {
           </div>
         </CongContent>
       </CommonModal>
-      <PasswordModal visible={passVisible} setVisible={setPassVisible} onOk={passOK} />
       <PasswordModal
-        visible={inputPassVisible}
-        setVisible={setInputPassVisible}
-        onOk={inputPassOK}
-        type={'input'}
+        visible={passVisible}
+        setVisible={setPassVisible}
+        onOk={passOK}
+        type={userInfo.pay_password ? 'setpass' : 'inputpass'}
       />
     </BuyEggWrap>
   )
