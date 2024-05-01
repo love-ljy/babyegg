@@ -84,7 +84,7 @@ const { t } = useTranslation('common')
   const isDev = process.env.NODE_ENV === 'development'
   const invateLink = isDev?"https://test.web.babyloong.org/":window.location.href
   const copyLink = () => {
-    copy(`${invateLink}?inviter=${userInfo?.invite}`)
+    copy(`${invateLink}?invite=${userInfo?.invite}`)
     toast.success('复制成功')
   }
   return (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback,useContext } from 'react'
 import { Typography, Box, TextField, Button } from '@mui/material'
 import styled from '@emotion/styled'
 import CountDown from './components/countDown/countDown'
@@ -20,6 +20,7 @@ import { dispatch } from '@store/index'
 import { toast } from 'react-toastify'
 import md5 from 'md5'
 import useBind2 from '@hooks/useBind2'
+import {GetInvateContext} from '../../contexts/GetInvateContext'
 import { useTranslation } from 'next-i18next'
 import useGetBalance from '@hooks/useGetBalance'
 import  {serverSideTranslations} from 'next-i18next/serverSideTranslations'
@@ -89,10 +90,10 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 `
 
 function LongEgg() {
-  // @ts-ignore
+  const { userParent } = useContext(GetInvateContext)
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
-  const [bindAddress, setBindAddress] = useState('')
+  const [bindAddress, setBindAddress] = useState(userParent||'')
   const [inviteCode, setInviteCode] = useState('')
   const [gameInfo, setGameInfo] = useState<any>({})
   const [gameEnd, setGameEnd] = useState(false)
@@ -122,32 +123,7 @@ function LongEgg() {
     setBindAddress(event.target.value)
   }
 
-  const fetchUserHadParent = useCallback(async () => {
-    try {
-      const res: any = await getUserHadParent({
-        username: walletInfo.address,
-        invite: router.query.invite,
-      })
-      if (res.code === 0) {
-        if (res.data.had_parent === 0) {
-          // 未绑定
-          setBindAddress(res.data.username)
-          setInviteCode(res.data.invite)
-          setVisible(true)
-          dispatch(setIsBindParent(false))
-        } else {
-          // 已绑定
-          setVisible(false)
-          login(res.data.invite)
-        }
-      } else {
-        toast.warn('网络错误')
-      }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
-    }
-  }, [walletInfo?.address])
+
 
   const fetchUserInfo = async () => {
     try {
@@ -227,11 +203,7 @@ function LongEgg() {
 
   useEffect(() => {
     fetchAllNetwork()
-    if (walletInfo?.address) {
-      fetchUserHadParent()
-    } else {
-      setVisible(false)
-    }
+    
   }, [walletInfo?.address])
 
   const LongHeader = () => {
