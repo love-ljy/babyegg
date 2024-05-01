@@ -220,6 +220,10 @@ function LongEgg() {
     }
     if(parentAddr==='0x0000000000000000000000000000000000000000'&&address){
       setVisible(true)
+      dispatch(setIsBindParent(false))
+    }else{
+      setVisible(false)
+      dispatch(setIsBindParent(true))
     }
     if(!userParent){
       setBindAddress("0x555893167ddE9aD866b18E7373C6368419Ce107c")

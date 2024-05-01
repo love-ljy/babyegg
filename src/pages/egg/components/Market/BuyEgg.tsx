@@ -16,7 +16,7 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectUserInfo, selectIsBindParent, selectGamingId } from '@store/user'
+import { selectWalletInfo,selectUserInfo, selectIsBindParent, selectGamingId } from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import {
@@ -433,10 +433,10 @@ const BuyEgg = () => {
   }, [])
 
   useEffect(() => {
-    if (walletInfo?.address && isBindParent) {
+    if (walletInfo?.address && isBindParent&&userInfo.id) {
       fetCoin()
     }
-  }, [walletInfo?.address, isBindParent])
+  }, [walletInfo?.address, isBindParent,userInfo])
 
   return (
     <BuyEggWrap>

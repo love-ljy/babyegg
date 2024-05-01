@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import Router, { useRouter } from 'next/router'
 import { getUserHadParent,submitUserLogin,getUserInfo } from '@utils/api'
 import { useConnect, useAccount } from 'wagmi'
@@ -32,8 +32,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const router = useRouter();
     const {invite:queryParam} = router.query;
     const { isConnected, address } = useAccount();
-    
-    const fetchUserParent = async () => {
+    const fetchUserParent = useCallback(async () => {
         try {
             const res:any = await getUserHadParent({username:address,invite:inviteCode})
             if (res.code === 0) {
@@ -45,8 +44,11 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             console.info(error)
             window.localStorage.setItem("invite", '');
         }
-    }
-    const userLogin = async (invite: string) => {
+    },[address,token])
+       
+
+    
+    const userLogin = useCallback(async (invite: string) => {
         try {
           const res: any = await submitUserLogin({
             password: md5(md5(address + 'babyloong') + 'babyloong'),
@@ -54,10 +56,12 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             invite,
           })
           if (res.code === 0) {
+            
             setToken(res.data.Token)
             globalToken = res.data.Token; 
             window.localStorage.setItem('token', res.data.Token || '');
             dispatch(setUserInfo({ token: res.data.Token, }))
+            await  fetchLoginUserInfo()
           } else {
             toast.warn('网络错误')
           }
@@ -65,7 +69,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
           console.log('e', e)
           toast.warn('网络错误')
         }
-      }
+      }, [address,token])
       useEffect(() => {
         const storedToken = localStorage.getItem('token');
         if (storedToken) {
@@ -91,7 +95,6 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
         }
         if(queryParam||address){
             userLogin(inviteCode)
-            fetchLoginUserInfo()
             fetchUserParent()
         }
         
