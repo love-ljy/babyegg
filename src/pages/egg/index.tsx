@@ -106,7 +106,6 @@ function LongEgg() {
   const walletInfo: any = useSelector(selectWalletInfo)
 
   const { parentAddr } = useGetBalance()
-  console.info(parentAddr,'parentAddr',bindAddress,userParent)
   const {
     estimatedGas: bindEstimatedGas,
     bindParent,
