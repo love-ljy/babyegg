@@ -56,7 +56,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
           if (res.code === 0) {
             setToken(res.data.Token)
             globalToken = res.data.Token; 
-            localStorage.setItem('token', res.data.Token || '');
+            window.localStorage.setItem('token', res.data.Token || '');
             dispatch(setUserInfo({ token: res.data.Token, }))
           } else {
             toast.warn('网络错误')
@@ -70,6 +70,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
         const storedToken = localStorage.getItem('token');
         if (storedToken) {
           setToken(storedToken);
+          globalToken = storedToken;
         }
       }, []);
 

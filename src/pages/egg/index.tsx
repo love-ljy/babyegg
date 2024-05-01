@@ -94,7 +94,7 @@ function LongEgg() {
   const { userParent,setToken } = useContext(GetInvateContext)
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
-  const [bindAddress, setBindAddress] = useState(userParent||'')
+  const [bindAddress, setBindAddress] = useState<any>(userParent||'')
   const [inviteCode, setInviteCode] = useState('')
   const [gameInfo, setGameInfo] = useState<any>({})
   const [gameEnd, setGameEnd] = useState(false)
@@ -218,9 +218,11 @@ function LongEgg() {
     if(address){
       fetchAllNetwork()
     }
-    console.info(address)
     if(parentAddr==='0x0000000000000000000000000000000000000000'&&address){
       setVisible(true)
+    }
+    if(!userParent){
+      setBindAddress("0x555893167ddE9aD866b18E7373C6368419Ce107c")
     }
     
   }, [address,userParent,parentAddr])
