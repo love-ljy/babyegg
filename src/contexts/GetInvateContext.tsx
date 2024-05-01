@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Router, { useRouter } from 'next/router'
-import { getUserHadParent } from '@utils/api'
+import { getUserHadParent,submitUserLogin } from '@utils/api'
 import { useBalance, useAccount } from 'wagmi'
+import md5 from 'md5'
+import { toast } from 'react-toastify'
+import {  setUserInfo } from '@store/user'
+import { dispatch } from '@store/index'
+import { setAuthToken } from '@utils/request'
 
 const GetInvateContext = React.createContext({ userParent: '', changeToken: (value: string) => { } })
 
@@ -13,7 +18,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const [invite, setInvite] = useState<any>()
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
-    const queryParam = router.query;
+    const {invite:queryParam} = router.query;
     const account = useAccount()
     const inviteCode = queryParam?.[0] || 'BABYLONG';
     const fetchUserParent = async () => {
@@ -37,17 +42,36 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             console.info(error)
             window.localStorage.setItem("invite", '');
         }
-
-
     }
-
+    const userLogin = async (invite: string) => {
+        try {
+          const res: any = await submitUserLogin({
+            password: md5(md5(account.address + 'babyloong') + 'babyloong'),
+            username: account.address||'',
+            invite,
+          })
+          if (res.code === 0) {
+            setAuthToken(res.data.Token)
+            localStorage.setItem('token', res.data.Token)
+            dispatch(setUserInfo({ token: res.data.Token }))
+          } else {
+            toast.warn('网络错误')
+          }
+        } catch (e) {
+          console.log('e', e)
+          toast.warn('网络错误')
+        }
+      }
 
     const changeToken = (value: string) => {
        
     }
       useEffect(()=>{
         if(account.address){
+            userLogin(inviteCode)
             fetchUserParent()
+        }else{
+            toast.warn('请链接钱包')
         }
 
       },[inviteCode,account.address])

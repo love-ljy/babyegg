@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-let authToken = null;
-export const setAuthToken = (token) => {
+let authToken = '';
+export const setAuthToken = (token:string) => {
   authToken = token;
 };
 
