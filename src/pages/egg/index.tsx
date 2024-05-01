@@ -5,6 +5,7 @@ import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
+import { useConnect, useAccount } from 'wagmi'
 import {
   getUserHadParent,
   submitUserLogin,
@@ -100,6 +101,7 @@ function LongEgg() {
   const [allNet, setAllNet] = useState<any>({})
   const [countDown, setCountDown] = useState<number>(0)
   const router = useRouter()
+  const {address} = useAccount()
 
   const walletInfo: any = useSelector(selectWalletInfo)
 
@@ -202,9 +204,12 @@ function LongEgg() {
   }
 
   useEffect(() => {
-    fetchAllNetwork()
+    if(address){
+      fetchAllNetwork()
+    }
     
-  }, [walletInfo?.address])
+    
+  }, [address])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time?new Date(gameInfo.end_time):null

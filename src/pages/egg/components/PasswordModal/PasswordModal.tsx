@@ -251,7 +251,7 @@ const PasswordModal = (props: any) => {
     <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
 
       <ModalMain>
-        <Typography>{type === 'setpass' ? '打开龙蛋需要输入密码' : '打开龙蛋需要先设置密码'}</Typography>
+        <Typography>{type === 'setpass' ? '打开龙蛋需要输入密码' : '升级龙蛋需要先设置密码'}</Typography>
         {expirationTime>0&&status===0&&<Countdown date={expirationTime*1000} />}
         <div className="title">密码</div>
         <CountInput

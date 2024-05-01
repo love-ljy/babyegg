@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Router, { useRouter } from 'next/router'
 import { getUserHadParent,submitUserLogin } from '@utils/api'
-import { useBalance, useAccount } from 'wagmi'
+import { useConnect, useAccount } from 'wagmi'
 import md5 from 'md5'
 import { toast } from 'react-toastify'
 import {  setUserInfo } from '@store/user'
@@ -19,13 +19,13 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
     const {invite:queryParam} = router.query;
-    const account = useAccount()
+    const { isConnected, address } = useAccount();
     const inviteCode = queryParam?.[0] || 'BABYLONG';
     const fetchUserParent = async () => {
         try {
             if (inviteCode) {
                 try {
-                  const res:any = await getUserHadParent({username:account.address,invite:inviteCode})
+                  const res:any = await getUserHadParent({username:address,invite:inviteCode})
                   if (res.code === 0) {
                     setUserParent(res.data.username)
                   }else{
@@ -46,8 +46,8 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const userLogin = async (invite: string) => {
         try {
           const res: any = await submitUserLogin({
-            password: md5(md5(account.address + 'babyloong') + 'babyloong'),
-            username: account.address||'',
+            password: md5(md5(address + 'babyloong') + 'babyloong'),
+            username: address||'',
             invite,
           })
           if (res.code === 0) {
@@ -67,14 +67,15 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
        
     }
       useEffect(()=>{
-        if(account.address){
+        console.info(isConnected)
+        if(address){
             userLogin(inviteCode)
             fetchUserParent()
         }else{
             toast.warn('请链接钱包')
         }
 
-      },[inviteCode,account.address])
+      },[inviteCode,isConnected])
 
     return <GetInvateContext.Provider value={{ userParent, changeToken }}>{children}</GetInvateContext.Provider>
 }
