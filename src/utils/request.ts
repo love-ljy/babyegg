@@ -1,10 +1,6 @@
 import axios from 'axios'
 
-let authToken = '';
-export const setAuthToken = (token:string) => {
-  authToken = token;
-};
-
+import { getToken } from '../contexts/GetInvateContext';
 // create an axios instance
 const service = axios.create({
   baseURL: '', // url = base url + request url
@@ -15,8 +11,13 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
+    const token = getToken();
+    console.log('Adding token to request:', token); // 确保这行代码被执行
+    if (token) {
+      config.headers['Token'] = `${token}`;
+    }
     config.headers['Language'] = 'cn'
-    config.headers['Token'] = authToken?authToken:window.localStorage.getItem('token')
+   
     return config
   },
   error => {

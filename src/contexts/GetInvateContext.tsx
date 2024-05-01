@@ -1,42 +1,45 @@
-import React, { useEffect, useState } from 'react'
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import Router, { useRouter } from 'next/router'
-import { getUserHadParent,submitUserLogin } from '@utils/api'
+import { getUserHadParent,submitUserLogin,getUserInfo } from '@utils/api'
 import { useConnect, useAccount } from 'wagmi'
 import md5 from 'md5'
 import { toast } from 'react-toastify'
 import {  setUserInfo } from '@store/user'
 import { dispatch } from '@store/index'
-import { setAuthToken } from '@utils/request'
 
-const GetInvateContext = React.createContext({ userParent: '', changeToken: (value: string) => { } })
+let globalToken: string | null = null;  // 添加一个全局变量来存储 token
+
+export const getToken = () => {
+  return globalToken;  // 提供一个函数来获取当前 token
+};
+type AuthContextType = {
+    token: string | null;
+    userParent: string;
+    setToken: (token: string | null) => void;
+    isAuthenticated: boolean;
+  };
+const GetInvateContext = React.createContext<AuthContextType>({token:'' ,userParent: '', setToken: () => { },isAuthenticated:false })
+
 
 interface Props {
     children: React.ReactNode
 }
 
 const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
-    const [invite, setInvite] = useState<any>()
+    const [inviteCode, setInviteCode] = useState<any>('BABYLONG')
+    const [token, setToken] = useState<string | null>(globalToken);
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
     const {invite:queryParam} = router.query;
     const { isConnected, address } = useAccount();
-    const inviteCode = queryParam?.[0] || 'BABYLONG';
+    
     const fetchUserParent = async () => {
         try {
-            if (inviteCode) {
-                try {
-                  const res:any = await getUserHadParent({username:address,invite:inviteCode})
-                  if (res.code === 0) {
-                    setUserParent(res.data.username)
-                  }else{
-                    window.localStorage.setItem("invite", '');
-                  }
-                } catch (error) {
-                  window.localStorage.setItem("invite", '');
-                }
-
-            } else {
-                setUserParent('')
+            const res:any = await getUserHadParent({username:address,invite:inviteCode})
+            if (res.code === 0) {
+              setUserParent(res.data.username)
+            }else{
+              window.localStorage.setItem("invite", '');
             }
         } catch (error) {
             console.info(error)
@@ -51,9 +54,10 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             invite,
           })
           if (res.code === 0) {
-            setAuthToken(res.data.Token)
-            localStorage.setItem('token', res.data.Token)
-            dispatch(setUserInfo({ token: res.data.Token }))
+            setToken(res.data.Token)
+            globalToken = res.data.Token; 
+            localStorage.setItem('token', res.data.Token || '');
+            dispatch(setUserInfo({ token: res.data.Token, }))
           } else {
             toast.warn('网络错误')
           }
@@ -62,22 +66,47 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
           toast.warn('网络错误')
         }
       }
+      useEffect(() => {
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+          setToken(storedToken);
+        }
+      }, []);
 
+      const isAuthenticated = token !== null;
+
+     const fetchLoginUserInfo = async()=>{
+        const res:any = await getUserInfo()
+        if(res.code===0){
+            dispatch(setUserInfo(res.data))
+        }
+     } 
     const changeToken = (value: string) => {
        
     }
       useEffect(()=>{
-        console.info(isConnected)
-        if(address){
-            userLogin(inviteCode)
-            fetchUserParent()
-        }else{
-            toast.warn('请链接钱包')
+        if(queryParam){
+            setInviteCode(queryParam)
         }
+        if(queryParam||address){
+            userLogin(inviteCode)
+            fetchLoginUserInfo()
+            fetchUserParent()
+        }
+        
 
-      },[inviteCode,isConnected])
+      },[inviteCode,address,isConnected,queryParam])
 
-    return <GetInvateContext.Provider value={{ userParent, changeToken }}>{children}</GetInvateContext.Provider>
+    return <GetInvateContext.Provider value={{token, userParent,setToken, isAuthenticated }}>{children}</GetInvateContext.Provider>
 }
 
 export { GetInvateContext, GetInvateContextProvider }
+
+
+export const useAuth = () => {
+    const context = useContext(GetInvateContext);
+    if (!context) {
+      throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+  };

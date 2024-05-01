@@ -42,7 +42,7 @@ function CountDown({ initialTimeInSeconds }: Props) {
   const { t } = useTranslation('common')
   const Completionist = (completed) => {
     return <Typography fontWeight={700} fontSize={25}>
-      {completed ? t('Waiting for the next round to start') : t('Countdown')}
+      {!completed ? t('Waiting for the next round to start') : t('Countdown')}
     </Typography>;
   }
 

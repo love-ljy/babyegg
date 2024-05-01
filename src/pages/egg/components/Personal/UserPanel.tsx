@@ -580,11 +580,11 @@ const UserPanel = () => {
   }
 
   useEffect(() => {
-    if (walletInfo?.address && isBindParent) {
+    if (walletInfo?.address) {
       fetchGameEgg()
       fecthUserRewardInfo()
     }
-  }, [walletInfo?.address, isBindParent])
+  }, [walletInfo?.address])
   const variable = Number(userInfo.dragon_egg)
   const level = useMemo(()=>{
     const level = LevelList.find(level => level.count > Number(userInfo.dragon_egg));

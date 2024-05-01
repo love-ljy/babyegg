@@ -25,7 +25,6 @@ import {GetInvateContext} from '../../contexts/GetInvateContext'
 import { useTranslation } from 'next-i18next'
 import useGetBalance from '@hooks/useGetBalance'
 import  {serverSideTranslations} from 'next-i18next/serverSideTranslations'
-import {setAuthToken} from '@utils/request'
 import { formatUnits } from 'viem'
 import nextI18NextConfig from '../../../next-i18next.config.js'
 
@@ -92,7 +91,7 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 `
 
 function LongEgg() {
-  const { userParent } = useContext(GetInvateContext)
+  const { userParent,setToken } = useContext(GetInvateContext)
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState(userParent||'')
@@ -106,8 +105,8 @@ function LongEgg() {
 
   const walletInfo: any = useSelector(selectWalletInfo)
 
-  const { userBalance } = useGetBalance()
-
+  const { parentAddr } = useGetBalance()
+  console.info(parentAddr,'parentAddr',bindAddress,userParent)
   const {
     estimatedGas: bindEstimatedGas,
     bindParent,
@@ -155,7 +154,7 @@ function LongEgg() {
       })
       if (res.code === 0) {
         localStorage.setItem('token', res.data.Token)
-        setAuthToken(res.data.Token)
+        setToken(res.data.Token)
         dispatch(setUserInfo({ token: res.data.Token }))
         fetchUserInfo()
       } else {
@@ -220,9 +219,12 @@ function LongEgg() {
     if(address){
       fetchAllNetwork()
     }
+    console.info(address)
+    if(parentAddr==='0x0000000000000000000000000000000000000000'&&address){
+      setVisible(true)
+    }
     
-    
-  }, [address])
+  }, [address,userParent,parentAddr])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null
