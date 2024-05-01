@@ -129,11 +129,11 @@ const ModalMain = styled.div`
   }
 `
 
-const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
+const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
 `
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;

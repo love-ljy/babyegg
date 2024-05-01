@@ -143,7 +143,7 @@ const { t } = useTranslation('common')
           tabList={tabList}
           tabChange={tabChange}
           swipeChange={swipeChange}
-          selectedColor={'rgba(50, 32, 208, 1)'}
+          selectedcolor={'rgba(50, 32, 208, 1)'}
         />
       </div>
       <Rank myRank={myRank} rankLevel={rankLevel} dataSource={dataSource} />

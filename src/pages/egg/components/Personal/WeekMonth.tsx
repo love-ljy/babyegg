@@ -377,7 +377,7 @@ const WeekMonth = () => {
           tabList={tabList}
           tabChange={tabChange}
           swipeChange={swipeChange}
-          selectedColor={'rgba(184, 3, 139, 1)'}
+          selectedcolor={'rgba(184, 3, 139, 1)'}
         />
       </div>
       <div className="seeMore">{t('See More')}</div>

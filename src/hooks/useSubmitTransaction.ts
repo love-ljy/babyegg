@@ -64,13 +64,20 @@ const useSubmitTransaction = (
   })
   
   const {
-    writeContract,
+    writeContractAsync,
     data: hash,
     error: contractWriteError,
     isError: isContractWriteError,
     isPending: isContractWriteLoading,
     reset,
-  } = useWriteContract()
+  } = useWriteContract(
+    {
+      mutation: {
+        onError: (error: Error) => console.info(error),
+       
+      },
+    }
+  )
 
   const {
     data: transactionReceipt,
@@ -110,35 +117,33 @@ const useSubmitTransaction = (
       reset()
     }
   }, [transactionReceipt, isSuccess, isError])
-
   return {
     onSubmitTransaction: async (args:any = []) => {
-      console.log('args', args);
+      console.log('args', contractCallConfig);
       
-      if (!writeContract && error) {
+      if (!writeContractAsync && error) {
         onError?.(error, rawError)
         return
       }
-      console.log('estimatedGas', estimatedGas);
+      
       
       const estimatedGasInFloat = estimatedGas
         ? parseFloat(formatUnits(estimatedGas, walletInfo?.decimals))
         : null
-        console.log('contractCallConfig', contractCallConfig);
       if (!estimatedGasInFloat) {
         toast.warn("Couldn't estimate gas")
-        onError?.(error, rawError)
+        onError?.(error||'', rawError)
         return
       }
       if (actualMoney + estimatedGasInFloat > walletInfo?.balance) {
         toast.warn('Insufficient balance for gas')
-        onError?.(error, rawError)
+        onError?.(error||'', rawError)
         return
       }
 
-      writeContract({
+      await writeContractAsync({
         ...contractCallConfig,
-        args
+        ...args
       })
     },
     isPreparing: isSimulateContractLoading || isGasEstimationLoading,

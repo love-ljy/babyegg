@@ -82,7 +82,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -99,7 +99,7 @@ const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   }
 `
 
-const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
+const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
 `
 
@@ -330,9 +330,9 @@ const PasswordModal = (props: any) => {
         )}
         {type !== 'setpass' && <Typography fontSize="12px" textAlign="left" >设置支付密码前需要支付 1 $babylong</Typography>}
         <BtnWrap>
-          {Number(allowance) > 0 ? <BuyBtn className="confirm" isCancel={loading} disabled={loading} onClick={HandleSetPassword}>
+          {Number(allowance) > 0 ? <BuyBtn className="confirm" iscancel={loading} disabled={loading} onClick={HandleSetPassword}>
             {loading ? 'Loading...' : '确定'}
-          </BuyBtn> : <BuyBtn className="confirm" isCancel={loading} disabled={loading} onClick={HandlerApprove}>
+          </BuyBtn> : <BuyBtn className="confirm" iscancel={loading} disabled={loading} onClick={HandlerApprove}>
             {loading ? 'Loading...' : 'Approve'}
           </BuyBtn>}
 

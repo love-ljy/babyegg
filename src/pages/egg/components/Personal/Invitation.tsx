@@ -91,7 +91,7 @@ const { t } = useTranslation('common')
     <InvitationWrap>
       <div className="title">{t('Your Invitation Link')}</div>
       <Copy onClick={copyLink}>
-        <span className="text">{`${invateLink}?inviter=${userInfo?.invite}`}</span>
+        <span className="text">{`${invateLink}?invite=${userInfo?.invite}`}</span>
         <CopyIcon />
       </Copy>
       <CommonRow>

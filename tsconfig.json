@@ -28,6 +28,7 @@
       "@service/*": ["./src/service/*"],
       "@store/*": ["./src/store/*"],
       "@locales": ["./src/locales/*"],
+      "contexts":["./src/contexts/*"]
     },
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",

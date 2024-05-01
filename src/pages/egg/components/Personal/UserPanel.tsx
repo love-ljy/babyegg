@@ -377,7 +377,7 @@ const ModalMain = styled.div`
   }
 `
 
-const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -394,7 +394,7 @@ const BuyBtn = styled(Button) <{ width?: string; isCancel?: boolean }>`
   }
 `
 
-const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
+const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
 `
 
@@ -601,7 +601,6 @@ const UserPanel = () => {
 
   const imgSrc = level ? level?.imgSrc : null;
   const LevlName = level ? level?.name : null;
-  console.info(level, 'userInfo.level_grade',Number(userInfo.dragon_egg))
   return (
     <UserPanelWrap>
       <div className="header">

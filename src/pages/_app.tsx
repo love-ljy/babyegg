@@ -15,6 +15,7 @@ import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../next-i18next.config.js'
 import Layout from '../components/Layout'
+import {GetInvateContextProvider}from '../contexts/GetInvateContext'
 import { ToastContainer } from 'react-toastify'
 import store from '@store/index'
 import 'react-toastify/dist/ReactToastify.css'
@@ -33,6 +34,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
+       
         <WagmiProvider config={config}>
           <RainbowKitProvider
             theme={darkTheme({
@@ -44,7 +46,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             })}
             initialChain={bscTestnet}
           >
-            <CacheProvider value={clientSideEmotionCache}>
+            <GetInvateContextProvider>
+            <CacheProvider value={clientSideEmotionCache}> 
               <ThemeProvider theme={themes}>
                 <ToastContainer theme="dark" />
                 <CssBaseline />
@@ -55,8 +58,10 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 </Layout>
               </ThemeProvider>
             </CacheProvider>
+            </GetInvateContextProvider>
           </RainbowKitProvider>
         </WagmiProvider>
+       
       </QueryClientProvider>
     </Provider>
   )

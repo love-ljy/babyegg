@@ -23,7 +23,7 @@ import useBind2 from '@hooks/useBind2'
 import { useTranslation } from 'next-i18next'
 import useGetBalance from '@hooks/useGetBalance'
 import  {serverSideTranslations} from 'next-i18next/serverSideTranslations'
-
+import {setAuthToken} from '@utils/request'
 import nextI18NextConfig from '../../../next-i18next.config.js'
 
 const LongEggWrap = styled.div`
@@ -73,7 +73,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -175,6 +175,7 @@ function LongEgg() {
       })
       if (res.code === 0) {
         localStorage.setItem('token', res.data.Token)
+        setAuthToken(res.data.Token)
         dispatch(setUserInfo({ token: res.data.Token }))
         fetchUserInfo()
       } else {
@@ -264,7 +265,7 @@ function LongEgg() {
         <ModalMain>
           <div className="title">{t('Bind superior address')}</div>
           <CountInput type="text" value={bindAddress} onChange={handleChange} variant="standard" />
-          <BuyBtn isCancel={isLoading} disabled={isLoading} onClick={handleBind}>
+          <BuyBtn iscancel={isLoading} disabled={isLoading} onClick={handleBind}>
             {isLoading ? 'Loading...' : t('confirm')}
           </BuyBtn>
         </ModalMain>

@@ -31,7 +31,7 @@ import { useWriteContract } from 'wagmi'
 import burnTokenAbi from '@config/abi/burnToken.json'
 import { BurnContractAddr } from '@config/contants'
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -531,7 +531,7 @@ const BuyEgg = () => {
         <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
       </div>
       <BuyBtn
-        isCancel={isLoading || loading || orderLoading || babyLoading}
+        iscancel={isLoading || loading || orderLoading || babyLoading}
         disabled={isLoading || loading || orderLoading || babyLoading}
         onClick={handleBuy}
       >

@@ -1,5 +1,10 @@
 import axios from 'axios'
 
+let authToken = null;
+export const setAuthToken = (token) => {
+  authToken = token;
+};
+
 // create an axios instance
 const service = axios.create({
   baseURL: '', // url = base url + request url
@@ -11,7 +16,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     config.headers['Language'] = 'cn'
-    config.headers['Token'] = window.localStorage.getItem('token')
+    config.headers['Token'] = authToken?authToken:window.localStorage.getItem('token')
     return config
   },
   error => {
