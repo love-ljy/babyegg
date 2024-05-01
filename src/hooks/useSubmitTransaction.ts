@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import processViemContractError from './processViemContractError'
+import processViemContractError from '@utils/processViemContractError'
 import {
   Abi,
   ContractFunctionArgs,
@@ -7,13 +7,13 @@ import {
   DecodeEventLogReturnType,
   TransactionReceipt,
   decodeEventLog,
-  formatUnits,
 } from 'viem'
-import { useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import {
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from 'wagmi'
 import useEstimateGas from './useEstimateGas'
-import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
-import { selectWalletInfo } from '@store/user'
 
 const getEvents = (
   contractCallConfig: any,
@@ -35,7 +35,6 @@ const getEvents = (
 
 const useSubmitTransaction = (
   contractCallConfig: any,
-  actualMoney,
   options?: {
     setContext?: boolean
     customErrorsMap?: Record<string, string>
@@ -48,12 +47,12 @@ const useSubmitTransaction = (
       query: { enabled: contractCallConfig.query?.enabled ?? true },
       ...contractCallConfig,
     })
-  const walletInfo = useSelector(selectWalletInfo)
-
+ 
   const {
     estimatedGas,
     gasEstimationError,
     isLoading: isGasEstimationLoading,
+    mutate,
   } = useEstimateGas({
     abi: contractCallConfig.abi as Abi,
     address: contractCallConfig.address as `0x${string}`,
@@ -62,9 +61,9 @@ const useSubmitTransaction = (
     value: contractCallConfig.value as bigint,
     shouldFetch: contractCallConfig.query?.enabled ?? true,
   })
-  
+
   const {
-    writeContractAsync,
+    writeContract,
     data: hash,
     error: contractWriteError,
     isError: isContractWriteError,
@@ -118,32 +117,13 @@ const useSubmitTransaction = (
     }
   }, [transactionReceipt, isSuccess, isError])
   return {
-    onSubmitTransaction: async (args:any = []) => {
-      console.log('args', contractCallConfig);
-      
-      if (!writeContractAsync && error) {
+    onSubmitTransaction: async (args: any = []) => {
+      if (!writeContract && error) {
         onError?.(error, rawError)
         return
       }
-      
-      
-      const estimatedGasInFloat = estimatedGas
-        ? parseFloat(formatUnits(estimatedGas, walletInfo?.decimals))
-        : null
-      if (!estimatedGasInFloat) {
-        toast.warn("Couldn't estimate gas")
-        onError?.(error||'', rawError)
-        return
-      }
-      if (actualMoney + estimatedGasInFloat > walletInfo?.balance) {
-        toast.warn('Insufficient balance for gas')
-        onError?.(error||'', rawError)
-        return
-      }
-
-      await writeContractAsync({
+      writeContract({
         ...contractCallConfig,
-        ...args
       })
     },
     isPreparing: isSimulateContractLoading || isGasEstimationLoading,

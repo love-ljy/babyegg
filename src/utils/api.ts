@@ -83,13 +83,6 @@ const queryTotalNet = async () => {
 }
 
 // 扣币下单
-const buyEgg = async (data: any) => {
-  return request({
-    url: '/api/order/create',
-    method: 'post',
-    data,
-  })
-}
 const createOrder = async (data: any) => {
   return request({
     url: '/api/order/create',
@@ -176,7 +169,6 @@ export {
   openEgg,
   eggIncomeReinvestment,
   queryTotalNet,
-  buyEgg,
   getCoin,
   createOrder,
   updateUserInfo,

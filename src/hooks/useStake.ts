@@ -3,13 +3,14 @@ import eggAbi from '../config/abi/eggAbi.json'
 import { MainContractAddr } from '../config/contants'
 
 interface Props {
+  args?: any[]
   value: bigint
   onSuccess: () => void
   onError: (error, rawError) => void
-  actualMoney: number
 }
 
-const useStake = ({ value, onSuccess, onError, actualMoney }: Props) => {
+const useStake = ({value, onSuccess, onError }: Props) => {
+  
   const contractCallParams = {
     abi: eggAbi,
     address: MainContractAddr,
@@ -20,7 +21,6 @@ const useStake = ({ value, onSuccess, onError, actualMoney }: Props) => {
 
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(
     contractCallParams,
-    actualMoney,
     {
       onError,
       onSuccess,
