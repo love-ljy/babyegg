@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import copy from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
+import { useMemo } from 'react'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -82,7 +83,10 @@ const { t } = useTranslation('common')
   }
   
   const isDev = process.env.NODE_ENV === 'development'
-  const invateLink = isDev?"https://test.web.babyloong.org/":window.location.href
+ const invateLink =  useMemo(() => {
+   let  invateLinks = isDev?"https://test.web.babyloong.org/":router.asPath
+    return invateLinks
+  },[isDev])
   const copyLink = () => {
     copy(`${invateLink}?invite=${userInfo?.invite}`)
     toast.success('复制成功')

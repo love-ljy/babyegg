@@ -48,9 +48,13 @@ module.exports = {
           destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
         },
       ];
-    }
-    // 可以添加生产环境的特定重写规则或返回空数组
-    return [];
+    } 
+    return [
+      {
+        source: '/api/:path*',
+        destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
+      },
+    ];
   },
 }
 
