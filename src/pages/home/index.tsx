@@ -202,7 +202,7 @@ const Home: React.FC = () => {
   const router = useRouter();
   const HandleGoGame = (e:any)=>{
     if(!e.isComing){
-      router.push(e.path)
+      router.push(e.path+'?invite='+router.query.invite)
     }else{
       toast('敬请期待')
     }

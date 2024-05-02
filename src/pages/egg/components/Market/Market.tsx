@@ -10,7 +10,6 @@ import { useTranslation } from 'next-i18next'
 import { getLast100, getRealTimeTraffic } from '@utils/api'
 
 const MarketWrap = styled.div`
-margin-top: 40px;
   .top {
     position: relative;
     height: 80px;

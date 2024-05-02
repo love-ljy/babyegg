@@ -91,7 +91,7 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 `
 
 function LongEgg() {
-  const { userParent,setToken } = useContext(GetInvateContext)
+  const { userParent } = useContext(GetInvateContext)
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState<any>(userParent||'')
@@ -229,7 +229,7 @@ const token = useSelector(selectAuthToken)
     if(!userParent){
       setBindAddress("0x555893167ddE9aD866b18E7373C6368419Ce107c")
     }else{
-      setBindAddress('')
+      setBindAddress(userParent)
     }
     
   }, [address,userParent,parentAddr,token])

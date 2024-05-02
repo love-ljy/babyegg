@@ -4,7 +4,7 @@ import { getUserHadParent,submitUserLogin,getUserInfo } from '@utils/api'
 import {  useAccount } from 'wagmi'
 import md5 from 'md5'
 import { toast } from 'react-toastify'
-import {  setUserInfo,setAuthToken,selectAuthToken } from '@store/user'
+import {  setUserInfo,setAuthToken,selectAuthToken,setInviteCode,selectInviteCode } from '@store/user'
 import { useSelector } from 'react-redux'
 import { dispatch } from '@store/index'
 
@@ -28,15 +28,18 @@ interface Props {
 }
 
 const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
-    const [inviteCode, setInviteCode] = useState<any>('BABYLONG')
+    const inviteCode = useSelector(selectInviteCode)
+    const [invite, setInvite] = useState<any>(inviteCode||'')
     const authToken = useSelector(selectAuthToken)
     const [token, setToken] = useState<string | null>(globalToken);
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
     const {invite:queryParam} = router.query;
-    const { isConnected, address } = useAccount();
+    console.info(router.query,'router.query')
+    const {  address } = useAccount();
     const fetchUserParent = useCallback(async () => {
         try {
+          
             const res:any = await getUserHadParent({username:address,invite:inviteCode})
             if (res.code === 0&&res.data.had_parent===0) {
               setUserParent(res.data.username)
@@ -89,16 +92,16 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
         }
      } 
       useEffect(()=>{
+        console.info(queryParam)
         if(queryParam){
+            dispatch(setInviteCode(queryParam||'BABYLONG'))
             setInviteCode(queryParam)
         }
         if(queryParam||address){
             userLogin(inviteCode)
             fetchUserParent()
         }
-        
-
-      },[inviteCode,address,isConnected,queryParam])
+      },[address,queryParam])
 
     return <GetInvateContext.Provider value={{token, userParent,setToken, isAuthenticated }}>{children}</GetInvateContext.Provider>
 }
