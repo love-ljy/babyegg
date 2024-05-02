@@ -1,5 +1,4 @@
 import axios from 'axios'
-
 import { getToken } from '../contexts/GetInvateContext';
 
 // create an axios instance

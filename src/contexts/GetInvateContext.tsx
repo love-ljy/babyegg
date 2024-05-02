@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, {  useContext, useState, useCallback, useEffect } from 'react';
 import Router, { useRouter } from 'next/router'
 import { getUserHadParent,submitUserLogin,getUserInfo } from '@utils/api'
-import { useConnect, useAccount } from 'wagmi'
+import {  useAccount } from 'wagmi'
 import md5 from 'md5'
 import { toast } from 'react-toastify'
 import {  setUserInfo,setAuthToken,selectAuthToken } from '@store/user'
@@ -88,9 +88,6 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             dispatch(setUserInfo(res.data))
         }
      } 
-    const changeToken = (value: string) => {
-       
-    }
       useEffect(()=>{
         if(queryParam){
             setInviteCode(queryParam)
