@@ -33,6 +33,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const [token, setToken] = useState<string | null>(globalToken);
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
+    
     const {invite} = router.query;
     console.info(router.query,'router.query')
     const {  address } = useAccount();
@@ -91,16 +92,19 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
         }
      } 
       useEffect(()=>{
-        console.info(invite)
-        if(invite){
+        if(router.isReady){
+          if(invite){
             dispatch(setInviteCode(invite||'BABYLONG'))
             setInviteCode(invite)
         }
         if(address){
+          
             userLogin(inviteCode)
             fetchUserParent()
         }
-      },[address,invite])
+        }
+       
+      },[address,router.isReady])
 
     return <GetInvateContext.Provider value={{token, userParent,setToken, isAuthenticated }}>{children}</GetInvateContext.Provider>
 }
