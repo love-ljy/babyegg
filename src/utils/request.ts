@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { getToken } from '../contexts/GetInvateContext';
-
 // create an axios instance
 const service = axios.create({
   baseURL: '', // url = base url + request url
@@ -33,6 +32,9 @@ service.interceptors.response.use(
     if (response.status !== 200) {
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
+      if(res.code===40300){
+        window.localStorage.setItem("token", '');
+      }
       return res
     }
   },

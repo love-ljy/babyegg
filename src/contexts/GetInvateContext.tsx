@@ -38,7 +38,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const fetchUserParent = useCallback(async () => {
         try {
             const res:any = await getUserHadParent({username:address,invite:inviteCode})
-            if (res.code === 0) {
+            if (res.code === 0&&res.data.had_parent===0) {
               setUserParent(res.data.username)
             }else{
               window.localStorage.setItem("invite", '');

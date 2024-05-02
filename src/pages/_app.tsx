@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { AppProps } from 'next/app'
 import { ThemeProvider } from '@mui/material/styles'
 import { Provider } from 'react-redux'
@@ -15,7 +15,7 @@ import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../next-i18next.config.js'
 import Layout from '../components/Layout'
-import {GetInvateContextProvider}from '../contexts/GetInvateContext'
+import {GetInvateContextProvider,GetInvateContext}from '../contexts/GetInvateContext'
 import { ToastContainer } from 'react-toastify'
 import store from '@store/index'
 import 'react-toastify/dist/ReactToastify.css'
@@ -29,8 +29,11 @@ globalThis.Buffer = Buffer
 const queryClient = new QueryClient()
 // 客户端的 Emotion 缓存实例
 
+
 const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
+  const { token } = useContext(GetInvateContext)
+
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

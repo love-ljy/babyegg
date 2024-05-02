@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux'
 import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
 import { useReadContract, useWriteContract } from 'wagmi'
-import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
+import { selectWalletInfo, selectUserInfo,selectAuthToken, selectIsBindParent } from '@store/user'
 import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin, getIncomeReceiveNumber, createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
@@ -425,6 +425,7 @@ const UserPanel = () => {
     dragon_egg_babyloong: 0,
   })
   const userInfo: any = useSelector(selectUserInfo)
+  const token = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
   const isBindParent: any = useSelector(selectIsBindParent)
   const [eggVisible, setEggVisible] = useState(false)
@@ -580,11 +581,11 @@ const UserPanel = () => {
   }
 
   useEffect(() => {
-    if (walletInfo?.address) {
+    if (walletInfo?.address&&token) {
       fetchGameEgg()
       fecthUserRewardInfo()
     }
-  }, [walletInfo?.address])
+  }, [walletInfo?.address,token])
   const variable = Number(userInfo.dragon_egg)
   const level = useMemo(()=>{
     const level = LevelList.find(level => level.count > Number(userInfo.dragon_egg));

@@ -4,8 +4,8 @@ import styled from '@emotion/styled'
 import { Typography } from '@mui/material'
 import { getState } from '@store/index'
 import rankBgPng from '@imgs/rankBg.png'
-import CommonTab from '../commonTab/commonTab'
-import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
+import { selectWalletInfo, setUserInfo,setAuthToken, setIsBindParent, setGamingId, selectAuthToken } from '@store/user'
+import { useSelector } from 'react-redux'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
 import VIP4 from '@imgs/3000.png'
@@ -259,7 +259,7 @@ const Rank = (props: Props) => {
   // @ts-ignore
   const { t } = useTranslation('common')
   const { dataSource = [], myRank, rankLevel } = props
-  const userInfo = getState('user').userInfo
+
   return (
     <MarketWrap>
       <div className="top">

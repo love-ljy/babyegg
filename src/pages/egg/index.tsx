@@ -14,7 +14,7 @@ import {
   queryTotalNet,
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo,setAuthToken, setIsBindParent, setGamingId } from '@store/user'
+import { selectWalletInfo, setUserInfo,setAuthToken,selectAuthToken, setIsBindParent, setGamingId } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
@@ -102,7 +102,7 @@ function LongEgg() {
   const [countDown, setCountDown] = useState<number>(0)
   const router = useRouter()
   const {address} = useAccount()
-
+const token = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
 
   const { parentAddr } = useGetBalance()
@@ -215,8 +215,9 @@ function LongEgg() {
   }
 
   useEffect(() => {
-    if(address){
+    if(address&&token){
       fetchAllNetwork()
+      
     }
     if(parentAddr==='0x0000000000000000000000000000000000000000'&&address){
       setVisible(true)
@@ -227,9 +228,11 @@ function LongEgg() {
     }
     if(!userParent){
       setBindAddress("0x555893167ddE9aD866b18E7373C6368419Ce107c")
+    }else{
+      setBindAddress('')
     }
     
-  }, [address,userParent,parentAddr])
+  }, [address,userParent,parentAddr,token])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null

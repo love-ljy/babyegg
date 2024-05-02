@@ -11,7 +11,7 @@ import Rank from './Rank'
 import WeekMonth from './WeekMonth'
 import { useTranslation } from 'next-i18next'
 import {getUserRanking,getRankingLevel} from '@utils/api'
-import { selectUserInfo} from '@store/user'
+import { selectUserInfo,selectAuthToken} from '@store/user'
 import { useSelector } from 'react-redux'
 
 const MarketWrap = styled.div`
@@ -94,6 +94,7 @@ const { t } = useTranslation('common')
     // },
   ])
   const userInfo: any = useSelector(selectUserInfo)
+  const token = useSelector(selectAuthToken)
 
   const fetchEggRanking = async()=>{
     setLoading(true)
@@ -130,11 +131,11 @@ const { t } = useTranslation('common')
     // setRankTitle(selectList[i].label);
   }
   useEffect(()=>{
-    if(userInfo.id){
+    if(userInfo.id&&token){
       fetchEggRanking()
     }
     
-  },[userInfo])
+  },[userInfo,token])
 
   return (
     <MarketWrap>

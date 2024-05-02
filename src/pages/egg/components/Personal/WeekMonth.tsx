@@ -9,6 +9,8 @@ import CommonTab from '../commonTab/commonTab'
 import MaticIcon from '@icons/matic.svg'
 import { useTranslation } from 'next-i18next'
 import { getUserRanking, getRankingYuLong } from '@utils/api'
+import { selectUserInfo,selectAuthToken} from '@store/user'
+import { useSelector } from 'react-redux'
 
 const MarketWrap = styled.div`
   .top {
@@ -317,6 +319,7 @@ const WeekMonth = () => {
     // },
   ])
   const [myInfo,setMyInfo] = useState<MyInfo>()
+  const token = useSelector(selectAuthToken)
   const [dataSource2, setDataSource2] = useState([
     {
       no: 100,
@@ -366,9 +369,11 @@ const WeekMonth = () => {
     // setRankTitle(selectList[i].label);
   }
   useEffect(() => {
-
-    FetchRankingLevel(0)
-  }, [])
+if(token){
+  FetchRankingLevel(0)
+}
+   
+  }, [token])
   return (
     <MarketWrap>
       
