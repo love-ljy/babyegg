@@ -14,7 +14,7 @@ import {
   queryTotalNet,
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo, setIsBindParent, setGamingId } from '@store/user'
+import { selectWalletInfo, setUserInfo,setAuthToken, setIsBindParent, setGamingId } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
@@ -153,9 +153,9 @@ function LongEgg() {
       })
       if (res.code === 0) {
         localStorage.setItem('token', res.data.Token)
-        setToken(res.data.Token)
+        dispatch(setAuthToken(res.data.Token))
         dispatch(setUserInfo({ token: res.data.Token }))
-        fetchUserInfo()
+       await fetchUserInfo()
       } else {
         toast.warn('网络错误')
       }
