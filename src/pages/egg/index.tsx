@@ -92,6 +92,7 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 
 function LongEgg() {
   const { userParent } = useContext(GetInvateContext)
+  console.info(userParent,'userParent')
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState<any>(userParent||'')

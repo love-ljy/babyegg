@@ -29,18 +29,17 @@ interface Props {
 
 const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const inviteCode = useSelector(selectInviteCode)
-    const [invite, setInvite] = useState<any>(inviteCode||'')
     const authToken = useSelector(selectAuthToken)
     const [token, setToken] = useState<string | null>(globalToken);
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
-    const {invite:queryParam} = router.query;
+    const {invite} = router.query;
     console.info(router.query,'router.query')
     const {  address } = useAccount();
     const fetchUserParent = useCallback(async () => {
         try {
           
-            const res:any = await getUserHadParent({username:address,invite:inviteCode})
+            const res:any = await getUserHadParent({username:address,invite:router.query.invite})
             if (res.code === 0&&res.data.had_parent===0) {
               setUserParent(res.data.username)
             }else{
@@ -50,7 +49,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             console.info(error)
             window.localStorage.setItem("invite", '');
         }
-    },[address,token])
+    },[address,token,invite])
        
 
     
@@ -92,16 +91,16 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
         }
      } 
       useEffect(()=>{
-        console.info(queryParam)
-        if(queryParam){
-            dispatch(setInviteCode(queryParam||'BABYLONG'))
-            setInviteCode(queryParam)
+        console.info(invite)
+        if(invite){
+            dispatch(setInviteCode(invite||'BABYLONG'))
+            setInviteCode(invite)
         }
-        if(queryParam||address){
+        if(address){
             userLogin(inviteCode)
             fetchUserParent()
         }
-      },[address,queryParam])
+      },[address,invite])
 
     return <GetInvateContext.Provider value={{token, userParent,setToken, isAuthenticated }}>{children}</GetInvateContext.Provider>
 }
