@@ -38,9 +38,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter();
   useEffect(() => { 
     const handleRouteChange = () => {
-      // 清空 store 的逻辑
-      // 这里你可以调用你的 store 清空状态的 action
-    // store.dispatch(setAuthToken(''));
+       localStorage.setItem('token', '')
+       store.dispatch(setAuthToken(''))
       console.log('路由变化，清空 store');
     };
 

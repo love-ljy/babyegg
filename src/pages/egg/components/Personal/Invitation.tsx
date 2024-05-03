@@ -84,7 +84,7 @@ const { t } = useTranslation('common')
   
   const isDev = process.env.NODE_ENV === 'development'
  const invateLink =  useMemo(() => {
-   let  invateLinks = isDev?"https://test.web.babyloong.org/":router.asPath
+   let  invateLinks = isDev?"https://test.web.babyloong.org/":'https://test.web.babyloong.org/'
     return invateLinks
   },[isDev])
   const copyLink = () => {

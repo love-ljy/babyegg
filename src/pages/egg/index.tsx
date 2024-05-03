@@ -217,23 +217,27 @@ function LongEgg() {
 
   const fetchUserParent = async (invite) => {
     try {
+    
       const res: any = await getUserHadParent({ username: address, invite: invite||"BABYLONG" })
-      if (res.code === 0 && res.data.had_parent === 0) {
-        if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
-          setVisible(true)
-         
-        } else {
-          setVisible(false)
+      if (res.code === 0 ) {
+        if(res.data.had_parent === 0){
+          if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
+            setVisible(true)
+          } else {
+            setVisible(false)
+          }
+          dispatch(setInviteCode(invite||"BABYLONG"))
+          setBindAddress(res.data.username)
+          dispatch(setIsBindParent(false))
+        }else {
+          localStorage.setItem('token', '')
+          dispatch(setAuthToken(''))
+          dispatch(setIsBindParent(true))
+          await login(inviteCode)
+          await fetchUserInfo()
+          await  fetchAllNetwork()
+          window.localStorage.setItem("invite", res.data.username)
         }
-        dispatch(setInviteCode(invite||"BABYLONG"))
-        setBindAddress(res.data.username)
-
-        dispatch(setIsBindParent(false))
-      } else {
-        dispatch(setIsBindParent(true))
-        setBindAddress(res.data.username)
-        await login(inviteCode)
-        window.localStorage.setItem("invite", '');
       }
     } catch (error) {
       console.info(error)
@@ -245,18 +249,17 @@ function LongEgg() {
 
 
   useEffect(() => {
-    if (router.isReady&&address) {
-      dispatch(setAuthToken(''))
-      localStorage.setItem('token', '')
+    if (address) {
       const {invite} = router.query
       if(invite){
         dispatch(setInviteCode(invite))
-       
+        fetchUserParent(invite)
+      }else{
+        fetchUserParent("BABYLONG")
       }
-      fetchUserParent(invite)
-      
+
     }
-  }, [address, parentAddr,router.isReady])
+  }, [address,router.query])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null
