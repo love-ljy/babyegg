@@ -246,7 +246,8 @@ function LongEgg() {
 
   useEffect(() => {
     if (router.isReady&&address) {
-      
+      dispatch(setAuthToken(''))
+      localStorage.setItem('token', '')
       const {invite} = router.query
       if(invite){
         dispatch(setInviteCode(invite))
