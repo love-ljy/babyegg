@@ -14,7 +14,7 @@ import {
   queryTotalNet,
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo, setAuthToken, selectAuthToken, setIsBindParent, setGamingId } from '@store/user'
+import { selectWalletInfo, setUserInfo,setInviteCode, setAuthToken,selectInviteCode,selectIsBindParent, selectAuthToken, setIsBindParent, setGamingId } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
@@ -94,17 +94,17 @@ function LongEgg() {
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [bindAddress, setBindAddress] = useState<any>('')
-  const [inviteCode, setInviteCode] = useState('')
+
   const [gameInfo, setGameInfo] = useState<any>({})
   const [gameEnd, setGameEnd] = useState(false)
   const [allNet, setAllNet] = useState<any>({})
   const [countDown, setCountDown] = useState<number>(0)
   const router = useRouter()
   const { address } = useAccount()
-  const {invite} = router.query
+  const inviteCode = useSelector(selectInviteCode)
   const authToken = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
-
+  const isBindParent = useSelector(selectIsBindParent)
   const { parentAddr } = useGetBalance()
   const {
     estimatedGas: bindEstimatedGas,
@@ -156,6 +156,7 @@ function LongEgg() {
         dispatch(setAuthToken(res.data.Token))
         dispatch(setUserInfo({ token: res.data.Token }))
         await fetchUserInfo()
+        await  fetchAllNetwork()
       } else {
         localStorage.setItem('token', '')
         toast.warn('网络错误')
@@ -214,44 +215,45 @@ function LongEgg() {
     }
   }
 
-  const fetchUserParent = useCallback(async () => {
+  const fetchUserParent = async (invite) => {
     try {
-      const res: any = await getUserHadParent({ username: address, invite: router.query.invite })
+      const res: any = await getUserHadParent({ username: address, invite: invite||"BABYLONG" })
       if (res.code === 0 && res.data.had_parent === 0) {
+        dispatch(setInviteCode(invite||"BABYLONG"))
         setBindAddress(res.data.username)
         dispatch(setIsBindParent(false))
       } else {
         dispatch(setIsBindParent(true))
-        await login(res.data.invite)
+        setBindAddress(res.data.username)
+        await login(inviteCode)
         window.localStorage.setItem("invite", '');
       }
     } catch (error) {
       console.info(error)
       window.localStorage.setItem("invite", '');
     }
-  }, [address])
+  }
 
 
 
 
   useEffect(() => {
-    if (router.isReady) {
-      if (address) {
-        fetchUserParent()
-      }
+    if (router.isReady&&address) {
       if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
         setVisible(true)
+       
       } else {
         setVisible(false)
       }
-      if(String(invite)){
-        setInviteCode(String(invite))
+      const {invite} = router.query
+      if(invite){
+        dispatch(setInviteCode(invite))
+       
       }
-      if(address&&authToken){
-        fetchAllNetwork()
-      } 
+      fetchUserParent(invite)
+      
     }
-  }, [address, parentAddr,router.isReady,authToken])
+  }, [address, parentAddr,router.isReady])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null
