@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback,useContext } from 'react'
+import { useState, useEffect, useCallback, useContext } from 'react'
 import { Typography, Box, TextField, Button } from '@mui/material'
 import styled from '@emotion/styled'
 import CountDown from './components/countDown/countDown'
@@ -14,17 +14,17 @@ import {
   queryTotalNet,
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo,setAuthToken,selectAuthToken, setIsBindParent, setGamingId } from '@store/user'
+import { selectWalletInfo, setUserInfo, setAuthToken, selectAuthToken, setIsBindParent, setGamingId } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
 import { toast } from 'react-toastify'
 import md5 from 'md5'
 import useBind2 from '@hooks/useBind2'
-import {GetInvateContext} from '../../contexts/GetInvateContext'
+import { GetInvateContext } from '../../contexts/GetInvateContext'
 import { useTranslation } from 'next-i18next'
 import useGetBalance from '@hooks/useGetBalance'
-import  {serverSideTranslations} from 'next-i18next/serverSideTranslations'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { formatUnits } from 'viem'
 import nextI18NextConfig from '../../../next-i18next.config.js'
 
@@ -75,7 +75,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -91,19 +91,18 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 `
 
 function LongEgg() {
-  const { userParent } = useContext(GetInvateContext)
-  console.info(userParent,'userParent')
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
-  const [bindAddress, setBindAddress] = useState<any>(userParent||'')
+  const [bindAddress, setBindAddress] = useState<any>('')
   const [inviteCode, setInviteCode] = useState('')
   const [gameInfo, setGameInfo] = useState<any>({})
   const [gameEnd, setGameEnd] = useState(false)
   const [allNet, setAllNet] = useState<any>({})
   const [countDown, setCountDown] = useState<number>(0)
   const router = useRouter()
-  const {address} = useAccount()
-const token = useSelector(selectAuthToken)
+  const { address } = useAccount()
+  const {invite} = router.query
+  const authToken = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
 
   const { parentAddr } = useGetBalance()
@@ -156,8 +155,9 @@ const token = useSelector(selectAuthToken)
         localStorage.setItem('token', res.data.Token)
         dispatch(setAuthToken(res.data.Token))
         dispatch(setUserInfo({ token: res.data.Token }))
-       await fetchUserInfo()
+        await fetchUserInfo()
       } else {
+        localStorage.setItem('token', '')
         toast.warn('网络错误')
       }
     } catch (e) {
@@ -189,7 +189,6 @@ const token = useSelector(selectAuthToken)
         const { end_time } = res.data
         const endDate = new Date(end_time).getTime()
         const startDate = new Date().getTime()
-        console.log('endDate', endDate, 'startDate', startDate)
         setCountDown(Math.ceil(startDate - endDate))
         dispatch(setGamingId(res.data.id))
       } else if (res.code === 1) {
@@ -215,25 +214,44 @@ const token = useSelector(selectAuthToken)
     }
   }
 
+  const fetchUserParent = useCallback(async () => {
+    try {
+      const res: any = await getUserHadParent({ username: address, invite: router.query.invite })
+      if (res.code === 0 && res.data.had_parent === 0) {
+        setBindAddress(res.data.username)
+        dispatch(setIsBindParent(false))
+      } else {
+        dispatch(setIsBindParent(true))
+        await login(res.data.invite)
+        window.localStorage.setItem("invite", '');
+      }
+    } catch (error) {
+      console.info(error)
+      window.localStorage.setItem("invite", '');
+    }
+  }, [address])
+
+
+
+
   useEffect(() => {
-    if(address&&token){
-      fetchAllNetwork()
-      
+    if (router.isReady) {
+      if (address) {
+        fetchUserParent()
+      }
+      if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
+        setVisible(true)
+      } else {
+        setVisible(false)
+      }
+      if(String(invite)){
+        setInviteCode(String(invite))
+      }
+      if(address&&authToken){
+        fetchAllNetwork()
+      } 
     }
-    if(parentAddr==='0x0000000000000000000000000000000000000000'&&address){
-      setVisible(true)
-      dispatch(setIsBindParent(false))
-    }else{
-      setVisible(false)
-      dispatch(setIsBindParent(true))
-    }
-    if(!userParent){
-      setBindAddress("0x555893167ddE9aD866b18E7373C6368419Ce107c")
-    }else{
-      setBindAddress(userParent)
-    }
-    
-  }, [address,userParent,parentAddr,token])
+  }, [address, parentAddr,router.isReady,authToken])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null

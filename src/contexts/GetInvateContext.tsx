@@ -4,10 +4,19 @@ import { getUserHadParent,submitUserLogin,getUserInfo } from '@utils/api'
 import {  useAccount } from 'wagmi'
 import md5 from 'md5'
 import { toast } from 'react-toastify'
-import {  setUserInfo,setAuthToken,selectAuthToken,setInviteCode,selectInviteCode } from '@store/user'
+import {  setUserInfo,setAuthToken,selectAuthToken,selectIsBindParent,setIsBindParent,setInviteCode,selectInviteCode } from '@store/user'
 import { useSelector } from 'react-redux'
 import { dispatch } from '@store/index'
 
+
+/**
+ * 1.先调用后端api（hadparent）的判断上级邀请码  是否展示上级信息，1就不展示，0就展示弹窗并确认。
+2.再调用登陆接口 
+3.获取登陆用户信息
+4.根据用户信息里的上级地址，查询合约接口上级地址   看看是否与用户信息的上级地址一致
+5.不一致就调用合约绑定上级
+ * 
+ */
 
 let globalToken: string | null = null;  // 添加一个全局变量来存储 token
 
@@ -33,7 +42,7 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
     const [token, setToken] = useState<string | null>(globalToken);
     const [userParent, setUserParent] = useState('')
     const router = useRouter();
-    
+    const isBindParent = useSelector(selectIsBindParent)
     const {invite} = router.query;
     console.info(router.query,'router.query')
     const {  address } = useAccount();
@@ -43,7 +52,9 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             const res:any = await getUserHadParent({username:address,invite:router.query.invite})
             if (res.code === 0&&res.data.had_parent===0) {
               setUserParent(res.data.username)
+              dispatch(setIsBindParent(false))
             }else{
+              dispatch(setIsBindParent(true))
               window.localStorage.setItem("invite", '');
             }
         } catch (error) {
@@ -91,20 +102,21 @@ const GetInvateContextProvider: React.FC<Props> = ({ children }) => {
             dispatch(setUserInfo(res.data))
         }
      } 
-      useEffect(()=>{
-        if(router.isReady){
-          if(invite){
-            dispatch(setInviteCode(invite||'BABYLONG'))
-            setInviteCode(invite)
-        }
-        if(address){
-          
-            userLogin(inviteCode)
-            fetchUserParent()
-        }
-        }
+      // useEffect(()=>{
+      //   if(router.isReady){
+      //     if(invite){
+      //       dispatch(setInviteCode(invite||'BABYLONG'))
+      //       setInviteCode(invite)
+      //   }
+      //   if(address){
+      //       fetchUserParent()
+      //       if(isBindParent){
+      //           userLogin(inviteCode)
+      //       }
+      //     }
+      //   }
        
-      },[address,router.isReady])
+      // },[address,router.isReady,isBindParent])
 
     return <GetInvateContext.Provider value={{token, userParent,setToken, isAuthenticated }}>{children}</GetInvateContext.Provider>
 }

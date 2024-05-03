@@ -67,7 +67,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             })}
             initialChain={bscTestnet}
           >
-            <GetInvateContextProvider>
             <CacheProvider value={clientSideEmotionCache}> 
               <ThemeProvider theme={themes}>
                 <ToastContainer theme="dark" />
@@ -79,7 +78,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
                 </Layout>
               </ThemeProvider>
             </CacheProvider>
-            </GetInvateContextProvider>
           </RainbowKitProvider>
         </WagmiProvider>
        

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { getToken } from '../contexts/GetInvateContext';
 // create an axios instance
 const service = axios.create({
   baseURL: '', // url = base url + request url
@@ -10,7 +9,7 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    const token = getToken();
+    const token = localStorage.getItem('token');
     console.log('Adding token to request:', token); // 确保这行代码被执行
     if (token) {
       config.headers['Token'] = `${token}`;
