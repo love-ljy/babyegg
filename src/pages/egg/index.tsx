@@ -219,8 +219,15 @@ function LongEgg() {
     try {
       const res: any = await getUserHadParent({ username: address, invite: invite||"BABYLONG" })
       if (res.code === 0 && res.data.had_parent === 0) {
+        if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
+          setVisible(true)
+         
+        } else {
+          setVisible(false)
+        }
         dispatch(setInviteCode(invite||"BABYLONG"))
         setBindAddress(res.data.username)
+
         dispatch(setIsBindParent(false))
       } else {
         dispatch(setIsBindParent(true))
@@ -239,12 +246,7 @@ function LongEgg() {
 
   useEffect(() => {
     if (router.isReady&&address) {
-      if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
-        setVisible(true)
-       
-      } else {
-        setVisible(false)
-      }
+      
       const {invite} = router.query
       if(invite){
         dispatch(setInviteCode(invite))
