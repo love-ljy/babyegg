@@ -120,11 +120,14 @@ const Market = () => {
           res = await getLast100({ page: currentPage, limit: 100 })
           if (res.code === 0) {
             setDataSource(res.data)
+          } else {
+            toast.warn(res.msg)
           }
         } else if (tabNum === 2) {
           res = await getRealTimeTraffic({ page: currentPage, limit: 10 })
           if (res.code === 0) {
             setDataSource2(res.data)
+          } else {
             toast.warn(res.msg)
           }
         }
