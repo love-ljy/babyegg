@@ -50,6 +50,7 @@
     "Weekly Rank Reward": "您的育龙周榜奖励",
     "Monthly Rank Reward": "您的育龙月榜奖励",
     "Ranking": "排行榜",
+    "Grandmaster ":"育龙宗师",
     "Current Grandmaster Prize Pool": "当前育龙宗师总奖金池",
     "Master": "育龙大师",
     "Current Master Prize Pool": "当前育龙大师总奖金池",
@@ -112,7 +113,7 @@
     "The platform will charge a 5% fee on withdrawals as revenue": "平台在用户提现时将收取5%手续费作为创收",
     "When choosing to withdraw $Matic,a portion of the amount will be automatically reinvested": "选择提现$Matic时,部分数额将作为自动复投",
     "Mechanism Explanation": "机制说明",
-    "Lucky Reward: ": "幸运奖励",
+    "Lucky Reward": "幸运奖励",
     "Each egg purchase provides a chance to win an airdrop reward of 100-1000 $MATIC (1% probability)":"每次购买龙蛋都有机会获得100-1000$MATIC 空投奖励（1%的概率）",
     "Initial Value": "初始价值",
     "After purchase, the egg's initial value is zero, which increases as more people buy":"龙蛋购买后初始价值为0，随着后面的人购买价值增加",
@@ -243,5 +244,5 @@
     "BabyLoong Raising Saga": "宝贝龙养成记",
     "In this unique raising game, players feed BabyLoongs daily with tokens, increasing the prize pot. Largest and smallest BabyLoongs claim prizes after each cycle. The game blends nurturing and strategic investment for an engaging experience": "在这款独特的饲养游戏中，玩家每天用代币喂养BabyLoongs，从而增加奖金。每个周期后，最大和最小的 BabyLoongs 都会领取奖品。该游戏融合了培育和战略投资，带来引人入胜的体验",
     "PARTNERS": "伙伴",
-    "MeExplan":"机制说明"
+    "MeExplan":"游戏说明"
 }
