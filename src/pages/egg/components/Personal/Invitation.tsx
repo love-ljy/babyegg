@@ -83,7 +83,9 @@ const Invitation = () => {
   }
 
   const copyLink = () => {
-    copy(`${window.location.origin}?invite=${userInfo?.invite}`)
+    copy(
+      `${typeof window !== 'undefined' ? window?.location?.origin : ''}?invite=${userInfo?.invite}`
+    )
     toast.success('复制成功')
   }
 
@@ -91,7 +93,7 @@ const Invitation = () => {
     <InvitationWrap>
       <div className="title">{t('Your Invitation Link')}</div>
       <Copy onClick={copyLink}>
-        <span className="text">{`${window.location.origin}?invite=${userInfo?.invite}`}</span>
+        <span className="text">{`${typeof window !== 'undefined' ? window?.location?.origin : ''}?invite=${userInfo?.invite}`}</span>
         <CopyIcon />
       </Copy>
       <CommonRow>

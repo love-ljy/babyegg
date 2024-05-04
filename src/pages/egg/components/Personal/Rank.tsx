@@ -256,7 +256,7 @@ type Level = {
 const Rank = (props: Props) => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const { dataSource = [], myRank, rankLevel } = props
+  const { dataSource = [], myRank, rankLevel = []} = props
 
   return (
     <MarketWrap>
