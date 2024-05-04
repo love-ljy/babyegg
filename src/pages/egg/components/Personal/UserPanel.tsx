@@ -633,11 +633,11 @@ const UserPanel = () => {
         <div className="row mar">
           <div className="group">
             <span className="title">{t('Current Eggs Held')}</span>
-            <span className="count">{userInfo.dragon_egg}</span>
+            <span className="count">{userInfo.dragon_egg||'-'}</span>
           </div>
           <div className="group group2">
             <span className="title">{t('Your Master Rank')}</span>
-            <span className="count">{userInfo.index_num}</span>
+            <span className="count">{userInfo.index_num||'-'}</span>
           </div>
         </div>
       </Expenditure>
@@ -655,7 +655,7 @@ const UserPanel = () => {
                   <div>
                     <Image src={eggIconPng} alt="egg" />
                   </div>
-                  <span>{eggInfo.dragon_egg}</span>
+                  <span>{eggInfo.dragon_egg||'-'}</span>
                 </div>
               </div>
               <div className="infoItem">
@@ -663,7 +663,7 @@ const UserPanel = () => {
                 <div className="rit-bot">
                   <div className="t">
                     <EggTokenIcon />
-                    <span>{eggInfo.dragon_egg_babyloong}</span>
+                    <span>{eggInfo.dragon_egg_babyloong||'-'}</span>
                   </div>
                   <div className="rit">
                     <span>≈ 100.00</span>
@@ -695,7 +695,7 @@ const UserPanel = () => {
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>{userReward[0]?.number}</span>
+            <span>{userReward[0]?.number||'-'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -705,7 +705,7 @@ const UserPanel = () => {
               <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[1]?.number}</span>
+              <span>{userReward[1]?.number||'-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -714,7 +714,7 @@ const UserPanel = () => {
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[2]?.number}</span>
+              <span>{userReward[2]?.number||'-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -725,7 +725,7 @@ const UserPanel = () => {
               <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[3]?.number}</span>
+              <span>{userReward[3]?.number||'-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -734,7 +734,7 @@ const UserPanel = () => {
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[4]?.number}</span>
+              <span>{userReward[4]?.number||'-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -744,7 +744,7 @@ const UserPanel = () => {
             <span>{t('Egg Rank Reward')}</span>
           </div>
           <div className="bot">
-            <span>{userReward[5]?.number}</span>
+            <span>{userReward[5]?.number||'-'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -754,7 +754,7 @@ const UserPanel = () => {
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[6]?.number}</span>
+              <span>{userReward[6]?.number||'-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -763,7 +763,7 @@ const UserPanel = () => {
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[7]?.number}</span>
+              <span>{userReward[7]?.number||'-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>

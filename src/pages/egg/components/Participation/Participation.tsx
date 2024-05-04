@@ -59,11 +59,11 @@ const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {
       <Top>
         <div className="parti">
           <span className="label">{t('Master Participation')}</span>
-          <span className="count">{allNet?.loong_user_count}</span>
+          <span className="count">{allNet?.loong_user_count||'-'}</span>
         </div>
         <div className="parti">
           <span className="label">{t('Egg Participation')}</span>
-          <span className="count">{allNet?.dragon_egg_count}</span>
+          <span className="count">{allNet?.dragon_egg_count||'-'}</span>
         </div>
       </Top>
       <Mid>
@@ -71,7 +71,7 @@ const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {
           {t('TOTAL DISTRIBUTE')}
         </Typography>
         <div className="bot">
-          <span className="count">{allNet?.wait_out_babyloong}</span>
+          <span className="count">{allNet?.wait_out_babyloong||'-'}</span>
           <div className="img">
             <EggTokenIcon />
           </div>
@@ -82,7 +82,7 @@ const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {
           {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
-          <span className="count">0</span>
+          <span className="count">{allNet?.reward_total||'-'}</span>
           <div className="img">
             <MaticIcon />
           </div>

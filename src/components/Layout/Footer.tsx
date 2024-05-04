@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   return (
     <Box component="footer" sx={{ bgcolor: '#17172C', color: 'white', p: 3, width: '100%' }}>
       <Typography variant="body2" color="inherit" align="center">
-        © {new Date().getFullYear()} Your Website Name
+        © {new Date().getFullYear()} Powered By
       </Typography>
       <Typography  color="inherit" fontSize="12px" sx={{opacity:'0.5'}} align="center">
       2024 BabyLoong all right reserved</Typography>

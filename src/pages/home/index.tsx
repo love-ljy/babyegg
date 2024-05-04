@@ -150,8 +150,13 @@ filter: blur(60.150001525878906px);
 `
 const TokenBurn = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: .2fr 1fr;
   grid-gap: 20px;
+  justify-content: space-between;
+  border-radius: 5px;
+border: 1px solid #8F0DF5;
+padding: 4px;
+  align-items: center;
 `
 
 const EcologyCard = styled.div`
@@ -175,13 +180,17 @@ const slides = [
     name: '',
     desc: 'Discovering the Thrills of BabyLoong’s Treasury Egg',
     imageUrl: '/img/image1.png',
-    path:'/egg',
-    isComing:false
+    path: '/egg',
+    isComing: false
   },
-  { title: 'Are you ready', name: 'Go', desc: 'Let the release speed of Babylong passion', imageUrl: '/img/image2.png', path:'/egg',
-  isComing:true },
-  { title: 'Carnival', name: '', desc: 'Feed your Babylong', imageUrl: '/img/image3.png', path:'/egg',
-  isComing:true },
+  {
+    title: 'Are you ready', name: 'Go', desc: 'Let the release speed of Babylong passion', imageUrl: '/img/image2.png', path: '/egg',
+    isComing: true
+  },
+  {
+    title: 'Carnival', name: '', desc: 'Feed your Babylong', imageUrl: '/img/image3.png', path: '/egg',
+    isComing: true
+  },
 ]
 
 const ecologyLits = [
@@ -198,12 +207,12 @@ const Parteners = [
 
 
 const Home: React.FC = () => {
-  const { t,i18n } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
   const router = useRouter();
-  const HandleGoGame = (e:any)=>{
-    if(!e.isComing){
-      router.push(e.path+'?invite='+router.query.invite)
-    }else{
+  const HandleGoGame = (e: any) => {
+    if (!e.isComing) {
+      router.push(e.path + '?invite=' + router.query.invite)
+    } else {
       toast('敬请期待')
     }
   }
@@ -230,7 +239,7 @@ const Home: React.FC = () => {
                 </ContentBox>
               </SlideBox>
               <Stack flexDirection="row">
-                <Button onClick={()=>{HandleGoGame(e)}} sx={{ margin: '30px 20px' }} fullWidth variant="contained">
+                <Button onClick={() => { HandleGoGame(e) }} sx={{ margin: '30px 20px' }} fullWidth variant="contained">
                   {t("Explore Game")}
                 </Button>
               </Stack>
@@ -247,7 +256,7 @@ const Home: React.FC = () => {
           <Image width="124" height={99} src={shoub} alt="" />
         </RightBox>
         <Typography fontSize="40px" color="#fff" fontWeight="bold">
-        {t("INTRODUCTION")}
+          {t("INTRODUCTION")}
         </Typography>
         <Typography fontSize="15px" color="#fff">
           {t("The first meme coin on the Polygon chain featuring a burn mechanism and multiple game ecosystems is here! It's a boon for crypto lovers, turning the tables on their investment stories and reviving the glory of the Polygon chain as we pay tribute to the great memes")}
@@ -255,13 +264,17 @@ const Home: React.FC = () => {
       </ProjectBox>
       <Container sx={{ width: '100%' }}>
         <Typography fontSize="40px" color="#fff" fontWeight="bold">
-        {t("$BabyLoongnomices")}
+          {t("$BabyLoongnomices")}
         </Typography>
         <TokenContainer>
           <TokenBg />
           <TokenImg>
             <Image width="159" height={159} src={Token} alt="" />
           </TokenImg>
+          <TokenDesc>
+            <TokenTitle> {t("Token Introduction")}</TokenTitle>
+            <Typography fontSize="12px" fontWeight="bold" color="#fff">{t('BabyLoong tokens are the value certificates of the game ecosystem, with a total supply of 12.8 billion. The liquidity pool tokens are burned at a rate of 0.375% per hour, continuing until the total circulating supply is reduced to 100 million tokens')}</Typography>
+          </TokenDesc>
           <TokenDesc>
             <TokenTitle> {t("Total Supply")}</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">12,800,000,000</Typography>
@@ -279,6 +292,14 @@ const Home: React.FC = () => {
             <TokenTitle> {t("Buy &Sell Tax")}</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">5%</Typography>
           </TokenDesc>
+          <TokenBurn>
+            <TokenTitle> {t("Current Burned")}</TokenTitle>
+            <Stack flexDirection="row" alignItems="center" justifyContent="right">
+              <Typography fontSize="24px" fontWeight="bold" color="#fff">100,000,000</Typography>
+              <Image width="30" height={30} src={Token} alt="" />
+            </Stack>
+
+          </TokenBurn>
           {/* <TokenDesc>
             <TokenTitle>税收奖励池</TokenTitle>
             <TokenBurn>
@@ -299,29 +320,29 @@ const Home: React.FC = () => {
               1002383</Typography>
           </TokenDesc> */}
         </TokenContainer>
-       
+
       </Container>
       <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">{t('GAMES ECOSYSTEM')}</Typography>
       <EcologyCard>
-          {ecologyLits.map(e => {
+        {ecologyLits.map(e => {
+          return (
+            <GameCard key={e.title} title={t(e.title)} image={e.image} description={t(e.description)} comingsoon={e.comingsoon} />
+          )
+        })}
+      </EcologyCard>
+      <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">{t('GAMES ECOSYSTEM')}</Typography>
+      <PartenerBox>
+        {
+          Parteners.map((e, i) => {
             return (
-              <GameCard key={e.title} title={t(e.title)} image={e.image} description={t(e.description)} comingsoon={e.comingsoon} />
+              // <PartenerCard key={e.title} title={e.title} image={e.image} />
+              <Box key={i + '2s'} margin="0 auto">
+                <Image width={140} src={e} alt="" />
+              </Box>
             )
-          })}
-        </EcologyCard>
-        <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">{t('GAMES ECOSYSTEM')}</Typography>
-        <PartenerBox>
-          {
-            Parteners.map((e,i) => {
-              return (
-                // <PartenerCard key={e.title} title={e.title} image={e.image} />
-               <Box key={i+'2s'} margin="0 auto">
-                 <Image width={140} src={e}   alt=""/>
-               </Box>
-              )
-            })
-          }
-        </PartenerBox>
+          })
+        }
+      </PartenerBox>
     </LayBox>
   )
 }
