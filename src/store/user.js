@@ -50,10 +50,12 @@ export const slice = createSlice({
     walletInfo: {
       address: '',
     },
+    babyPrice:0,
     isBindParent: false,
     gamingId:'',
     authToken:'',
-    inviteCode:''
+    inviteCode:'',
+    babyIncome:0
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
@@ -74,10 +76,16 @@ export const slice = createSlice({
     setInviteCode: (state, { payload }) => {
       state.inviteCode = payload
     },
+    setBabyPrice: (state, { payload }) => {
+      state.babyPrice = payload
+    },
+    setBabyIncome: (state, { payload }) => {
+      state.babyIncome = payload
+    }
   },
 })
 
-export const { setUserInfo,setAuthToken,setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
+export const {setBabyIncome,setBabyPrice, setUserInfo,setAuthToken,setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
@@ -86,5 +94,7 @@ export const selectIsBindParent = s => s.user.isBindParent
 export const selectGamingId = s => s.user.gamingId
 export const selectAuthToken = s => s.user.authToken
 export const selectInviteCode = s => s.user.inviteCode
+export const selectBabyPrice = s => s.user.babyPrice
+export const selectBabyIncome = s => s.user.babyIncome
 
 export default slice.reducer

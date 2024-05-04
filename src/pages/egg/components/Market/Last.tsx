@@ -81,7 +81,7 @@ interface TrafficProps {
 }
 
 interface Props {
-  dataSource?: TrafficProps
+  dataSource?: string[]
   changePage: (i: number) => void
 }
 
@@ -89,7 +89,7 @@ const Last = (props: Props) => {
   const { dataSource, changePage } = props
   // @ts-ignore
   const { t } = useTranslation('common')
-
+  console.info(dataSource,'--')
   const changePageFormat = (event: React.ChangeEvent<unknown>, value: number) => {
     changePage(value)
   }
@@ -106,8 +106,8 @@ const Last = (props: Props) => {
           <div>{t('Address')}</div>
         </Column>
         <Source>
-          {dataSource?.list?.length ? (
-            dataSource?.list?.map((item: any, index: number) => {
+          {dataSource?.length ? (
+            dataSource?.map((item: any, index: number) => {
               return (
                 <SourceItem>
                   <div className="No">{index}</div>
@@ -120,7 +120,7 @@ const Last = (props: Props) => {
           )}
         </Source>
       </div>
-      <Box mt={2}>
+      {/* <Box mt={2}>
         {dataSource?.list?.length ? (
           <CommonPage
             count={dataSource?.page?.total_count}
@@ -128,7 +128,7 @@ const Last = (props: Props) => {
             handleChange={changePageFormat}
           />
         ) : null}
-      </Box>
+      </Box> */}
     </LastWrap>
   )
 }

@@ -69,7 +69,7 @@ interface TrafficProps {
 const Market = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const [dataSource, setDataSource] = useState<TrafficProps>()
+  const [dataSource, setDataSource] = useState<string[]>()
   const [currentPage, setCurrentPage] = useState(1)
   const [tabNum, setTabNum] = useState(0)
   const [dataSource2, setDataSource2] = useState<TrafficProps>()
@@ -117,7 +117,7 @@ const Market = () => {
       let res: any
       try {
         if (tabNum === 1) {
-          res = await getLast100({ page: currentPage, limit: 10 })
+          res = await getLast100({ page: currentPage, limit: 100 })
           if (res.code === 0) {
             setDataSource(res.data)
           }

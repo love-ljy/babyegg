@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux'
 import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
 import { useReadContract, useWriteContract } from 'wagmi'
-import { selectWalletInfo, selectUserInfo,selectAuthToken, selectIsBindParent } from '@store/user'
+import { selectWalletInfo, selectUserInfo,selectAuthToken,setBabyIncome, selectIsBindParent } from '@store/user'
 import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin, getIncomeReceiveNumber, createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
@@ -563,7 +563,7 @@ const UserPanel = () => {
       })
       const res = await Promise.all(resolve)
       setUserReward(res?.flat())
-      console.info(res.flat())
+      // setBabyIncome(res?.flat()?[1])
     } catch (error) {
 
     }
@@ -637,7 +637,7 @@ const UserPanel = () => {
           </div>
           <div className="group group2">
             <span className="title">{t('Your Master Rank')}</span>
-            <span className="count">{userInfo.last_sort_num}</span>
+            <span className="count">{userInfo.index_num}</span>
           </div>
         </div>
       </Expenditure>

@@ -22,6 +22,7 @@ import {
   selectAuthToken,
   selectIsBindParent,
   selectGamingId,
+  setBabyPrice,
 } from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
@@ -35,6 +36,7 @@ import { getDecimalAmount } from '@utils/formatterBalance'
 import useAllowance from '@hooks/useAllowance'
 import { BurnContractAddr, MainContractAddr } from '@config/contants'
 import { useAccount } from 'wagmi'
+import { dispatch } from '@store/index'
 
 const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
@@ -445,6 +447,7 @@ const BuyEgg = () => {
           })
           setCoinList(options)
           setCoinType(options[0].value)
+          dispatch(setBabyPrice(res.data[1].matic_price))
         } else {
           toast.warn('网络错误')
         }
