@@ -232,6 +232,8 @@ function LongEgg() {
   }
 
   const fetchUserParent = useCallback(async () => {
+    console.log('cesh');
+    
     try {
       if (address && router.isReady) {
         const bindRes = await refetch()
