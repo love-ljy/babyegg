@@ -231,6 +231,7 @@
     "BabyLoong tokens are the value certificates of the game ecosystem, with a total supply of 12.8 billion. The liquidity pool tokens are burned at a rate of 0.375% per hour, continuing until the total circulating supply is reduced to 100 million tokens": "宝贝龙代币是游戏生态的价值通证，总量128亿枚，底池代币燃烧每小时0.375%，燃烧通缩至总流通量1亿枚为止",
     "Total Supply": "总供应",
     "Contract": "合约",
+    "APPROVE":"授权",
     "Liquidity Burn": "底池燃烧",
     "Buy &Sell Tax": "交易税收",
     "Current Burned": "当前代币销毁总量",
