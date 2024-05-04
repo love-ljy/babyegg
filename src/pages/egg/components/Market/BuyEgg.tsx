@@ -34,7 +34,7 @@ import useGetBalance from '@hooks/useGetBalance'
 import useBabyLong from '@hooks/useBabyLong'
 import { getDecimalAmount } from '@utils/formatterBalance'
 import useAllowance from '@hooks/useAllowance'
-import { BurnContractAddr, MainContractAddr } from '@config/contants'
+import { BurnContractAddr, MainContractAddr, BabyToken } from '@config/contants'
 import { useAccount } from 'wagmi'
 import { dispatch } from '@store/index'
 
@@ -233,7 +233,7 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
 
 const tokenAddressMap = {
   0: MainContractAddr,
-  1: BurnContractAddr,
+  1: BabyToken,
 }
 
 const BuyEgg = () => {
@@ -255,14 +255,15 @@ const BuyEgg = () => {
   const gamingId: any = useSelector(selectGamingId)
   const token = useSelector(selectAuthToken)
   const { address } = useAccount()
+  const { userBalance } = useGetBalance()
 
   const {
     isAllowing,
-    allowSpendingTokens,
     allowance,
     refetch: allowanceRefetch,
+    approveEstimatedGas,
+    allowSpendingTokens,
   } = useAllowance(tokenAddressMap[coinType], MainContractAddr)
-  const { userBalance } = useGetBalance()
 
   const {
     estimatedGas: stakeEstimatedGas,
@@ -289,10 +290,12 @@ const BuyEgg = () => {
     onSuccess() {
       toast.success('下单成功')
       userBalance.refetch()
+      setLoading(false)
     },
     onError(error, rawError) {
       console.log('babyLong rawError', rawError)
       toast.warn('下单失败')
+      setLoading(false)
     },
     args: babyArgs,
   })
@@ -349,27 +352,8 @@ const BuyEgg = () => {
       if (res.code === 0) {
         const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
         const bigAmount = getDecimalAmount(amount, 18)
-        setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
-        setTimeout(() => {
-          console.log('handleBabyLong, babyLongEstimatedGas', babyLongEstimatedGas)
-          const estimatedGasInFloat = babyLongEstimatedGas
-            ? parseFloat(formatUnits(babyLongEstimatedGas, walletInfo?.decimals))
-            : null
-          if (!estimatedGasInFloat) {
-            toast.warn("Couldn't estimate gas")
-            setLoading(false)
-            return
-          }
-          if (
-            +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals) + estimatedGasInFloat >
-            walletInfo?.balance
-          ) {
-            toast.warn('Insufficient balance for gas')
-            setLoading(false)
-            return
-          }
-          orderBabyLong()
-        }, 200)
+        console.log('bigAmount', bigAmount.toString())
+        orderBabyLong([coin_token, amount, type, id, sign_out_time, v, r, s])
       } else {
         toast.warn(res.msg)
       }
@@ -397,9 +381,6 @@ const BuyEgg = () => {
 
   const selectChange = (option: any) => {
     setCoinType(option.value)
-    setTimeout(() => {
-      allowanceRefetch()
-    }, 200)
   }
 
   const handleReinvestment = async passParams => {
@@ -428,12 +409,24 @@ const BuyEgg = () => {
     setPassVisible(true)
   }
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
+    const estimatedGasInFloat = approveEstimatedGas
+      ? parseFloat(formatUnits(approveEstimatedGas, walletInfo?.decimals))
+      : null
+    if (!estimatedGasInFloat) {
+      toast.warn("Couldn't estimate gas")
+      return
+    }
+    if (estimatedGasInFloat > walletInfo?.balance) {
+      toast.warn('Insufficient balance for gas')
+      return
+    }
     allowSpendingTokens()
   }
 
   const fetCoin = useCallback(async () => {
     if (address && isBindParent && token) {
+      allowanceRefetch()
       try {
         const res: any = await getCoin({
           type: -1,

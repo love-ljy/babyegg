@@ -34,6 +34,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { formatUnits } from 'viem'
 import nextI18NextConfig from '../../../next-i18next.config.js'
 import { TOKEN } from '@config/contants'
+import useGetBalance from '@hooks/useGetBalance'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -112,7 +113,7 @@ function LongEgg() {
 
   const inviteCode = useSelector(selectInviteCode)
   const walletInfo: any = useSelector(selectWalletInfo)
-
+  const { userBalance } = useGetBalance()
   const {
     estimatedGas: bindEstimatedGas,
     bindParent,
@@ -144,6 +145,7 @@ function LongEgg() {
         fetchEggCountDown()
         fetchAllNetwork()
         setVisible(false)
+        userBalance.refetch()
       } else {
         toast.warn(res.msg)
       }
@@ -187,10 +189,12 @@ function LongEgg() {
       : null
     if (!estimatedGasInFloat) {
       toast.warn("Couldn't estimate gas")
+      setFetchLoading(false)
       return
     }
-    if (0 + estimatedGasInFloat > walletInfo?.balance) {
+    if (estimatedGasInFloat > walletInfo?.balance) {
       toast.warn('Insufficient balance for gas')
+      setFetchLoading(false)
       return
     }
     bindParent()
@@ -232,8 +236,6 @@ function LongEgg() {
   }
 
   const fetchUserParent = useCallback(async () => {
-    console.log('cesh');
-    
     try {
       if (address && router.isReady) {
         const bindRes = await refetch()

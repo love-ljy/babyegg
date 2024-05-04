@@ -18,7 +18,7 @@ const useBabyLong = ({ args = [], onSuccess, onError }: Props) => {
     functionName: 'deposit',
     args,
     query: {
-      enabled
+      enabled: true
     }
   } as const
   

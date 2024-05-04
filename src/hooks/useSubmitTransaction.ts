@@ -52,7 +52,7 @@ const useSubmitTransaction = (
     estimatedGas,
     gasEstimationError,
     isLoading: isGasEstimationLoading,
-    mutate,
+    mutate: estimateGasMutate,
   } = useEstimateGas({
     abi: contractCallConfig.abi as Abi,
     address: contractCallConfig.address as `0x${string}`,
@@ -124,12 +124,14 @@ const useSubmitTransaction = (
       }
       writeContract({
         ...contractCallConfig,
+        args
       })
     },
     isPreparing: isSimulateContractLoading || isGasEstimationLoading,
     isLoading: isWaitForTransactionLoading || isContractWriteLoading,
     estimatedGas,
     error,
+    estimateGasMutate
   }
 }
 

@@ -1,4 +1,4 @@
-import { useBalance, useAccount, useReadContract } from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 import useSubmitTransaction from './useSubmitTransaction'
 import eggAbi from '../config/abi/eggAbi.json'
 import { MainContractAddr } from '../config/contants'
@@ -13,6 +13,7 @@ interface Props {
 const useBind2 = ({ args, onSuccess, onError }: Props) => {
   const { address } = useAccount()
   const enabled = !!address && address !== NULL_ADDRESS && !!args[0]
+  
   const contractCallParams = {
     abi: eggAbi,
     address: MainContractAddr,
@@ -32,7 +33,7 @@ const useBind2 = ({ args, onSuccess, onError }: Props) => {
       enabled: false,
     },
   })
-  
+
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(
     contractCallParams,
     {
@@ -47,7 +48,7 @@ const useBind2 = ({ args, onSuccess, onError }: Props) => {
     estimatedGas,
     bindParent: onSubmitTransaction,
     isLoading,
-    refetch
+    refetch,
   }
 }
 
