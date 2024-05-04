@@ -186,7 +186,7 @@ const GameDesc = () => {
     { num: 'Elite', level: 300, downLevel: 50 },
     { num: 'Expert', level: 500, downLevel: 40 },
     { num: 'Master', level: 1000, downLevel: 30 },
-    { num: 'GrandMaster', level: 3000, downLevel: 30 },
+    { num: 'Grandmaster', level: 3000, downLevel: 30 },
   ]
   return (
     <LastWrap>
