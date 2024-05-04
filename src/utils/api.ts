@@ -159,6 +159,17 @@ const queryUserInfoByTeam = async () => {
   })
 }
 
+
+// 领取奖励
+const incomeReceive = async (data: any) => {
+  return request({
+    url: '/api/user/incomeReceive',
+    method: 'post',
+    data,
+  })
+}
+
+
 export {
   getUserInfo,
   submitUserLogin,
@@ -178,5 +189,6 @@ export {
   getLast100,
   getRealTimeTraffic,
   getIncomeReceiveNumber,
-  queryUserInfoByTeam
+  queryUserInfoByTeam,
+  incomeReceive
 }

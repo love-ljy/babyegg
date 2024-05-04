@@ -3,13 +3,12 @@ import CopyIcon from '@icons/copy.svg'
 import invitePng from '@imgs/invite.png'
 import MaticIcon from '@icons/matic.svg'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectUserInfo } from '@store/user'
+import { selectUserInfo } from '@store/user'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import copy from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
-import { useMemo } from 'react'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -74,28 +73,25 @@ const CommonRow = styled.div`
   }
 `
 const Invitation = () => {
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const router = useRouter()
   const userInfo: any = useSelector(selectUserInfo)
-// @ts-ignore
-const { t } = useTranslation('common')
+
   const toHistory = () => {
     router.push('invite')
   }
-  
-  const isDev = process.env.NODE_ENV === 'development'
- const invateLink =  useMemo(() => {
-   let  invateLinks = isDev?"https://test.web.babyloong.org/":'https://test.web.babyloong.org/'
-    return invateLinks
-  },[isDev])
+
   const copyLink = () => {
-    copy(`${invateLink}?invite=${userInfo?.invite}`)
+    copy(`${window.location.origin}?invite=${userInfo?.invite}`)
     toast.success('复制成功')
   }
+
   return (
     <InvitationWrap>
       <div className="title">{t('Your Invitation Link')}</div>
       <Copy onClick={copyLink}>
-        <span className="text">{`${invateLink}?invite=${userInfo?.invite}`}</span>
+        <span className="text">{`${window.location.origin}?invite=${userInfo?.invite}`}</span>
         <CopyIcon />
       </Copy>
       <CommonRow>
@@ -103,7 +99,7 @@ const { t } = useTranslation('common')
           <span>{t('Current Number of Your Valid Referral Addresses')}</span>
         </div>
         <div className="bot">
-          <span>{userInfo?.true_son_num||0}</span>
+          <span>{userInfo?.true_son_num || 0}</span>
         </div>
       </CommonRow>
       <CommonRow>

@@ -5,7 +5,7 @@ const isDev = process.env.NODE_ENV === 'development'
  * @type {import('next').NextConfig}
  */
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   i18n,
   swcMinify: true, // 开启 SWC 编译器来提升构建性能
   experimental: {

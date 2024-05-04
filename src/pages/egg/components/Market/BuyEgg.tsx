@@ -16,20 +16,25 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo,selectUserInfo,selectAuthToken, selectIsBindParent, selectGamingId } from '@store/user'
+import {
+  selectWalletInfo,
+  selectUserInfo,
+  selectAuthToken,
+  selectIsBindParent,
+  selectGamingId,
+} from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
-import {
-  getCoin,
-  eggIncomeReinvestment,
-  createOrder,
-} from '@utils/api'
+import { getCoin, eggIncomeReinvestment, createOrder } from '@utils/api'
 import useStake from '@hooks/useStake'
 import { useTranslation } from 'next-i18next'
 import { formatUnits } from 'viem'
 import useGetBalance from '@hooks/useGetBalance'
 import useBabyLong from '@hooks/useBabyLong'
 import { getDecimalAmount } from '@utils/formatterBalance'
+import useAllowance from '@hooks/useAllowance'
+import { BurnContractAddr, MainContractAddr } from '@config/contants'
+import { useAccount } from 'wagmi'
 
 const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
@@ -224,15 +229,19 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
   }
 )
 
+const tokenAddressMap = {
+  0: MainContractAddr,
+  1: BurnContractAddr,
+}
+
 const BuyEgg = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const [coinType, setCoinType] = useState('2')
+  const [coinType, setCoinType] = useState('1')
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
   const [loading, setLoading] = useState(false)
   const [passVisible, setPassVisible] = useState(false)
-  const [inputPassVisible, setInputPassVisible] = useState(false)
   const [firstBuyVisible, setFirstBuyVisible] = useState(false)
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
@@ -243,7 +252,14 @@ const BuyEgg = () => {
   const userInfo: any = useSelector(selectUserInfo)
   const gamingId: any = useSelector(selectGamingId)
   const token = useSelector(selectAuthToken)
+  const { address } = useAccount()
 
+  const {
+    isAllowing,
+    allowSpendingTokens,
+    allowance,
+    refetch: allowanceRefetch,
+  } = useAllowance(tokenAddressMap[coinType], MainContractAddr)
   const { userBalance } = useGetBalance()
 
   const {
@@ -287,8 +303,7 @@ const BuyEgg = () => {
     if (coinType === '2') {
       // usdt
       if (userInfo.pay_password) {
-        // 需输入密码
-        setInputPassVisible(true)
+        setPassVisible(true)
       } else {
         setFirstBuyVisible(true)
       }
@@ -380,11 +395,13 @@ const BuyEgg = () => {
 
   const selectChange = (option: any) => {
     setCoinType(option.value)
+    setTimeout(() => {
+      allowanceRefetch()
+    }, 200)
   }
 
   const handleReinvestment = async passParams => {
     try {
-      // todo passLoading
       const res: any = await eggIncomeReinvestment({
         id: gamingId,
         password: passParams.pass,
@@ -404,40 +421,43 @@ const BuyEgg = () => {
     }
   }
 
-
   const firstBuyClose = async () => {
     setFirstBuyVisible(false)
     setPassVisible(true)
   }
 
+  const handleApprove = () => {
+    allowSpendingTokens()
+  }
+
   const fetCoin = useCallback(async () => {
-    try {
-      const res: any = await getCoin({
-        type: -1,
-      })
-      if (res.code === 0) {
-        const options = res.data.map((item: any) => {
-          return {
-            label: item.name,
-            value: item.type,
-          }
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getCoin({
+          type: -1,
         })
-        setCoinList(options)
-        setCoinType(options[0].value)
-      } else {
+        if (res.code === 0) {
+          const options = res.data.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.type,
+            }
+          })
+          setCoinList(options)
+          setCoinType(options[0].value)
+        } else {
+          toast.warn('网络错误')
+        }
+      } catch (e) {
+        console.log('fetCoin error', e)
         toast.warn('网络错误')
       }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
     }
-  }, [])
+  }, [address, isBindParent, token])
 
   useEffect(() => {
-    if (walletInfo?.address && isBindParent&&userInfo.id&&token) {
-      fetCoin()
-    }
-  }, [walletInfo?.address, isBindParent,userInfo,token])
+    fetCoin()
+  }, [fetCoin])
 
   return (
     <BuyEggWrap>
@@ -482,13 +502,19 @@ const BuyEgg = () => {
         <span className="buying">{t('Current $Matic available')} :</span>
         <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
       </div>
-      <BuyBtn
-        iscancel={stakeLoading || loading || babyLoading}
-        disabled={stakeLoading || loading || babyLoading}
-        onClick={handleBuy}
-      >
-        {stakeLoading || loading || babyLoading ? t('Loading...') : t('BUY')}
-      </BuyBtn>
+      {(allowance && +allowance.toString() > 0) || coinType === '0' || coinType === '2' ? (
+        <BuyBtn
+          iscancel={stakeLoading || loading || babyLoading}
+          disabled={stakeLoading || loading || babyLoading}
+          onClick={handleBuy}
+        >
+          {stakeLoading || loading || babyLoading ? t('Loading...') : t('BUY')}
+        </BuyBtn>
+      ) : (
+        <BuyBtn iscancel={isAllowing} disabled={isAllowing} onClick={handleApprove}>
+          {isAllowing ? t('Loading...') : t('APPROVE')}
+        </BuyBtn>
+      )}
       <div className="detailed">
         <div>
           <Image width={15} height={15} src={detailedPng} alt="detailed" />

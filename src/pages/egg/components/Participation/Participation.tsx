@@ -1,9 +1,7 @@
 import styled from '@emotion/styled'
-import { Box, Typography } from '@mui/material'
-import distributePng from '@imgs/distribute.png'
+import { Typography } from '@mui/material'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
-import Image from 'next/image'
 import { useTranslation } from 'next-i18next'
 
 const ParticipationWrap = styled.div`
@@ -52,9 +50,10 @@ const Bot = styled.div`
   background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
 `
 
-const Participation: React.FC<{ allNet: any }> = ({allNet}) => {
-     // @ts-ignore
-     const { t } = useTranslation('common')
+const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {
+  // @ts-ignore
+  const { t } = useTranslation('common')
+
   return (
     <ParticipationWrap>
       <Top>

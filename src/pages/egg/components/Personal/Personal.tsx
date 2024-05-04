@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
+import { useEffect, useState, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Box } from '@mui/material'
-import markitipPng from '@imgs/markitip.png'
 import CommonTab from '../commonTab/commonTab'
 import UserPanel from './UserPanel'
 import Invitation from './Invitation'
@@ -10,16 +8,17 @@ import Withdraw from './Withdraw'
 import Rank from './Rank'
 import WeekMonth from './WeekMonth'
 import { useTranslation } from 'next-i18next'
-import {getUserRanking,getRankingLevel} from '@utils/api'
-import { selectUserInfo,selectAuthToken} from '@store/user'
+import { getUserRanking, getRankingLevel } from '@utils/api'
+import { selectAuthToken, selectIsBindParent } from '@store/user'
 import { useSelector } from 'react-redux'
+import { useAccount } from 'wagmi'
+import { toast } from 'react-toastify'
 
 const MarketWrap = styled.div`
   .top {
     position: relative;
     height: 80px;
     .bg {
-    
       height: 80px;
       opacity: 1;
       background: radial-gradient(
@@ -71,71 +70,72 @@ const tabList: tabItem[] = [
   },
 ]
 type Level = {
-  "grade": string
-  "rate": string
-  "user_num": number
-  "total_reward_babyloong": string
-  "total_reward_babyloong_matic": string
+  grade: string
+  rate: string
+  user_num: string
+  total_reward_babyloong: string
+  total_reward_babyloong_matic: string
 }
-interface MYRANK{my_egg:string,my_ranking:string}
+interface MYRANK {
+  my_egg: string
+  my_ranking: string
+}
 
 const Personal = () => {
   // @ts-ignore
-const { t } = useTranslation('common')
-  const [loading, setLoading] = useState(false)
-  const [myRank,setMyRank] = useState<MYRANK>()
-  const [rankLevel,setRankLevel] = useState<Level[]>()
-  const [dataSource, setDataSource] = useState([
-    // {
-    //   no: 100,
-    //   address: '0x4Bc48...3B98fD',
-    //   amount: 1000,
-    //   time: '12 hours ago',
-    // },
-  ])
-  const userInfo: any = useSelector(selectUserInfo)
+  const { t } = useTranslation('common')
+  const [myRank, setMyRank] = useState<MYRANK>()
+  const [rankLevel, setRankLevel] = useState<Level[]>([])
+  const [dataSource, setDataSource] = useState([])
   const token = useSelector(selectAuthToken)
+  const isBindParent: any = useSelector(selectIsBindParent)
+  const { address } = useAccount()
 
-  const fetchEggRanking = async()=>{
-    setLoading(true)
-    const res:any =  await getUserRanking()
-    if(res.code===0){
-      setDataSource(res.data.list)
-      setMyRank({my_egg:res.data.my_egg,my_ranking:res.data.my_ranking})
+  const tabChange = (_event: React.SyntheticEvent, i: number) => {}
+
+  const swipeChange = (i: number) => {}
+
+  const fetchUserRank = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getUserRanking()
+        if (res.code === 0) {
+          setDataSource(res.data.list)
+          setMyRank({ my_egg: res.data.my_egg, my_ranking: res.data.my_ranking })
+        } else {
+          toast.warn(res.msg)
+          setDataSource([])
+        }
+      } catch (e) {
+        console.log('fetchUserRank error', e)
+        toast.warn('网络错误')
+        setDataSource([])
+      }
     }
-    const ress:any = await getRankingLevel()
-    if(ress.code===0){
-      setRankLevel(ress.data)
-    } 
-  }
+  }, [address && isBindParent && token])
 
-
-
-  const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   // setPageIndex(1);
-    //   // setList(rankAllList[i].list);
-    //   // setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
-  }
-
-  const swipeChange = (i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   setPageIndex(1);
-    //   setList(rankAllList[i].list);
-    //   setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
-  }
-  useEffect(()=>{
-    if(userInfo.id&&token){
-      fetchEggRanking()
+  const fetchRankLevel = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getRankingLevel()
+        if (res.code === 0) {
+          setRankLevel(res.data)
+        } else {
+          toast.warn(res.msg)
+          setRankLevel([])
+        }
+      } catch (e) {
+        console.log('fetchRankLevel error', e)
+        toast.warn('网络错误')
+        setRankLevel([])
+      }
     }
-    
-  },[userInfo,token])
+  }, [address && isBindParent && token])
+
+  useEffect(() => {
+    fetchUserRank()
+    fetchRankLevel()
+  }, [fetchUserRank, fetchRankLevel])
 
   return (
     <MarketWrap>

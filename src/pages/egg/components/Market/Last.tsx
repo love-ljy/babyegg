@@ -2,8 +2,6 @@ import styled from '@emotion/styled'
 import CommonPage from '../commonPage/commonPage'
 import { Box } from '@mui/material'
 import { useTranslation } from 'next-i18next'
-import {getLast100} from '@utils/api'
-import { useEffect,useState } from 'react'
 
 const LastWrap = styled.div`
   display: flex;
@@ -68,25 +66,34 @@ const SourceItem = styled.div`
   }
 `
 
+interface TrafficProps {
+  list: {
+    id: string
+    event: string
+    created_at: string
+    username: string
+  }[]
+  page: {
+    total_count: string
+    total_page: number
+    current_page: number
+  }
+}
+
 interface Props {
-  dataSource: any[]
+  dataSource?: TrafficProps
+  changePage: (i: number) => void
 }
 
 const Last = (props: Props) => {
-      // @ts-ignore
-      const { t } = useTranslation('common')
-      useEffect(()=>{
-        fetchLast100
-      },[])
-      const[list,setList] = useState([])
-      const fetchLast100 = async()=>{
-        const res:any = await getLast100({page:1,limit:100})
-        if(res.code===0){
-          setList(res.data)
-        }
-      }
-     
-  const { dataSource = [] } = props
+  const { dataSource, changePage } = props
+  // @ts-ignore
+  const { t } = useTranslation('common')
+
+  const changePageFormat = (event: React.ChangeEvent<unknown>, value: number) => {
+    changePage(value)
+  }
+
   return (
     <LastWrap>
       <div
@@ -99,8 +106,8 @@ const Last = (props: Props) => {
           <div>{t('Address')}</div>
         </Column>
         <Source>
-          {dataSource.length ? (
-            dataSource.map((item: any, index:number) => {
+          {dataSource?.list?.length ? (
+            dataSource?.list?.map((item: any, index: number) => {
               return (
                 <SourceItem>
                   <div className="No">{index}</div>
@@ -113,8 +120,17 @@ const Last = (props: Props) => {
           )}
         </Source>
       </div>
-      <Box mt={2}>{list.length ? <CommonPage /> : null}</Box>
+      <Box mt={2}>
+        {dataSource?.list?.length ? (
+          <CommonPage
+            count={dataSource?.page?.total_count}
+            page={dataSource?.page?.current_page}
+            handleChange={changePageFormat}
+          />
+        ) : null}
+      </Box>
     </LastWrap>
   )
 }
+
 export default Last

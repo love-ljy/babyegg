@@ -5,7 +5,7 @@ import CountDown from './components/countDown/countDown'
 import Participation from './components/Participation/Participation'
 import Market from './components/Market/Market'
 import Personal from './components/Personal/Personal'
-import { useConnect, useAccount } from 'wagmi'
+import { useAccount } from 'wagmi'
 import {
   getUserHadParent,
   submitUserLogin,
@@ -14,19 +14,26 @@ import {
   queryTotalNet,
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
-import { selectWalletInfo, setUserInfo,setInviteCode, setAuthToken,selectInviteCode,selectIsBindParent, selectAuthToken, setIsBindParent, setGamingId } from '@store/user'
+import {
+  selectWalletInfo,
+  setUserInfo,
+  setInviteCode,
+  setAuthToken,
+  selectInviteCode,
+  setIsBindParent,
+  setGamingId,
+} from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { dispatch } from '@store/index'
 import { toast } from 'react-toastify'
 import md5 from 'md5'
 import useBind2 from '@hooks/useBind2'
-import { GetInvateContext } from '../../contexts/GetInvateContext'
 import { useTranslation } from 'next-i18next'
-import useGetBalance from '@hooks/useGetBalance'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { formatUnits } from 'viem'
 import nextI18NextConfig from '../../../next-i18next.config.js'
+import { TOKEN } from '@config/contants'
 
 const LongEggWrap = styled.div`
   color: #fff;
@@ -75,7 +82,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -92,40 +99,41 @@ const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
 
 function LongEgg() {
   const { t } = useTranslation('common')
-  const [visible, setVisible] = useState(false)
-  const [bindAddress, setBindAddress] = useState<any>('')
+  const router = useRouter()
+  const { address } = useAccount()
 
+  const [visible, setVisible] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(false)
+  const [bindAddress, setBindAddress] = useState<any>('')
   const [gameInfo, setGameInfo] = useState<any>({})
   const [gameEnd, setGameEnd] = useState(false)
   const [allNet, setAllNet] = useState<any>({})
   const [countDown, setCountDown] = useState<number>(0)
-  const router = useRouter()
-  const { address } = useAccount()
+
   const inviteCode = useSelector(selectInviteCode)
-  const authToken = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
-  const isBindParent = useSelector(selectIsBindParent)
-  const { parentAddr } = useGetBalance()
+
   const {
     estimatedGas: bindEstimatedGas,
     bindParent,
-    isLoading,
+    isLoading: bindLoading,
+    refetch,
   } = useBind2({
     args: [bindAddress],
     onSuccess() {
-      toast.success('绑定上级成功')
       login(inviteCode)
+      toast.success('绑定上级成功')
     },
     onError(error, rawError) {
-      console.log('rawError', rawError)
+      console.log('bind rawError', rawError)
       toast.warn('绑定上级失败')
+      setFetchLoading(false)
     },
   })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBindAddress(event.target.value)
   }
-
 
   const fetchUserInfo = async () => {
     try {
@@ -134,40 +142,46 @@ function LongEgg() {
         dispatch(setUserInfo(res.data))
         dispatch(setIsBindParent(true))
         fetchEggCountDown()
+        fetchAllNetwork()
         setVisible(false)
       } else {
-        toast.warn('网络错误')
+        toast.warn(res.msg)
       }
     } catch (e) {
       console.log('e', e)
       toast.warn('网络错误')
+    } finally {
+      setFetchLoading(false)
     }
   }
 
   const login = async (invite: string) => {
     try {
       const res: any = await submitUserLogin({
-        password: md5(md5(walletInfo?.address + 'babyloong') + 'babyloong'),
-        username: walletInfo?.address,
+        password: md5(md5(address + 'babyloong') + 'babyloong'),
+        username: address as `0x${string}`,
         invite,
       })
       if (res.code === 0) {
-        localStorage.setItem('token', res.data.Token)
+        localStorage.setItem(TOKEN, res.data.Token)
         dispatch(setAuthToken(res.data.Token))
-        dispatch(setUserInfo({ token: res.data.Token }))
-        await fetchUserInfo()
-        await  fetchAllNetwork()
+        fetchUserInfo()
       } else {
-        localStorage.setItem('token', '')
-        toast.warn('网络错误')
+        localStorage.setItem(TOKEN, '')
+        dispatch(setAuthToken(''))
+        toast.warn(res.msg)
+        setFetchLoading(false)
       }
     } catch (e) {
-      console.log('e', e)
+      localStorage.setItem(TOKEN, '')
+      console.log('login error', e)
       toast.warn('网络错误')
+      setFetchLoading(false)
     }
   }
 
   const handleBind = async () => {
+    setFetchLoading(true)
     const estimatedGasInFloat = bindEstimatedGas
       ? parseFloat(formatUnits(bindEstimatedGas, walletInfo?.decimals))
       : null
@@ -194,9 +208,11 @@ function LongEgg() {
         dispatch(setGamingId(res.data.id))
       } else if (res.code === 1) {
         setGameEnd(true)
+      } else {
+        toast.warn(res.msg)
       }
     } catch (e) {
-      console.log('e', e)
+      console.log('fetchEggCountDown error', e)
       toast.warn('网络错误')
     }
   }
@@ -204,62 +220,62 @@ function LongEgg() {
   const fetchAllNetwork = async () => {
     try {
       const res: any = await queryTotalNet()
-      console.info(res, res.data.data)
       if (res.code === 0) {
-        console.info(res.data)
         setAllNet(res.data)
+      } else {
+        toast.warn(res.msg)
       }
     } catch (e) {
-      console.log('e', e)
+      console.log('fetchAllNetwork error', e)
       toast.warn('网络错误')
     }
   }
 
-  const fetchUserParent = async (invite) => {
+  const fetchUserParent = useCallback(async () => {
     try {
-    
-      const res: any = await getUserHadParent({ username: address, invite: invite||"BABYLONG" })
-      if (res.code === 0 ) {
-        if(res.data.had_parent === 0){
-          if (parentAddr === '0x0000000000000000000000000000000000000000' && address) {
+      if (address && router.isReady) {
+        const bindRes = await refetch()
+        const { invite } = router.query
+        const res: any = await getUserHadParent({
+          username: address,
+          invite: invite || '',
+        })
+        if (res.code === 0) {
+          if (res.data.had_parent === 0) {
             setVisible(true)
+            dispatch(setInviteCode(invite ? invite : res.data.invite))
+            setBindAddress(res.data.username)
+            dispatch(setIsBindParent(false))
+            localStorage.setItem('inviteCode', invite ? invite : res.data.invite)
+            localStorage.setItem('userAddress', address)
           } else {
-            setVisible(false)
+            if (bindRes.data !== res.data.username) {
+              setVisible(true)
+              dispatch(setInviteCode(invite ? invite : res.data.invite))
+              localStorage.setItem('inviteCode', invite ? invite : res.data.invite)
+              localStorage.setItem('userAddress', address)
+              setBindAddress(res.data.username)
+              dispatch(setIsBindParent(false))
+              toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
+            } else {
+              setVisible(false)
+              login(res.data.invite)
+              localStorage.setItem('inviteCode', res.data.invite)
+              localStorage.setItem('userAddress', address)
+            }
           }
-          dispatch(setInviteCode(invite||"BABYLONG"))
-          setBindAddress(res.data.username)
-          dispatch(setIsBindParent(false))
-        }else {
-          localStorage.setItem('token', '')
-          dispatch(setAuthToken(''))
-          dispatch(setIsBindParent(true))
-          await login(inviteCode)
-          await fetchUserInfo()
-          await  fetchAllNetwork()
-          window.localStorage.setItem("invite", res.data.username)
+        } else {
+          toast.warn(res.msg)
         }
       }
     } catch (error) {
-      console.info(error)
-      window.localStorage.setItem("invite", '');
+      console.info('fetchUserParent', error)
     }
-  }
-
-
-
+  }, [address, router.isReady])
 
   useEffect(() => {
-    if (address) {
-      const {invite} = router.query
-      if(invite){
-        dispatch(setInviteCode(invite))
-        fetchUserParent(invite)
-      }else{
-        fetchUserParent("BABYLONG")
-      }
-
-    }
-  }, [address,router.query])
+    fetchUserParent()
+  }, [fetchUserParent])
 
   const LongHeader = () => {
     const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null
@@ -291,8 +307,12 @@ function LongEgg() {
         <ModalMain>
           <div className="title">{t('Bind superior address')}</div>
           <CountInput type="text" value={bindAddress} onChange={handleChange} variant="standard" />
-          <BuyBtn iscancel={isLoading} disabled={isLoading} onClick={handleBind}>
-            {isLoading ? 'Loading...' : t('confirm')}
+          <BuyBtn
+            iscancel={fetchLoading || bindLoading}
+            disabled={fetchLoading || bindLoading}
+            onClick={handleBind}
+          >
+            {fetchLoading || bindLoading ? 'Loading...' : t('confirm')}
           </BuyBtn>
         </ModalMain>
       </CommonModal>

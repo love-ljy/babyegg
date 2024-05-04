@@ -1,23 +1,21 @@
-import { useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
-import Image from 'next/image'
+import { useEffect, useState, useCallback } from 'react'
+import { Typography } from '@mui/material'
 import styled from '@emotion/styled'
-import markitipPng from '@imgs/markitip.png'
-import closePng from '@imgs/close.png'
-import desctipPng from '@imgs/desctip.png'
 import CommonTab from '../commonTab/commonTab'
 import MaticIcon from '@icons/matic.svg'
 import { useTranslation } from 'next-i18next'
-import { getUserRanking, getRankingYuLong } from '@utils/api'
-import { selectUserInfo,selectAuthToken} from '@store/user'
+import { getRankingYuLong } from '@utils/api'
+import { selectAuthToken, selectIsBindParent } from '@store/user'
 import { useSelector } from 'react-redux'
+import { useAccount } from 'wagmi'
+import { toast } from 'react-toastify'
+import { formatAddress } from '@utils/formatterBalance'
 
 const MarketWrap = styled.div`
   .top {
     position: relative;
     height: 80px;
     .bg {
-    
       height: 80px;
       opacity: 1;
       background: radial-gradient(
@@ -123,16 +121,16 @@ interface tabItem {
 
 interface CompProps {
   dataSource: any[]
-  myInfo?:MyInfo
+  myInfo?: MyInfo
 }
 const Bot = styled.div`
   border-radius: 5px;
-background: rgba(184, 3, 139, 1);
-display: flex;
-flex-direction: column;
-justify-content: flex-start;
-align-items: center;
-padding: 6px 15px 6px 15px;
+  background: rgba(184, 3, 139, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 6px 15px 6px 15px;
 `
 const LastWrap = styled.div`
   margin-top: 10px;
@@ -194,14 +192,14 @@ const Source = styled.div`
   }
 `
 const MyRank = styled.div`
-opacity: 1;
-background: rgba(22, 34, 54, 1);
-display: flex;
-justify-content: space-between;
-align-items: center;
-border-radius: 3px;
-padding: 15px 15px 15px 15px;
-margin:20px 0%;
+  opacity: 1;
+  background: rgba(22, 34, 54, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 3px;
+  padding: 15px 15px 15px 15px;
+  margin: 20px 0%;
 `
 const Flex = styled.div`
   display: flex;
@@ -237,7 +235,7 @@ const SourceItem = styled.div`
 const Comp = (props: CompProps) => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const { dataSource,myInfo } = props
+  const { dataSource, myInfo } = props
   return (
     <ContentWrap>
       <Bot>
@@ -254,12 +252,18 @@ const Comp = (props: CompProps) => {
       <MyRank>
         <div>
           <Typography fontSize="12px">您当前的预计分红</Typography>
-          <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">{myInfo?.my_reward_matic}</Typography>
-          <Typography fontSize="12px">您的小区新增业绩 {myInfo?.my_min_son_team_performance}</Typography>
+          <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
+            {myInfo?.my_reward_matic}
+          </Typography>
+          <Typography fontSize="12px">
+            您的小区新增业绩 {myInfo?.my_min_son_team_performance}
+          </Typography>
         </div>
         <Flex>
           <Typography fontSize="12px">NO</Typography>
-          <Typography fontWeight="bold" fontSize="44px">{myInfo?.my_ranking}</Typography>
+          <Typography fontWeight="bold" fontSize="44px">
+            {myInfo?.my_ranking}
+          </Typography>
         </Flex>
       </MyRank>
       <LastWrap>
@@ -279,10 +283,10 @@ const Comp = (props: CompProps) => {
               dataSource.map((item: any) => {
                 return (
                   <SourceItem>
-                    <div className="No">{item.no}</div>
-                    <div className="address">{item.address}</div>
-                    <div className="amount">{item.amount}</div>
-                    <div className="time">{item.time}</div>
+                    <div className="No">{item.ranking}</div>
+                    <div className="address">{formatAddress(item.username)}</div>
+                    <div className="amount">{item.rate}</div>
+                    <div className="time">{item.expect_reward}</div>
                   </SourceItem>
                 )
               })
@@ -296,38 +300,33 @@ const Comp = (props: CompProps) => {
   )
 }
 
-interface MyInfo{
-  my_min_son_team_performance:string
-my_ranking:string
-my_reward:string
-my_reward_matic:string
-total_reward:string
-total_reward_matic:string
+interface MyInfo {
+  my_min_son_team_performance: string
+  my_ranking: string
+  my_reward: string
+  my_reward_matic: string
+  total_reward: string
+  total_reward_matic: string
 }
 
 const WeekMonth = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const [loading, setLoading] = useState(false)
-  const [marketShow, setMarketShow] = useState(false)
-  const [dataSource, setDataSource] = useState([
-    // {
-    //   no: 100,
-    //   address: '0x4Bc48...3B98fD',
-    //   amount: 1000,
-    //   time: '12 hours ago',
-    // },
-  ])
-  const [myInfo,setMyInfo] = useState<MyInfo>()
+  const [dataSource, setDataSource] = useState([])
+  const [myInfo, setMyInfo] = useState<MyInfo>({
+    my_min_son_team_performance: '',
+    my_ranking: '',
+    my_reward: '',
+    my_reward_matic: '',
+    total_reward: '',
+    total_reward_matic: '',
+  })
+  const [tabNum, setTabNum] = useState(0)
+
   const token = useSelector(selectAuthToken)
-  const [dataSource2, setDataSource2] = useState([
-    {
-      no: 100,
-      address: '0x4Bc48...3B98fD',
-      amount: 1000,
-      time: '12 hours ago',
-    },
-  ])
+  const isBindParent: any = useSelector(selectIsBindParent)
+  const { address } = useAccount()
+
   const tabList: tabItem[] = [
     {
       label: 'Weekly',
@@ -340,43 +339,71 @@ const WeekMonth = () => {
       component: <Comp myInfo={myInfo} dataSource={dataSource} />,
     },
   ]
+
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    FetchRankingLevel(i)
+    setTabNum(i)
   }
-  const FetchRankingLevel = async (i) => {
-    console.info(2222)
-    const res: any = await getRankingYuLong(i)
-    if (res.code === 0) {
-      setDataSource(res.data.list)
-      const {my_min_son_team_performance,my_ranking,my_reward,my_reward_matic,total_reward,total_reward_matic} = res.data
-      setMyInfo({
-        my_min_son_team_performance,
-        my_ranking,
-        my_reward,
-        my_reward_matic,
-        total_reward,
-        total_reward_matic
-      })
-    }
-  }
+
   const swipeChange = (i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   setPageIndex(1);
-    //   setList(rankAllList[i].list);
-    //   setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    setTabNum(i)
   }
+
+  const fetchYuLong = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getRankingYuLong(tabNum)
+        if (res.code === 0) {
+          setDataSource(res.data.list)
+          const {
+            my_min_son_team_performance,
+            my_ranking,
+            my_reward,
+            my_reward_matic,
+            total_reward,
+            total_reward_matic,
+          } = res.data
+          setMyInfo({
+            my_min_son_team_performance,
+            my_ranking,
+            my_reward,
+            my_reward_matic,
+            total_reward,
+            total_reward_matic,
+          })
+        } else {
+          toast.warn(res.msg)
+          setDataSource([])
+          setMyInfo({
+            my_min_son_team_performance: '',
+            my_ranking: '',
+            my_reward: '',
+            my_reward_matic: '',
+            total_reward: '',
+            total_reward_matic: '',
+          })
+        }
+      } catch (e) {
+        console.log('fetchYuLong error', e)
+        toast.warn('网络错误')
+        setDataSource([])
+        setMyInfo({
+          my_min_son_team_performance: '',
+          my_ranking: '',
+          my_reward: '',
+          my_reward_matic: '',
+          total_reward: '',
+          total_reward_matic: '',
+        })
+      }
+    }
+  }, [address, isBindParent, token, tabNum])
+
   useEffect(() => {
-if(token){
-  FetchRankingLevel(0)
-}
-   
-  }, [token])
+    fetchYuLong()
+  }, [fetchYuLong])
+
   return (
     <MarketWrap>
-      
       <div className="tab">
         <CommonTab
           tabList={tabList}

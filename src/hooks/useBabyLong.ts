@@ -9,11 +9,17 @@ interface Props {
 }
 
 const useBabyLong = ({ args = [], onSuccess, onError }: Props) => {
+  
+  const enabled = !!args.length
+
   const contractCallParams = {
     abi: burnTokenAbi,
     address: BurnContractAddr,
     functionName: 'deposit',
     args,
+    query: {
+      enabled
+    }
   } as const
   
   const { error, isPreparing, isLoading, estimatedGas, onSubmitTransaction } = useSubmitTransaction(

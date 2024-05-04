@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
 import CommonTab from '../commonTab/commonTab'
@@ -8,6 +8,11 @@ import BuyEgg from './BuyEgg'
 import GameDesc from './GameDesc'
 import { useTranslation } from 'next-i18next'
 import { getLast100, getRealTimeTraffic } from '@utils/api'
+
+import { useAccount } from 'wagmi'
+import { selectAuthToken, selectIsBindParent } from '@store/user'
+import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 
 const MarketWrap = styled.div`
   .top {
@@ -41,41 +46,39 @@ const MarketWrap = styled.div`
   }
 `
 
-
 interface tabItem {
   label: string
   value: string
   component: any
 }
 
-interface TrafficProps{
-  list:{
-    id:string,
-    event:string,
-    created_at:string,
-    username:string
-  }[],
-  page:{
-    total_count:string
-    total_page:number
-    current_page:number
+interface TrafficProps {
+  list: {
+    id: string
+    event: string
+    created_at: string
+    username: string
+  }[]
+  page: {
+    total_count: string
+    total_page: number
+    current_page: number
   }
 }
 
 const Market = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const [loading, setLoading] = useState(false)
-  const [marketShow, setMarketShow] = useState(false)
-  const [dataSource, setDataSource] = useState([
-    // {
-    //   no: 1,
-    //   address: '0x9a4E864aF8E...C71c88f1782bD',
-    // },
-  ])
-  const [currentPage,setCurrentPage] = useState(1)
-  const [tabNum,setTabNum] = useState(0)
+  const [dataSource, setDataSource] = useState<TrafficProps>()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [tabNum, setTabNum] = useState(0)
   const [dataSource2, setDataSource2] = useState<TrafficProps>()
+
+  const { address } = useAccount()
+
+  const token = useSelector(selectAuthToken)
+  const isBindParent: any = useSelector(selectIsBindParent)
+
   const tabList: tabItem[] = [
     {
       label: 'Buy Egg',
@@ -85,7 +88,7 @@ const Market = () => {
     {
       label: 'Last 100',
       value: 'last',
-      component: <Last dataSource={dataSource} />,
+      component: <Last dataSource={dataSource} changePage={setCurrentPage} />,
     },
     {
       label: 'Traffic',
@@ -98,54 +101,43 @@ const Market = () => {
       component: <GameDesc />,
     },
   ]
-  const fetchLast100 = async (i: number) => {
-    console.info(i)
-    let res: any
-   
-    if (i === 1) {
-      res = await getLast100({ page: currentPage, limit: 10 })
-      if (res.code === 0) {
-        setDataSource(res.data)
-      }
-    } else if (i === 2) {
-      res = await getRealTimeTraffic({ page: currentPage, limit: 10 })
-      if (res.code === 0) {
-        setDataSource2(res.data)
-      }
-    }
-   
 
-  }
-
-  useEffect(()=>{
-    if(tabNum===1||tabNum===2){
-      fetchLast100(tabNum)
-    }
-    
-  },[currentPage,tabNum])
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    console.info(i)
     setTabNum(i)
-    if (i === 1 || i === 2) { fetchLast100(i) }
+    setCurrentPage(1)
   }
 
   const swipeChange = (i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   setPageIndex(1);
-    //   setList(rankAllList[i].list);
-    //   setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    setTabNum(i)
+    setCurrentPage(1)
   }
 
-  const openMarketDialog = () => {
-    setMarketShow(true)
-  }
+  const fetchTableList = useCallback(async () => {
+    if (address && isBindParent && token) {
+      let res: any
+      try {
+        if (tabNum === 1) {
+          res = await getLast100({ page: currentPage, limit: 10 })
+          if (res.code === 0) {
+            setDataSource(res.data)
+          }
+        } else if (tabNum === 2) {
+          res = await getRealTimeTraffic({ page: currentPage, limit: 10 })
+          if (res.code === 0) {
+            setDataSource2(res.data)
+            toast.warn(res.msg)
+          }
+        }
+      } catch (e) {
+        console.log('table list error', e)
+        toast.warn('网络错误')
+      }
+    }
+  }, [currentPage, tabNum, address, isBindParent, token])
 
-  const closeDialog = () => {
-    setMarketShow(false)
-  }
+  useEffect(() => {
+    fetchTableList()
+  }, [fetchTableList])
 
   return (
     <MarketWrap>
@@ -161,7 +153,6 @@ const Market = () => {
       <div className="tab">
         <CommonTab tabList={tabList} tabChange={tabChange} swipeChange={swipeChange} />
       </div>
-
     </MarketWrap>
   )
 }

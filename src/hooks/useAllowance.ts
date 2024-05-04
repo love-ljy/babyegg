@@ -3,9 +3,9 @@ import { useAccount, useReadContract } from 'wagmi'
 import useSubmitTransaction from './useSubmitTransaction'
 import { NULL_ADDRESS } from '@config/contants'
 
-const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`) => {
+const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`, flag?: boolean) => {
   const { address, chainId } = useAccount()
-
+  
   const enabled = Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS)
   const {
     data: allowance,
@@ -23,6 +23,7 @@ const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`) => {
   })
 
 
+
   const { isLoading: isAllowing, onSubmitTransaction: allowSpendingTokens } = useSubmitTransaction(
     {
       abi: erc20Abi,
@@ -30,7 +31,7 @@ const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`) => {
       functionName: 'approve',
       args: [contract, maxUint256],
       query: {
-        enabled,
+        enabled: Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS && flag),
       },
     },
     {

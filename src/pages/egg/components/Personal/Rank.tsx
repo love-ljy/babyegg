@@ -1,21 +1,17 @@
-import { useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
-import { Typography } from '@mui/material'
-import { getState } from '@store/index'
+import { Typography, Box } from '@mui/material'
 import rankBgPng from '@imgs/rankBg.png'
-import { selectWalletInfo, setUserInfo,setAuthToken, setIsBindParent, setGamingId, selectAuthToken } from '@store/user'
-import { useSelector } from 'react-redux'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
 import VIP4 from '@imgs/3000.png'
+import { formatAddress } from '@utils/formatterBalance'
 
 const MarketWrap = styled.div`
   .top {
     position: relative;
     height: 80px;
     .bg {
-    
       height: 80px;
       opacity: 1;
       background: radial-gradient(
@@ -186,14 +182,14 @@ const Column = styled.div`
   }
 `
 const MyRank = styled.div`
-opacity: 1;
-background: rgba(22, 34, 54, 1);
-display: flex;
-justify-content: space-between;
-align-items: center;
-border-radius: 3px;
-padding: 15px 15px 15px 15px;
-margin:20px 0%;
+  opacity: 1;
+  background: rgba(22, 34, 54, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 3px;
+  padding: 15px 15px 15px 15px;
+  margin: 20px 0%;
 `
 
 const Source = styled.div`
@@ -237,23 +233,25 @@ const SourceItem = styled.div`
 `
 const Flex = styled.div`
   display: flex;
-  align-items: center;
-  gap: 15px;
+  align-items: flex-end;
+  justify-content: end;
 `
-interface MYRANK { my_egg: string, my_ranking: string }
+interface MYRANK {
+  my_egg: string
+  my_ranking: string
+}
 interface Props {
   dataSource: any[]
   myRank?: MYRANK
-  rankLevel?: Level[]
+  rankLevel: Level[]
 }
 type Level = {
-  "grade": string
-  "rate": string
-  "user_num": number
-  "total_reward_babyloong": string
-  "total_reward_babyloong_matic": string
+  grade: string
+  rate: string
+  user_num: string
+  total_reward_babyloong: string
+  total_reward_babyloong_matic: string
 }
-
 
 const Rank = (props: Props) => {
   // @ts-ignore
@@ -272,45 +270,55 @@ const Rank = (props: Props) => {
         <RankItem className="special">
           <Image src={rankBgPng} alt="rank" />
           <div className="countIcon">
-            <span className="big">{rankLevel && rankLevel[4]?.total_reward_babyloong_matic}</span>
+            <span className="big">{rankLevel[4]?.total_reward_babyloong_matic}</span>
             <EggTokenIcon width={24} />
           </div>
-          <div className="second">{rankLevel && rankLevel[4]?.user_num} {t('Grandmaster')}</div>
+          <div className="second">
+            {rankLevel[4]?.user_num} {t('Grandmaster')}
+          </div>
           <div className="third">{t('Current Grandmaster Prize Pool')}</div>
         </RankItem>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel && rankLevel[3]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[3]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">{rankLevel && rankLevel[3]?.user_num} {t('Grandmaster')}</div>
+            <div className="second">
+              {rankLevel[3]?.user_num} {t('Grandmaster')}
+            </div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel && rankLevel[2]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[2]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">{rankLevel && rankLevel[2]?.user_num} {t('Grandmaster')}</div>
+            <div className="second">
+              {rankLevel[2]?.user_num} {t('Grandmaster')}
+            </div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel && rankLevel[1]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[1]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">{rankLevel && rankLevel[1]?.user_num} {t('Grandmaster')}</div>
+            <div className="second">
+              {rankLevel[1]?.user_num} {t('Grandmaster')}
+            </div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel && rankLevel[0]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[0]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">{rankLevel && rankLevel[0]?.user_num} {t('Grandmaster')}</div>
+            <div className="second">
+              {rankLevel[0]?.user_num} {t('Grandmaster')}
+            </div>
             <div className="third">{t('Current Grandmaster Prize Pool')}</div>
           </RankItem>
         </div>
@@ -319,13 +327,17 @@ const Rank = (props: Props) => {
             <Image width={60} src={VIP4} alt="rank" />
             <div>
               <Typography fontSize="12px">您的排位</Typography>
-              <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">育龙宗师</Typography>
+              <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
+                育龙宗师
+              </Typography>
               <Typography fontSize="12px">龙蛋数额{myRank?.my_egg}</Typography>
             </div>
           </Flex>
           <Flex>
             <Typography fontSize="12px">NO</Typography>
-            <Typography fontWeight="bold" fontSize="44px">{myRank?.my_ranking}</Typography>
+            <Typography fontWeight="bold" fontSize="44px">
+              {myRank?.my_ranking}
+            </Typography>
           </Flex>
         </MyRank>
         <div>
@@ -348,10 +360,10 @@ const Rank = (props: Props) => {
                 dataSource.map((item: any) => {
                   return (
                     <SourceItem>
-                      <div className="No">{item.no}</div>
-                      <div className="address">{item.address}</div>
-                      <div className="amount">{item.amount}</div>
-                      <div className="time">{item.time}</div>
+                      <div className="No">{item.ranking}</div>
+                      <div className="address">{formatAddress(item.username)}</div>
+                      <div className="amount">{item.dragon_egg}</div>
+                      <div className="time">{item.level_grade}</div>
                     </SourceItem>
                   )
                 })

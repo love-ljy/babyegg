@@ -4,3 +4,5 @@ export const BabyToken = '0x726B2488bea65C4Ac38DE40853fbC12c55116D1d'
 export const withDrawAddr = '0x3676CBC11f0b5714A6961FDEA196065294eb211B'
 export const NULL_ADDRESS: `0x${string}` =
   "0x0000000000000000000000000000000000000000"
+
+export const TOKEN = 'token'

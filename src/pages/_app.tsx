@@ -1,4 +1,4 @@
-import React, { useContext,useEffect } from 'react'
+import React from 'react'
 import { AppProps } from 'next/app'
 import { ThemeProvider } from '@mui/material/styles'
 import { Provider } from 'react-redux'
@@ -11,15 +11,12 @@ import { WagmiProvider } from 'wagmi'
 import { CacheProvider } from '@emotion/react'
 import createEmotionCache from '../createEmotionCache'
 import { config } from '../wagmi/wagmi'
-import { useRouter } from 'next/router';
 import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../next-i18next.config.js'
 import Layout from '../components/Layout'
-import {GetInvateContextProvider,GetInvateContext}from '../contexts/GetInvateContext'
 import { ToastContainer } from 'react-toastify'
 import store from '@store/index'
-import {  setUserInfo,setAuthToken,selectAuthToken,setInviteCode,selectInviteCode } from '@store/user'
 import 'react-toastify/dist/ReactToastify.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import 'slick-carousel/slick/slick.css'
@@ -31,30 +28,12 @@ globalThis.Buffer = Buffer
 const queryClient = new QueryClient()
 // 客户端的 Emotion 缓存实例
 
-
 const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
-  const { token } = useContext(GetInvateContext)
-  const router = useRouter();
-  useEffect(() => { 
-    const handleRouteChange = () => {
-       localStorage.setItem('token', '')
-       store.dispatch(setAuthToken(''))
-      console.log('路由变化，清空 store');
-    };
 
-    // 监听路由变化
-    router.events.on('routeChangeStart', handleRouteChange);
-
-    return () => {
-      // 移除监听
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [router]);
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-       
         <WagmiProvider config={config}>
           <RainbowKitProvider
             theme={darkTheme({
@@ -66,7 +45,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             })}
             initialChain={bscTestnet}
           >
-            <CacheProvider value={clientSideEmotionCache}> 
+            <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>
                 <ToastContainer theme="dark" />
                 <CssBaseline />
@@ -79,10 +58,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
             </CacheProvider>
           </RainbowKitProvider>
         </WagmiProvider>
-       
       </QueryClientProvider>
     </Provider>
   )
 }
 
-export default appWithTranslation(MyApp,nextI18NextConfig) ;
+export default appWithTranslation(MyApp, nextI18NextConfig)
