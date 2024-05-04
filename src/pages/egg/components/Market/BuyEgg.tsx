@@ -37,6 +37,7 @@ import useAllowance from '@hooks/useAllowance'
 import { BurnContractAddr, MainContractAddr, BabyToken } from '@config/contants'
 import { useAccount } from 'wagmi'
 import { dispatch } from '@store/index'
+import { BigNumber } from 'bignumber.js'
 
 const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
@@ -264,7 +265,6 @@ const BuyEgg = () => {
     approveEstimatedGas,
     allowSpendingTokens,
   } = useAllowance(tokenAddressMap[coinType], MainContractAddr)
-
   const {
     estimatedGas: stakeEstimatedGas,
     handleStake,
@@ -351,9 +351,9 @@ const BuyEgg = () => {
       })
       if (res.code === 0) {
         const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
-        const bigAmount = getDecimalAmount(amount, 18)
+        const bigAmount = BigInt(Math.floor(amount * (10 ** 18)))
         console.log('bigAmount', bigAmount.toString())
-        orderBabyLong([coin_token, amount, type, id, sign_out_time, v, r, s])
+        orderBabyLong([coin_token, bigAmount.toString(), type, id, sign_out_time, v, r, s])
       } else {
         toast.warn(res.msg)
       }
