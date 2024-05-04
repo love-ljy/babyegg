@@ -8,11 +8,7 @@ import {
   TransactionReceipt,
   decodeEventLog,
 } from 'viem'
-import {
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from 'wagmi'
+import { useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import useEstimateGas from './useEstimateGas'
 
 const getEvents = (
@@ -47,7 +43,7 @@ const useSubmitTransaction = (
       query: { enabled: contractCallConfig.query?.enabled ?? true },
       ...contractCallConfig,
     })
- 
+
   const {
     estimatedGas,
     gasEstimationError,
@@ -69,14 +65,11 @@ const useSubmitTransaction = (
     isError: isContractWriteError,
     isPending: isContractWriteLoading,
     reset,
-  } = useWriteContract(
-    {
-      mutation: {
-        onError: (error: Error) => console.info(error),
-       
-      },
-    }
-  )
+  } = useWriteContract({
+    mutation: {
+      onError: (error: Error) => console.info(error),
+    },
+  })
 
   const {
     data: transactionReceipt,
@@ -122,16 +115,13 @@ const useSubmitTransaction = (
         onError?.(error, rawError)
         return
       }
-      writeContract({
-        ...contractCallConfig,
-        args
-      })
+      writeContract(contractCallConfig)
     },
     isPreparing: isSimulateContractLoading || isGasEstimationLoading,
     isLoading: isWaitForTransactionLoading || isContractWriteLoading,
     estimatedGas,
     error,
-    estimateGasMutate
+    estimateGasMutate,
   }
 }
 
