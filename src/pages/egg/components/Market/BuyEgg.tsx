@@ -353,8 +353,13 @@ const BuyEgg = () => {
         id: gamingId,
       })
       if (res.code === 0) {
-        const { r, v, s, id, type, bsc_amount, coin_token, sign_out_time } = res.data
+        const { r, v, s, id, amount,type, bsc_amount, coin_token, sign_out_time } = res.data
         // const bigAmount = BigInt(Math.floor(amount * (10 ** 18)))
+        if(Number(amount)>Number(formatBalance)){
+          toast.warn('余额不足')
+          setLoading(false)
+          return;
+        }
         console.log('bigAmount', bsc_amount.toString())
         orderBabyLong([coin_token, bsc_amount, type, id, sign_out_time, v, r, s])
       } else {
