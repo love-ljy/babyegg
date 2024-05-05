@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "clean": "rimraf node_modules/.cache .next",
     "generate-types": "typechain --target ethers-v5 ./src/config/abi/*.json --out-dir ./src/types"
   },
   "eslintConfig": {
@@ -42,6 +43,7 @@
     "react-slick": "^0.30.2",
     "react-swipeable-views": "^0.14.0",
     "react-toastify": "^10.0.5",
+    "rimraf": "^5.0.5",
     "slick-carousel": "^1.8.1",
     "swr": "^2.2.5",
     "typechain": "^8.3.2",
