@@ -115,9 +115,12 @@ const useSubmitTransaction = (
         onError?.(error, rawError)
         return
       }
+      if (args.length) {
+        contractCallConfig.args = args
+      }
+
       writeContract({
         ...contractCallConfig,
-        args,
         overrides: {
           ...contractCallConfig.overrides,
           gasLimit: estimatedGas,
