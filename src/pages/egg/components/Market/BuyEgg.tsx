@@ -389,6 +389,7 @@ const BuyEgg = () => {
 
   const selectChange = (option: any) => {
     setCoinType(option.value)
+    console.info(option,'option')
     setCoinBalance(option.balance)
   }
 
@@ -456,6 +457,7 @@ const BuyEgg = () => {
               balance:e.value==='1'?formatBalance:walletInfo?.balance
             }
           })
+          console.info(balanceList,'balanceList')
           setCoinList(balanceList)
           setCoinType(balanceList[0].value)
           setCoinBalance(balanceList[0].balance)
@@ -468,7 +470,7 @@ const BuyEgg = () => {
         toast.warn('网络错误')
       }
     }
-  }, [address, isBindParent, token])
+  }, [address, isBindParent, token,formatBalance])
 
   useEffect(() => {
     fetCoin()
