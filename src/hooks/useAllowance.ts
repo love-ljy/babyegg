@@ -13,6 +13,7 @@ interface Options {
 const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`, options?: Options) => {
   const { address } = useAccount()
   const { userBalance } = useGetBalance()
+
   const enabled = Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS && contract)
   const {
     data: allowance,
@@ -28,7 +29,6 @@ const useAllowance = (tokenAddress: `0x${string}`, contract: `0x${string}`, opti
       enabled: enabled,
     },
   })
-
   const {
     isLoading: isAllowing,
     estimatedGas,

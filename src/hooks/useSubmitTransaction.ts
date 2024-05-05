@@ -115,7 +115,14 @@ const useSubmitTransaction = (
         onError?.(error, rawError)
         return
       }
-      writeContract(contractCallConfig)
+      writeContract({
+        ...contractCallConfig,
+        args,
+        overrides: {
+          ...contractCallConfig.overrides,
+          gasLimit: estimatedGas,
+        },
+      })
     },
     isPreparing: isSimulateContractLoading || isGasEstimationLoading,
     isLoading: isWaitForTransactionLoading || isContractWriteLoading,

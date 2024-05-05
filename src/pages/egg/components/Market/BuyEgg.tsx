@@ -37,7 +37,7 @@ import useAllowance from '@hooks/useAllowance'
 import { BurnContractAddr, MainContractAddr, BabyToken } from '@config/contants'
 import { useAccount } from 'wagmi'
 import { dispatch } from '@store/index'
-import { BigNumber } from 'bignumber.js'
+import useTokenBalance from '@hooks/useTokenBalance'
 
 const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
@@ -249,7 +249,7 @@ const BuyEgg = () => {
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
   const [babyArgs, setBabyArgs] = useState<any>([])
-
+  const [coinBalance,setCoinBalance] = useState('0')
   const isBindParent: any = useSelector(selectIsBindParent)
   const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
@@ -264,7 +264,7 @@ const BuyEgg = () => {
     refetch: allowanceRefetch,
     approveEstimatedGas,
     allowSpendingTokens,
-  } = useAllowance(tokenAddressMap[coinType], MainContractAddr)
+  } = useAllowance(tokenAddressMap[coinType], BurnContractAddr)
   const {
     estimatedGas: stakeEstimatedGas,
     handleStake,
@@ -281,6 +281,9 @@ const BuyEgg = () => {
       setLoading(false)
     },
   })
+
+  const {balance,formatBalance} = useTokenBalance(tokenAddressMap[coinType])
+  console.info(balance,'----',formatBalance)
 
   const {
     estimatedGas: babyLongEstimatedGas,
@@ -350,10 +353,10 @@ const BuyEgg = () => {
         id: gamingId,
       })
       if (res.code === 0) {
-        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
-        const bigAmount = BigInt(Math.floor(amount * (10 ** 18)))
-        console.log('bigAmount', bigAmount.toString())
-        orderBabyLong([coin_token, bigAmount.toString(), type, id, sign_out_time, v, r, s])
+        const { r, v, s, id, type, bsc_amount, coin_token, sign_out_time } = res.data
+        // const bigAmount = BigInt(Math.floor(amount * (10 ** 18)))
+        console.log('bigAmount', bsc_amount.toString())
+        orderBabyLong([coin_token, bsc_amount, type, id, sign_out_time, v, r, s])
       } else {
         toast.warn(res.msg)
       }
@@ -381,6 +384,7 @@ const BuyEgg = () => {
 
   const selectChange = (option: any) => {
     setCoinType(option.value)
+    setCoinBalance(option.balance)
   }
 
   const handleReinvestment = async passParams => {
@@ -437,9 +441,19 @@ const BuyEgg = () => {
               label: item.name,
               value: item.type,
             }
+            
           })
-          setCoinList(options)
-          setCoinType(options[0].value)
+          const listCoin = options.filter((e:any)=>e.label!='USDT')
+          const balanceList = listCoin?.map((e:any)=>{
+            return {
+              label: e.label,
+              value: e.value,
+              balance:e.value==='1'?formatBalance:walletInfo?.balance
+            }
+          })
+          setCoinList(balanceList)
+          setCoinType(balanceList[0].value)
+          setCoinBalance(balanceList[0].balance)
           dispatch(setBabyPrice(res.data[1].matic_price))
         } else {
           toast.warn('网络错误')
@@ -495,8 +509,8 @@ const BuyEgg = () => {
         variant="standard"
       />
       <div className="available">
-        <span className="buying">{t('Current $Matic available')} :</span>
-        <span className="count">{walletInfo?.balance?.toFixed(2)}</span>
+        <span className="buying">{coinType==='1'?t('Current BABYLONG available') : t('Current $Matic available')} :</span>
+        <span className="count">{coinBalance}</span>
       </div>
       {(allowance && +allowance.toString() > 0) || coinType === '0' || coinType === '2' ? (
         <BuyBtn
