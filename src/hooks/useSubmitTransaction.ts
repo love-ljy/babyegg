@@ -36,6 +36,7 @@ const useSubmitTransaction = (
     customErrorsMap?: Record<string, string>
     onSuccess?: (transactionReceipt: TransactionReceipt, events: DecodeEventLogReturnType[]) => void
     onError?: (errorMessage: string, rawError: any) => void
+    mutationError?: (error: Error) => void
   }
 ) => {
   const { error: simulateContractError, isLoading: isSimulateContractLoading } =
@@ -67,7 +68,10 @@ const useSubmitTransaction = (
     reset,
   } = useWriteContract({
     mutation: {
-      onError: (error: Error) => console.info(error),
+      onError: (error: Error) => {
+        console.info(error)
+        options?.mutationError && options?.mutationError(error)
+      },
     },
   })
 
@@ -110,15 +114,11 @@ const useSubmitTransaction = (
     }
   }, [transactionReceipt, isSuccess, isError])
   return {
-    onSubmitTransaction: async (args: any = []) => {
+    onSubmitTransaction: async () => {
       if (!writeContract && error) {
         onError?.(error, rawError)
         return
       }
-      if (args.length) {
-        contractCallConfig.args = args
-      }
-
       writeContract({
         ...contractCallConfig,
         overrides: {

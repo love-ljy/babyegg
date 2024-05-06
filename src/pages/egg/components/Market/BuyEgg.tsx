@@ -32,7 +32,6 @@ import { useTranslation } from 'next-i18next'
 import { formatUnits } from 'viem'
 import useGetBalance from '@hooks/useGetBalance'
 import useBabyLong from '@hooks/useBabyLong'
-import { getDecimalAmount } from '@utils/formatterBalance'
 import useAllowance from '@hooks/useAllowance'
 import { BurnContractAddr, MainContractAddr, BabyToken } from '@config/contants'
 import { useAccount } from 'wagmi'
@@ -232,15 +231,19 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
   }
 )
 
+const MATIC = '0'
+const BABY = '1'
+const OTHER = '2' // todo 余额投资
+
 const tokenAddressMap = {
-  0: MainContractAddr,
-  1: BabyToken,
+  [BABY]: BabyToken,
+  // todo 余额投资待定
 }
 
 const BuyEgg = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const [coinType, setCoinType] = useState('1')
+  const [coinType, setCoinType] = useState(BABY)
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -248,15 +251,17 @@ const BuyEgg = () => {
   const [firstBuyVisible, setFirstBuyVisible] = useState(false)
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
-  const [babyArgs, setBabyArgs] = useState<any>([])
-  const [coinBalance,setCoinBalance] = useState('0')
+  const [coinBalance, setCoinBalance] = useState('0')
+
   const isBindParent: any = useSelector(selectIsBindParent)
   const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
   const gamingId: any = useSelector(selectGamingId)
   const token = useSelector(selectAuthToken)
+
   const { address } = useAccount()
   const { userBalance } = useGetBalance()
+  const { formatBalance } = useTokenBalance(tokenAddressMap[coinType]) // !
 
   const {
     isAllowing,
@@ -264,7 +269,8 @@ const BuyEgg = () => {
     refetch: allowanceRefetch,
     approveEstimatedGas,
     allowSpendingTokens,
-  } = useAllowance(tokenAddressMap[coinType], BurnContractAddr)
+  } = useAllowance(tokenAddressMap[coinType], BurnContractAddr) // !
+
   const {
     estimatedGas: stakeEstimatedGas,
     handleStake,
@@ -282,25 +288,23 @@ const BuyEgg = () => {
     },
   })
 
-  const {balance,formatBalance} = useTokenBalance(tokenAddressMap[coinType])
-  console.info(balance,'----',formatBalance)
-
-  const {
-    estimatedGas: babyLongEstimatedGas,
-    orderBabyLong,
-    isLoading: babyLoading,
-  } = useBabyLong({
+  const { isLoading: babyLoading, setBabyArgs } = useBabyLong({
     onSuccess() {
       toast.success('下单成功')
       userBalance.refetch()
+      setBabyArgs([])
       setLoading(false)
     },
     onError(error, rawError) {
       console.log('babyLong rawError', rawError)
       toast.warn('下单失败')
       setLoading(false)
+      setBabyArgs([])
     },
-    args: babyArgs,
+    mutationError() {
+      setBabyArgs([])
+      setLoading(false)
+    },
   })
 
   const handleBuy = async () => {
@@ -308,20 +312,18 @@ const BuyEgg = () => {
       toast.warn('请链接钱包')
       return
     }
-    if (coinType === '2') {
-      // usdt
+    if (coinType === OTHER) {
+      // todo 余额投资
       if (userInfo.pay_password) {
         setPassVisible(true)
       } else {
         setFirstBuyVisible(true)
       }
     }
-    if (coinType === '1') {
-      // babyLong
+    if (coinType === BABY) {
       handleBabyLong()
     }
-    if (coinType === '0') {
-      // matic
+    if (coinType === MATIC) {
       handleMatic()
     }
   }
@@ -353,21 +355,20 @@ const BuyEgg = () => {
         id: gamingId,
       })
       if (res.code === 0) {
-        const { r, v, s, id, amount,type, bsc_amount, coin_token, sign_out_time } = res.data
-        // const bigAmount = BigInt(Math.floor(amount * (10 ** 18)))
-        if(Number(amount)>Number(formatBalance)){
-          toast.warn('余额不足')
-          setLoading(false)
-          return;
+        const { r, v, s, id, amount, type, bsc_amount, coin_token, sign_out_time } = res.data
+        if (Number(amount) > Number(formatBalance)) {
+          toast.warn('babylonng 余额不足')
+          return
         }
-        console.log('bigAmount', bsc_amount.toString())
-        orderBabyLong([coin_token, bsc_amount, type, id, sign_out_time, v, r, s])
+        setBabyArgs([coin_token, bsc_amount, type, id, sign_out_time, v, r, s])
       } else {
         toast.warn(res.msg)
+        setLoading(false)
       }
     } catch (e) {
       console.log('e', e)
       toast.warn('网络错误')
+      setLoading(false)
     }
   }
 
@@ -389,7 +390,6 @@ const BuyEgg = () => {
 
   const selectChange = (option: any) => {
     setCoinType(option.value)
-    console.info(option,'option')
     setCoinBalance(option.balance)
   }
 
@@ -434,10 +434,10 @@ const BuyEgg = () => {
     allowSpendingTokens()
   }
 
-  const fetCoin = useCallback(async () => {
+  const fetCoin = useCallback(async () => {    
     if (address && isBindParent && token) {
-      allowanceRefetch()
       try {
+        allowanceRefetch()
         const res: any = await getCoin({
           type: -1,
         })
@@ -447,30 +447,28 @@ const BuyEgg = () => {
               label: item.name,
               value: item.type,
             }
-            
           })
-          const listCoin = options.filter((e:any)=>e.label!='USDT')
-          const balanceList = listCoin?.map((e:any)=>{
-            return {
-              label: e.label,
-              value: e.value,
-              balance:e.value==='1'?formatBalance:walletInfo?.balance
-            }
-          })
-          console.info(balanceList,'balanceList')
+          const balanceList = options
+            .filter((e: any) => e.label != 'USDT')
+            ?.map((v: any) => {
+              return {
+                label: v.label,
+                value: v.value,
+                balance: v.value === BABY ? formatBalance : +walletInfo?.balance.toFixed(2),
+              }
+            })
           setCoinList(balanceList)
-          setCoinType(balanceList[0].value)
           setCoinBalance(balanceList[0].balance)
           dispatch(setBabyPrice(res.data[1].matic_price))
         } else {
-          toast.warn('网络错误')
+          toast.warn(res.msg)
         }
       } catch (e) {
         console.log('fetCoin error', e)
         toast.warn('网络错误')
       }
     }
-  }, [address, isBindParent, token,formatBalance])
+  }, [address, isBindParent, token])
 
   useEffect(() => {
     fetCoin()
@@ -516,10 +514,12 @@ const BuyEgg = () => {
         variant="standard"
       />
       <div className="available">
-        <span className="buying">{coinType==='1'?t('Current BABYLONG available') : t('Current $Matic available')} :</span>
+        <span className="buying">
+          {coinType === BABY ? t('Current BABYLONG available') : t('Current $Matic available')} :
+        </span>
         <span className="count">{coinBalance}</span>
       </div>
-      {(allowance && +allowance.toString() > 0) || coinType === '0' || coinType === '2' ? (
+      {(allowance && +allowance.toString() > 0) || coinType === MATIC || coinType === OTHER ? (
         <BuyBtn
           iscancel={stakeLoading || loading || babyLoading}
           disabled={stakeLoading || loading || babyLoading}
@@ -593,7 +593,7 @@ const BuyEgg = () => {
         visible={passVisible}
         setVisible={setPassVisible}
         onOk={passOK}
-        type={userInfo.pay_password ? 'setpass' : 'inputpass'}
+        type={userInfo.pay_password ? 'normal' : 'set'}
       />
     </BuyEggWrap>
   )
