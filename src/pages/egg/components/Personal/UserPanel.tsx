@@ -404,15 +404,13 @@ const UserPanel = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
   const LevelList = [
-    { name: '育龙实习', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
-    { name: '育龙新锐', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
-    { name: '育龙精英', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
-    { name: '育龙专家', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
-    { name: '育龙大师', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
-    { name: '育龙宗师', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
+    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
+    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
+    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
+    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
+    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
+    { name: 'Grandmaster', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
   ]
-
-
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState(0)
   const [progress, setProgress] = useState(0)
@@ -601,7 +599,7 @@ const UserPanel = () => {
   },[Number(userInfo.dragon_egg)])
 
   const imgSrc = level ? level?.imgSrc : null;
-  const LevlName = level ? level?.name : null;
+  const LevlName:string = level ? level?.name : 'Master';
   return (
     <UserPanelWrap>
       <div className="header">
@@ -611,7 +609,7 @@ const UserPanel = () => {
         <div className="prograssWrap">
 
           <div className="masterWrap">
-            <div className="title">{LevlName}</div>
+            <div className="title">{t(LevlName)}</div>
             <span className="percent">{userInfo.dragon_egg || 0}/1000</span>
           </div>
           <Box sx={{ width: '100%' }}>

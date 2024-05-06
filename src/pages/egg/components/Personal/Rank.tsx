@@ -256,8 +256,19 @@ type Level = {
 const Rank = (props: Props) => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const { dataSource = [], myRank, rankLevel = []} = props
-
+  const { dataSource = [], myRank, rankLevel = [] } = props
+  const LevelList = [
+    { name: 'Intern', count: 1 },
+    { name: 'Novice', count: 2 },
+    { name: 'Elite', count: 3 },
+    { name: 'Expert', count: 4 },
+    { name: 'Master', count: 5 },
+    { name: 'Grandmaster', count: 6 }
+  ]
+  const  renderUserTitle = (level:number)=>{
+    console.info(level)
+    return LevelList.find(e=>e.count===Number(level))?.name||'Intern'
+  }
   return (
     <MarketWrap>
       <div className="top">
@@ -285,9 +296,9 @@ const Rank = (props: Props) => {
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
-              {rankLevel[3]?.user_num} {t('Grandmaster')}
+              {rankLevel[3]?.user_num} {t('Master')}
             </div>
-            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
+            <div className="third">{t('Current Master Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
@@ -295,9 +306,9 @@ const Rank = (props: Props) => {
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
-              {rankLevel[2]?.user_num} {t('Grandmaster')}
+              {rankLevel[2]?.user_num} {t('Expert')}
             </div>
-            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
+            <div className="third">{t('Current Expert Prize Pool')}</div>
           </RankItem>
         </div>
         <div className="row">
@@ -307,9 +318,9 @@ const Rank = (props: Props) => {
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
-              {rankLevel[1]?.user_num} {t('Grandmaster')}
+              {rankLevel[1]?.user_num} {t('Elite')}
             </div>
-            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
+            <div className="third">{t('Current Elite Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
@@ -317,20 +328,20 @@ const Rank = (props: Props) => {
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
-              {rankLevel[0]?.user_num} {t('Grandmaster')}
+              {rankLevel[0]?.user_num} {t('Novice')}
             </div>
-            <div className="third">{t('Current Grandmaster Prize Pool')}</div>
+            <div className="third">{t('Current Novice Prize Pool')}</div>
           </RankItem>
         </div>
         <MyRank>
           <Flex>
             <Image width={60} src={VIP4} alt="rank" />
             <div>
-              <Typography fontSize="12px">您的排位</Typography>
+              <Typography fontSize="12px">{t('Your Ranking')}</Typography>
               <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
                 育龙宗师
               </Typography>
-              <Typography fontSize="12px">龙蛋数额{myRank?.my_egg}</Typography>
+              <Typography fontSize="12px">{t('Egg Amount')}{myRank?.my_egg}</Typography>
             </div>
           </Flex>
           <Flex>
@@ -353,7 +364,7 @@ const Rank = (props: Props) => {
               <div className="No">No.</div>
               <div className="address">{t('Address')}</div>
               <div className="amount">{t('Amount')}</div>
-              <div className="time">{t('Time')}</div>
+              <div className="time">{t('Title')}</div>
             </Column>
             <Source>
               {dataSource.length ? (
@@ -363,7 +374,7 @@ const Rank = (props: Props) => {
                       <div className="No">{item.ranking}</div>
                       <div className="address">{formatAddress(item.username)}</div>
                       <div className="amount">{item.dragon_egg}</div>
-                      <div className="time">{item.level_grade}</div>
+                      <div className="time">{t(renderUserTitle(item.level_grade))}</div>
                     </SourceItem>
                   )
                 })
