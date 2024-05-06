@@ -8,7 +8,8 @@ import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import { useRouter } from 'next/router'
-import { queryUserInfoByTeam } from '@utils/api'
+import { useTranslation } from 'next-i18next'
+import { getUserHistory } from '@utils/api'
 import { useAccount } from 'wagmi'
 import { selectIsBindParent, selectAuthToken } from '@store/user'
 import { useSelector } from 'react-redux'
@@ -19,7 +20,7 @@ const InviteWrap = styled.div`
 `
 
 const HistoryWrap = styled.div`
-  padding: 30px;
+  padding: 0 20px;
 `
 
 const Item = styled.div`
@@ -147,158 +148,132 @@ const SourceItem = styled.div`
   }
 `
 
-const Accordion = styled((props: AccordionProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }: any) => ({
-  marginBottom: '10px',
-  background: 'rgba(35, 29, 85, 1)',
-  fontSize: '13px',
-  color: '#fff',
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&::before': {
-    display: 'none',
-  },
-}))
+const CardItem = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 1);
+  padding: 5px 0;
+  /* margin-top: 20px; */
+`
 
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', color: '#fff' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  backgroundColor: 'rgba(35, 29, 85, 1)',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    margin: 0,
-  },
-}))
 
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}))
 
 interface MyType {
-  ids: string[]
-  team_num: number
-  performances: string
-  list: {
-    username: string
-    my_performance: string
-  }[]
+    ids: string[]
+    team_num: number
+    performances: string
+    list: {
+        username: string
+        my_performance: string
+    }[]
+}
+const CardWrap = styled.div`
+    border-radius: 5px;
+    margin: 20px 0;
+    padding: 15px;
+background: rgba(35, 29, 85, 1);
+&>p:nth-of-type(1){
+    text-decoration: underline;
+}
+`
+
+interface cardProps {
+    title: string
+    created_at: string
+    coin_name: string
+    number: string
+    state: string
+    t: any
 }
 
+
 const History = () => {
-  const router = useRouter()
-  const { address } = useAccount()
-  const [expanded, setExpanded] = useState<string | false>('panel1')
-  const [dataSource, setDataSource] = useState<MyType[]>()
-  const isBindParent = useSelector(selectIsBindParent)
-  const token = useSelector(selectAuthToken)
+    const router = useRouter()
+    const { address } = useAccount()
+    const { t } = useTranslation('common')
+    const [expanded, setExpanded] = useState<string | false>('panel1')
+    const [dataSource, setDataSource] = useState<MyType[]>()
+    const isBindParent = useSelector(selectIsBindParent)
+    const token = useSelector(selectAuthToken)
 
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-    setExpanded(newExpanded ? panel : false)
-  }
-
-  const goBack = () => {
-    router.push('/egg')
-  }
-
-  const getUserInfoByTeam = useCallback(async () => {
-    if (address && isBindParent && token) {
-      try {
-        const res: any = await queryUserInfoByTeam()
-        if (res.code === 0) {
-          setDataSource(res.data)
-        } else {
-          toast.warn(res.msg)
-        }
-      } catch (e) {
-        console.log('getUserInfoByTeam error', e)
-        toast.warn('网络错误')
-      }
+    const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+        setExpanded(newExpanded ? panel : false)
     }
-  }, [address, isBindParent, token])
 
-  useEffect(() => {
-    getUserInfoByTeam()
-  }, [getUserInfoByTeam])
+    const goBack = () => {
+        router.push('/egg')
+    }
 
-  return (
-    <InviteWrap>
-      <Bg></Bg>
-      <Header>
-        <div className="icon" onClick={goBack}>
-          <LeftArrowIcon />
-        </div>
-        <span>您的推广记录</span>
-      </Header>
-      <HistoryWrap>
-        {dataSource &&
-          dataSource?.length > 0 &&
-          dataSource?.map((e: any, i) => {
-            return (
-              <>
-                <Accordion
-                  key={e?.team_num + i + 's'}
-                  expanded={expanded === 'panel1'}
-                  onChange={handleChange('panel1')}
-                >
-                  <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                    <Item>
-                      <div>{i + 1} 代</div>
-                      <div>
-                        <span className="txt">人数: </span>
-                        <span>{e?.team_num}</span>
-                      </div>
-                      <div className="maticCount">
-                        <span>{e?.performances}</span> <MaticIcon />
-                      </div>
-                    </Item>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <LastWrap>
-                      <div
-                        style={{
-                          width: '100%',
-                        }}
-                      >
-                        <Column>
-                          <div>No.</div>
-                          <div>Address</div>
-                        </Column>
-                        <Source>
-                          {e && e?.list && e?.list?.length ? (
-                            e?.list.map((item: any) => {
-                              return (
-                                <SourceItem key={item?.username}>
-                                  <div className="No">{item?.my_performance}</div>
-                                  <div className="address">{item?.username}</div>
-                                </SourceItem>
-                              )
-                            })
-                          ) : (
-                            <div className="empty">No Data</div>
-                          )}
-                        </Source>
-                      </div>
-                    </LastWrap>
-                  </AccordionDetails>
-                </Accordion>
-              </>
-            )
-          })}
-      </HistoryWrap>
-      {dataSource?.length === 0 && (
-        <Typography color="#fff" className="empty">
-          No Data
-        </Typography>
-      )}
-    </InviteWrap>
-  )
+    const getUserInfoByTeam = useCallback(async () => {
+        if (address && isBindParent && token) {
+            try {
+                const res: any = await getUserHistory()
+                if (res.code === 0) {
+                    setDataSource(res.data.list)
+                } else {
+                    toast.warn(res.msg)
+                }
+            } catch (e) {
+                console.log('getUserInfoByTeam error', e)
+                toast.warn('网络错误')
+            }
+        }
+    }, [address, isBindParent, token])
+
+    useEffect(() => {
+        getUserInfoByTeam()
+    }, [getUserInfoByTeam])
+
+    return (
+        <InviteWrap>
+            <Bg></Bg>
+            <Header>
+                <div className="icon" onClick={goBack}>
+                    <LeftArrowIcon />
+                </div>
+                <span>您的历史记录</span>
+            </Header>
+            <HistoryWrap>
+                {dataSource &&
+                    dataSource.length > 0 &&
+                    dataSource.map((e: any, i) => {
+                        const { title, created_at, coin_name, number, state} = e
+                        return (
+                            <>
+                                <CardWrap>
+                                    <Typography textAlign="left" color="#fff">
+                                        {title}
+                                    </Typography>
+                                    <CardItem>
+                                        <Typography>{t('time')}</Typography>
+                                        <Typography>{created_at}</Typography>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Typography>{t('coin')}</Typography>
+                                        <Typography>{coin_name}</Typography>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Typography>{t('amount')}</Typography>
+                                        <Typography>{number}</Typography>
+                                    </CardItem>
+                                    <CardItem>
+                                        <Typography>{t('status')}</Typography>
+                                        <Typography>{state}</Typography>
+                                    </CardItem>
+                                </CardWrap>
+                            </>
+                        )
+                    })}
+            </HistoryWrap>
+            {dataSource?.length === 0 && (
+                <Typography color="#fff" className="empty">
+                    No Data
+                </Typography>
+            )}
+        </InviteWrap>
+    )
 }
 
 export default History

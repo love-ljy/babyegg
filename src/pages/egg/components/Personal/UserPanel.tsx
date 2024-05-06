@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux'
 import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
 import { useReadContract, useWriteContract } from 'wagmi'
-import { selectWalletInfo, selectUserInfo,selectAuthToken,setBabyIncome, selectIsBindParent } from '@store/user'
+import { selectWalletInfo, selectUserInfo,selectAuthToken,setBabyIncome, selectIsBindParent, selectBabyPrice } from '@store/user'
 import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin, getIncomeReceiveNumber, createOrder } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
@@ -425,7 +425,7 @@ const UserPanel = () => {
   const userInfo: any = useSelector(selectUserInfo)
   const token = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
-  const isBindParent: any = useSelector(selectIsBindParent)
+  const babyPrice: any = useSelector(selectBabyPrice)
   const [eggVisible, setEggVisible] = useState(false)
   const onError = (error: any) => {
     setLoading(false)
@@ -637,7 +637,7 @@ const UserPanel = () => {
         <div className="row mar">
           <div className="group">
             <span className="title">{t('Current Eggs Held')}</span>
-            <span className="count">{userInfo.dragon_egg||'-'}</span>
+            <span className="count">{eggInfo.dragon_egg||'0'}</span>
           </div>
           <div className="group group2">
             <span className="title">{t('Your Master Rank')}</span>
@@ -659,7 +659,7 @@ const UserPanel = () => {
                   <div>
                     <Image src={eggIconPng} alt="egg" />
                   </div>
-                  <span>{userInfo.dragon_egg||'-'}</span>
+                  <span>{eggInfo.dragon_egg||'0'}</span>
                 </div>
               </div>
               <div className="infoItem">
@@ -667,7 +667,7 @@ const UserPanel = () => {
                 <div className="rit-bot">
                   <div className="t">
                     <EggTokenIcon />
-                    <span>{eggInfo.dragon_egg_babyloong||'-'}</span>
+                    <span>{Number(eggInfo.dragon_egg_babyloong)*Number(babyPrice)||'0'}</span>
                   </div>
                   <div className="rit">
                     <span>≈ 100.00</span>

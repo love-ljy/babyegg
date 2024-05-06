@@ -265,5 +265,9 @@
     "BabyLoong Raising Saga": "宝贝龙养成记",
     "In this unique raising game, players feed BabyLoongs daily with tokens, increasing the prize pot. Largest and smallest BabyLoongs claim prizes after each cycle. The game blends nurturing and strategic investment for an engaging experience": "在这款独特的饲养游戏中，玩家每天用代币喂养BabyLoongs，从而增加奖金。每个周期后，最大和最小的 BabyLoongs 都会领取奖品。该游戏融合了培育和战略投资，带来引人入胜的体验",
     "PARTNERS": "伙伴",
-    "MeExplan": "游戏说明"
+    "MeExplan": "游戏说明",
+    "time":"时间",
+    "amount":"数量",
+    "coin":"币种",
+    "status":"状态"
 }

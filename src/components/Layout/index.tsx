@@ -17,8 +17,8 @@ interface Props {
 
 const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter()
-  const HideNav = ['/invite']?.some(x => x === router.pathname)
-  const HideFooter = ['/invite']?.some(x => x === router.pathname)
+  const HideNav = ['/invite','/history']?.some(x => x === router.pathname)
+  const HideFooter = ['/invite','/history']?.some(x => x === router.pathname)
 
   return (
     <LayBox>

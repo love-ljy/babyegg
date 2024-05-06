@@ -169,6 +169,14 @@ const incomeReceive = async (data: any) => {
   })
 }
 
+// 历史纪录 getIncomeReceiveNumber
+const getUserHistory = async () => {
+  return request({
+    url: '/api/user/income',
+    method: 'get',
+  })
+}
+
 
 export {
   getUserInfo,
@@ -190,5 +198,6 @@ export {
   getRealTimeTraffic,
   getIncomeReceiveNumber,
   queryUserInfoByTeam,
-  incomeReceive
+  incomeReceive,
+  getUserHistory
 }

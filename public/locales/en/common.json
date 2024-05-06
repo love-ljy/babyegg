@@ -281,5 +281,9 @@
     "Coming Soon": "Coming Soon",
     "BabyLoong Raising Saga": "BabyLoong Raising Saga",
     "In this unique raising game, players feed BabyLoongs daily with tokens, increasing the prize pot. Largest and smallest BabyLoongs claim prizes after each cycle. The game blends nurturing and strategic investment for an engaging experience": "In this unique raising game, players feed BabyLoongs daily with tokens, increasing the prize pot. Largest and smallest BabyLoongs claim prizes after each cycle. The game blends nurturing and strategic investment for an engaging experience",
-    "PARTNERS": "PARTNERS"
+    "PARTNERS": "PARTNERS",
+    "time":"Time",
+    "amount":"Amount",
+    "coin":"Coin",
+    "status":"Status"
 }
