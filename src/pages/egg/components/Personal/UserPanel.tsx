@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Box, TextField, Button } from '@mui/material'
 import Image from 'next/image'
+import {useRouter} from "next/router"
 import currentEggPng from '@imgs/currentEgg.png'
 import grandmasterPng from '@imgs/grandmaster.png'
 import openEggPng from '@imgs/openEgg.png'
@@ -26,8 +27,7 @@ import CommonModal from '../commonModal/commonModal'
 import { getDecimalAmount } from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
-import { resolve } from 'path'
-import { rejects } from 'assert'
+
 
 
 const UserPanelWrap = styled.div`
@@ -584,6 +584,12 @@ const UserPanel = () => {
       fecthUserRewardInfo()
     }
   }, [walletInfo?.address,token])
+
+  const router = useRouter()
+
+  const toHistory = () => {
+    router.push('/history')
+  }
   const variable = Number(userInfo.dragon_egg)
   const level = useMemo(()=>{
     const level = LevelList.find(level => level.count > Number(userInfo.dragon_egg));
@@ -653,7 +659,7 @@ const UserPanel = () => {
                   <div>
                     <Image src={eggIconPng} alt="egg" />
                   </div>
-                  <span>{eggInfo.dragon_egg||'-'}</span>
+                  <span>{userInfo.dragon_egg||'-'}</span>
                 </div>
               </div>
               <div className="infoItem">
@@ -684,7 +690,7 @@ const UserPanel = () => {
       <RewardStatusWrap>
         <div className="title">
           <div>{t('Reward Status')}</div>
-          <div>
+          <div onClick={toHistory}>
             <span className="history">{t('History')}</span>
           </div>
         </div>

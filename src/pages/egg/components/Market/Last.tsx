@@ -3,6 +3,8 @@ import CommonPage from '../commonPage/commonPage'
 import { Typography } from '@mui/material'
 import { useTranslation } from 'next-i18next'
 import MaticIcon from '@icons/matic.svg'
+import { useSelector } from 'react-redux'
+import {selectTotalData} from '@store/user'
 
 const LastWrap = styled.div`
   display: flex;
@@ -115,9 +117,9 @@ interface Props {
 
 const Last = (props: Props) => {
   const { dataSource, changePage } = props
-  // @ts-ignore
+  const totalData = useSelector(selectTotalData)
   const { t } = useTranslation('common')
-  console.info(dataSource, '--')
+  console.info(dataSource, '--',totalData)
   const changePageFormat = (event: React.ChangeEvent<unknown>, value: number) => {
     changePage(value)
   }
@@ -132,14 +134,14 @@ const Last = (props: Props) => {
         <RewardBox>
           <Typography>{t('Current Last 100 Bonus per pac')}</Typography>
           <RewardBoxItem>
-            <Typography fontSize="35px">1000,000</Typography>
+            <Typography fontSize="35px">{totalData.last100_reward}</Typography>
             <MaticIcon />
           </RewardBoxItem>
         </RewardBox>
         <LastBox>
           <Typography>{t('current Ultimate Bonus')}</Typography>
           <RewardBoxItem>
-            <Typography fontSize="35px">1000,000</Typography>
+            <Typography fontSize="35px">{totalData.last_reward}</Typography>
             <MaticIcon />
           </RewardBoxItem>
         </LastBox>

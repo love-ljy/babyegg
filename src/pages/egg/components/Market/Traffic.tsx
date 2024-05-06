@@ -152,7 +152,7 @@ const Traffic = (props: Props) => {
                 <SourceItem>
                   <div className="No">{item.id}</div>
                   <div className="address">{formatAddress(item.username)}</div>
-                  <div className="amount">{titles[item.event]}</div>
+                  <div className="amount">{t(item.event)}</div>
                   <div className="time">{item.created_at}</div>
                 </SourceItem>
               )

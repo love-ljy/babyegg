@@ -22,6 +22,7 @@ import {
   selectInviteCode,
   setIsBindParent,
   setGamingId,
+  setTotalData
 } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -208,7 +209,9 @@ function LongEgg() {
         const { end_time } = res.data
         const endDate = new Date(end_time).getTime()
         const startDate = new Date().getTime()
-        setCountDown(Math.ceil(startDate - endDate))
+        setCountDown(Math.ceil(endDate-startDate))
+        const isEnd = Math.ceil(endDate-startDate) < 0
+        setGameEnd(isEnd)
         dispatch(setGamingId(res.data.id))
       } else if (res.code === 1) {
         setGameEnd(true)
@@ -226,6 +229,7 @@ function LongEgg() {
       const res: any = await queryTotalNet()
       if (res.code === 0) {
         setAllNet(res.data)
+        dispatch(setTotalData(res.data))
       } else {
         toast.warn(res.msg)
       }
@@ -282,12 +286,13 @@ function LongEgg() {
   }, [fetchUserParent])
 
   const LongHeader = () => {
-    const timer = gameInfo?.end_time ? new Date(gameInfo.end_time) : null
+    const timer = new Date().getTime()+Number(Number(gameInfo?.remaining_time)*1000)
+    const deadlineDate = new Date(timer);
     return (
       <LongEggWrap>
         <Typography fontWeight={700} fontSize={25}>
-          {gameEnd ? t('Waiting for the next round to start') : t('Countdown')}
-          {timer && <CountDown initialTimeInSeconds={timer} />}
+          {Number(gameInfo?.state)!=0 ? t('Waiting for the next round to start') : t('Countdown')}
+          {Number(gameInfo?.state)===0 && <CountDown initialTimeInSeconds={deadlineDate} />}
         </Typography>
         <Box mt={2}>
           <Participation allNet={allNet} />
