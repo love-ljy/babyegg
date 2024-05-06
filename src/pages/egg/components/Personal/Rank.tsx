@@ -405,7 +405,7 @@ const Rank = (props: Props) => {
               {dataSource.length ? (
                 dataSource.map((item: any) => {
                   return (
-                    <SourceItem>
+                    <SourceItem key={item.ranking}>
                       <div className="No">{item.ranking}</div>
                       <div className="address">{formatAddress(item.username)}</div>
                       <div className="amount">{item.dragon_egg}</div>
