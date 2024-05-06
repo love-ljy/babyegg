@@ -1,10 +1,16 @@
 import Image from 'next/image'
 import styled from '@emotion/styled'
+import {useMemo} from 'react'
 import { Typography, Box } from '@mui/material'
 import rankBgPng from '@imgs/rankBg.png'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
-import VIP4 from '@imgs/3000.png'
+import VIP0 from '@imgs/99.png'
+import VIP1 from '@imgs/100.png'
+import VIP2 from '@imgs/300.png'
+import VIP3 from '@imgs/500.png'
+import VIP4 from '@imgs/1000.png'
+import VIP5 from '@imgs/3000.png'
 import { formatAddress } from '@utils/formatterBalance'
 
 const MarketWrap = styled.div`
@@ -265,6 +271,29 @@ const Rank = (props: Props) => {
     { name: 'Master', count: 5 },
     { name: 'Grandmaster', count: 6 }
   ]
+  const LeveUserlList = [
+    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
+    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
+    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
+    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
+    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
+    { name: 'Grandmaster', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
+  ]
+  const variable = Number(myRank?.my_egg)
+  const UserLevel = useMemo(()=>{
+    const level = LeveUserlList.find(level => level.count > variable);
+
+    // 如果找到，返回前一个元素的 imgSrc
+    if (level) {
+        const index = LeveUserlList.indexOf(level);
+        return index > 0 ? LeveUserlList[index - 1] : null;
+    }
+
+    // 如果没有找到符合条件的元素，返回数组最后一个元素的 imgSrc
+    return LeveUserlList[LeveUserlList.length - 1];
+  },[variable])
+  const imgSrc = UserLevel ? UserLevel?.imgSrc : null;
+  const LevlName:string = UserLevel ? UserLevel?.name : 'Master';
   const  renderUserTitle = (level:number)=>{
     console.info(level)
     return LevelList.find(e=>e.count===Number(level))?.name||'Intern'
@@ -335,11 +364,11 @@ const Rank = (props: Props) => {
         </div>
         <MyRank>
           <Flex>
-            <Image width={60} src={VIP4} alt="rank" />
+            {imgSrc}
             <div>
               <Typography fontSize="12px">{t('Your Ranking')}</Typography>
               <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
-                育龙宗师
+                {t(LevlName)}
               </Typography>
               <Typography fontSize="12px">{t('Egg Amount')}{myRank?.my_egg}</Typography>
             </div>

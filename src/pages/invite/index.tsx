@@ -13,13 +13,14 @@ import { useAccount } from 'wagmi'
 import { selectIsBindParent, selectAuthToken } from '@store/user'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import {formatAddress} from '@utils/formatterBalance'
 
 const InviteWrap = styled.div`
   position: relative;
 `
 
 const HistoryWrap = styled.div`
-  padding: 30px;
+  padding: 20px;
 `
 
 const Item = styled.div`
@@ -86,7 +87,7 @@ const Header = styled.div`
 
 const LastWrap = styled.div`
   display: flex;
-  min-height: 480px;
+  /* min-height: 480px; */
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
@@ -255,7 +256,7 @@ const Invite = () => {
                         <span>{e?.team_num}</span>
                       </div>
                       <div className="maticCount">
-                        <span>{e?.performances}</span> <MaticIcon />
+                        <span>{Number(e?.performances).toFixed(3)}</span> <MaticIcon />
                       </div>
                     </Item>
                   </AccordionSummary>
@@ -275,8 +276,8 @@ const Invite = () => {
                             e?.list.map((item: any) => {
                               return (
                                 <SourceItem key={item?.username}>
-                                  <div className="No">{item?.my_performance}</div>
-                                  <div className="address">{item?.username}</div>
+                                  <div className="No">{item?.id}</div>
+                                  <div className="address">{formatAddress(item?.username,8)}</div>
                                 </SourceItem>
                               )
                             })
