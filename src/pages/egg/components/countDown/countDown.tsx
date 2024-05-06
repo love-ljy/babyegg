@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import quotePng from '@imgs/quote.png'
-import { Typography } from '@mui/material'
 import Image from 'next/image'
 import Countdown from 'react-countdown';
 import { useTranslation } from 'next-i18next'

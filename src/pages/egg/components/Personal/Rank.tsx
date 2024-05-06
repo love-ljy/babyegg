@@ -239,7 +239,13 @@ const SourceItem = styled.div`
 `
 const Flex = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: end;
+`
+
+const Flex2 = styled.div`
+  display: flex;
+  align-items: baseline;
   justify-content: end;
 `
 interface MYRANK {
@@ -367,18 +373,18 @@ const Rank = (props: Props) => {
             {imgSrc}
             <div>
               <Typography fontSize="12px">{t('Your Ranking')}</Typography>
-              <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
+              <Typography my={1} color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
                 {t(LevlName)}
               </Typography>
               <Typography fontSize="12px">{t('Egg Amount')}{myRank?.my_egg}</Typography>
             </div>
           </Flex>
-          <Flex>
+          <Flex2>
             <Typography fontSize="12px">NO</Typography>
             <Typography fontWeight="bold" fontSize="44px">
               {myRank?.my_ranking}
             </Typography>
-          </Flex>
+          </Flex2>
         </MyRank>
         <div>
           <div>{t('Loong EGG Rank')}</div>

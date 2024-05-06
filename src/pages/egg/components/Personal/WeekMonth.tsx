@@ -206,6 +206,11 @@ const Flex = styled.div`
   align-items: center;
   gap: 15px;
 `
+const Flex2 = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+`
 
 const SourceItem = styled.div`
   width: 100%;
@@ -259,12 +264,12 @@ const Comp = (props: CompProps) => {
             您的小区新增业绩 {myInfo?.my_min_son_team_performance}
           </Typography>
         </div>
-        <Flex>
+        <Flex2>
           <Typography fontSize="12px">NO</Typography>
           <Typography fontWeight="bold" fontSize="44px">
             {myInfo?.my_ranking}
           </Typography>
-        </Flex>
+        </Flex2>
       </MyRank>
       <LastWrap>
         <div
