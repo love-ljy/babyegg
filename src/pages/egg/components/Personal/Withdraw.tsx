@@ -352,8 +352,7 @@ const Withdraw = () => {
       <div className="noteWrap">
         <div className="note">{t('Note')}:</div>
         <div>
-          {t(`The platform will charge a 5% fee on withdrawals as revenue.When choosing to withdraw
-          $Matic, a portion of the amount will be automatically reinvested.`)}
+          {t(`The platform will charge a 5% fee on withdrawals as revenue`)}. {t(`When choosing to withdraw $Matic,a portion of the amount will be automatically reinvested`)}
         </div>
       </div>
       <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>

@@ -39,15 +39,17 @@ const Top = styled.div`
 
 const Mid = styled.div`
   padding: 6px 36px;
-  border-radius: 51px;
-  background: linear-gradient(180deg, rgba(246, 26, 126, 1) 0%, rgba(246, 26, 126, 0.3) 100%);
+  border-radius: 5px;
+background: linear-gradient(360deg, rgba(50, 32, 208, 1) 0%, rgba(246, 26, 126, 1) 100%);
+
 `
 
 const Bot = styled.div`
   margin-top: 15px;
   padding: 6px 36px;
-  border-radius: 51px;
-  background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
+  border-radius: 5px;
+background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
+
 `
 
 const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {

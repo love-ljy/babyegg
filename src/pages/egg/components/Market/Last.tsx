@@ -1,7 +1,8 @@
 import styled from '@emotion/styled'
 import CommonPage from '../commonPage/commonPage'
-import { Box } from '@mui/material'
+import { Typography } from '@mui/material'
 import { useTranslation } from 'next-i18next'
+import MaticIcon from '@icons/matic.svg'
 
 const LastWrap = styled.div`
   display: flex;
@@ -65,6 +66,33 @@ const SourceItem = styled.div`
     text-align: left;
   }
 `
+const RewardBox = styled.div`
+border-radius: 5px;
+background: rgba(184, 3, 139, 1);
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 6px 15px 6px 15px;
+`
+const LastBox = styled.div`
+border-radius: 5px;
+background: rgba(49, 32, 204, 1);
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 6px 15px 6px 15px;
+margin: 20px 0;
+`
+const RewardBoxItem = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: .9fr .1fr;
+  justify-content: start;
+  align-items: center;
+  color: rgba(255, 255, 255, 1);
+`
 
 interface TrafficProps {
   list: {
@@ -89,7 +117,7 @@ const Last = (props: Props) => {
   const { dataSource, changePage } = props
   // @ts-ignore
   const { t } = useTranslation('common')
-  console.info(dataSource,'--')
+  console.info(dataSource, '--')
   const changePageFormat = (event: React.ChangeEvent<unknown>, value: number) => {
     changePage(value)
   }
@@ -101,6 +129,20 @@ const Last = (props: Props) => {
           width: '100%',
         }}
       >
+        <RewardBox>
+          <Typography>{t('Current Last 100 Bonus per pac')}</Typography>
+          <RewardBoxItem>
+            <Typography fontSize="35px">1000,000</Typography>
+            <MaticIcon />
+          </RewardBoxItem>
+        </RewardBox>
+        <LastBox>
+          <Typography>{t('current Ultimate Bonus')}</Typography>
+          <RewardBoxItem>
+            <Typography fontSize="35px">1000,000</Typography>
+            <MaticIcon />
+          </RewardBoxItem>
+        </LastBox>
         <Column>
           <div>No.</div>
           <div>{t('Address')}</div>
