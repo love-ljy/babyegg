@@ -16,6 +16,7 @@ import eggUpPng from '@imgs/eggUpPng.png'
 import eggIconPng from '@imgs/eggIcon.png'
 import LinearProgress from '@mui/material/LinearProgress'
 import EggTokenIcon from '@icons/eggToken.svg'
+import MaticIcon from '@icons/matic.svg'
 import { useSelector } from 'react-redux'
 import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
@@ -667,10 +668,10 @@ const UserPanel = () => {
                 <div className="rit-bot">
                   <div className="t">
                     <EggTokenIcon />
-                    <span>{Number(eggInfo.dragon_egg_babyloong)*Number(babyPrice)||'0'}</span>
+                    <span>{Number(eggInfo.dragon_egg_babyloong)||'0'}</span>
                   </div>
                   <div className="rit">
-                    <span>≈ 100.00</span>
+                    <span>≈ {(Number(eggInfo.dragon_egg_babyloong)*Number(babyPrice)).toFixed(4)}</span>
                     <span>Matic</span>
                   </div>
                 </div>
@@ -710,7 +711,7 @@ const UserPanel = () => {
             </div>
             <div className="bot">
               <span>{userReward[1]?.number||'-'}</span>
-              <EggTokenIcon />
+              <MaticIcon />
             </div>
           </CommonRow>
           <CommonRow className="row">
@@ -719,7 +720,7 @@ const UserPanel = () => {
             </div>
             <div className="bot">
               <span>{userReward[2]?.number||'-'}</span>
-              <EggTokenIcon />
+              <MaticIcon />
             </div>
           </CommonRow>
         </CommWrap>
@@ -730,7 +731,7 @@ const UserPanel = () => {
             </div>
             <div className="bot">
               <span>{userReward[3]?.number||'-'}</span>
-              <EggTokenIcon />
+              <MaticIcon />
             </div>
           </CommonRow>
           <CommonRow className="row">
@@ -739,7 +740,7 @@ const UserPanel = () => {
             </div>
             <div className="bot">
               <span>{userReward[4]?.number||'-'}</span>
-              <EggTokenIcon />
+              <MaticIcon />
             </div>
           </CommonRow>
         </CommWrap>
