@@ -94,6 +94,7 @@ const BuyEggWrap = styled.div`
   }
   .available {
     align-self: flex-start;
+    margin-top: 10px;
   }
   .detailed {
     display: flex;

@@ -122,6 +122,7 @@ interface tabItem {
 interface CompProps {
   dataSource: any[]
   myInfo?: MyInfo
+  tabNum: number
 }
 const Bot = styled.div`
   border-radius: 5px;
@@ -194,7 +195,9 @@ const Source = styled.div`
 const MyRank = styled.div`
   opacity: 1;
   background: rgba(22, 34, 54, 1);
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 20px;
   justify-content: space-between;
   align-items: center;
   border-radius: 3px;
@@ -209,7 +212,7 @@ const Flex = styled.div`
 const Flex2 = styled.div`
   display: flex;
   align-items: baseline;
-  gap: 15px;
+  /* gap: 15px; */
 `
 
 const SourceItem = styled.div`
@@ -240,7 +243,7 @@ const SourceItem = styled.div`
 const Comp = (props: CompProps) => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const { dataSource, myInfo } = props
+  const { dataSource, myInfo,tabNum } = props
   return (
     <ContentWrap>
       <Bot>
@@ -248,26 +251,26 @@ const Comp = (props: CompProps) => {
           {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
-          <span className="count">100,000,000</span>
+          <span className="count">{myInfo?.total_reward_matic}</span>
           <div className="img">
             <MaticIcon />
           </div>
         </div>
       </Bot>
       <MyRank>
-        <div>
-          <Typography fontSize="12px">您当前的预计分红</Typography>
+        <div style={{textAlign:'left'}}>
+          <Typography fontSize="12px">{t('Your Bonus')}</Typography>
           <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
-            {myInfo?.my_reward_matic}
+            {myInfo?.my_reward_matic||'-'}
           </Typography>
           <Typography fontSize="12px">
-            您的小区新增业绩 {myInfo?.my_min_son_team_performance}
+            {tabNum!=0?t('Current Amount of Your Monthly New Sales'):t('Current Amount of Your Weekly New Sales')} {myInfo?.my_min_son_team_performance||'-'}
           </Typography>
         </div>
         <Flex2>
           <Typography fontSize="12px">NO</Typography>
           <Typography fontWeight="bold" fontSize="44px">
-            {myInfo?.my_ranking}
+            {myInfo?.my_ranking||'-'}
           </Typography>
         </Flex2>
       </MyRank>
@@ -336,12 +339,12 @@ const WeekMonth = () => {
     {
       label: 'Weekly',
       value: 'Weekly',
-      component: <Comp myInfo={myInfo} dataSource={dataSource} />,
+      component: <Comp tabNum={tabNum} myInfo={myInfo} dataSource={dataSource} />,
     },
     {
       label: 'Monthly',
       value: 'Monthly',
-      component: <Comp myInfo={myInfo} dataSource={dataSource} />,
+      component: <Comp tabNum={tabNum} myInfo={myInfo} dataSource={dataSource} />,
     },
   ]
 

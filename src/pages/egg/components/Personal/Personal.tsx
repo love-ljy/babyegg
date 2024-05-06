@@ -155,7 +155,7 @@ const Personal = () => {
       </div>
       <Rank myRank={myRank} rankLevel={rankLevel} dataSource={dataSource} />
       <Box mt={2}>
-        <WeekMonth />
+        <WeekMonth  />
       </Box>
     </MarketWrap>
   )

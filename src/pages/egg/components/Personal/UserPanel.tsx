@@ -25,7 +25,7 @@ import {
   selectWalletInfo,
   selectUserInfo,
   selectAuthToken,
-  setBabyIncome,
+  setTotalRewards,
   selectIsBindParent,
   selectBabyPrice,
 } from '@store/user'
@@ -42,6 +42,7 @@ import CommonModal from '../commonModal/commonModal'
 import { getDecimalAmount } from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
+import { dispatch } from '@store/index'
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -547,6 +548,7 @@ const UserPanel = () => {
         })
         const res = await Promise.all(resolve)
         setUserReward(res?.flat())
+        dispatch(setTotalRewards(res?.flat()))
         // setBabyIncome(res?.flat()?[1])
       } catch (error) {
         console.log('fetchUserRewardInfo error', error)
@@ -763,12 +765,12 @@ const UserPanel = () => {
               </div>
               <div className="title">{t('Current total earnings from all eggs')}</div>
               <div className="countWrap">
-                <span>10,000,00</span>
+                <span>{Number(eggInfo.dragon_egg_babyloong)}</span>
                 <EggTokenIcon />
               </div>
               <div className="title">{t('Open all eggs to receive double earnings')}</div>
               <div className="countWrap">
-                <span>10,000,00</span>
+                <span>{Number(eggInfo.dragon_egg_babyloong)*2}</span>
                 <EggTokenIcon />
               </div>
               <div className="txt">{t('Confirm to open all eggs?')}</div>
@@ -780,23 +782,23 @@ const UserPanel = () => {
               </div>
               <div className="title">{t('Current total earnings from all eggs')}</div>
               <div className="countWrap">
-                <span>10,000,00</span>
+                <span>{Number(eggInfo.dragon_egg_babyloong)}</span>
                 <EggTokenIcon />
               </div>
               <div className="mid">
                 <div className="box">
-                  <span>{userReward[0]?.number}</span>
+                  <span>{Number(eggInfo.dragon_egg_babyloong)}</span>
                   <EggTokenIcon />
                 </div>
                 <span className="equ">=</span>
                 <div className="box">
-                  <span>10,000</span>
-                  <EggTokenIcon />
+                  <span>{(Number(eggInfo.dragon_egg_babyloong) * Number(babyPrice)).toFixed(4)}</span>
+                  <MaticIcon />
                 </div>
               </div>
               <div className="title">{t('You can currently upgrade')}</div>
               <div className="countWrap">
-                <span>10,000,00</span>
+                <span>{Number(eggInfo.dragon_egg)}</span>
                 <EggTokenIcon />
               </div>
               <div className="txt">{t('Confirm upgrade')} ?</div>

@@ -63,7 +63,47 @@ export const slice = createSlice({
     gamingId: '',
     authToken: '',
     inviteCode: '',
-    babyIncome: 0
+    babyIncome: 0,
+    allRewards: [
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      }, {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      }, {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      }
+    ]
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
@@ -92,11 +132,14 @@ export const slice = createSlice({
     },
     setTotalData: (state, { payload }) => {
       state.TotalData = payload
+    },
+    setTotalRewards: (state, { payload }) => {
+      state.allRewards = payload
     }
   },
 })
 
-export const {setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
+export const {setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
@@ -108,5 +151,6 @@ export const selectInviteCode = s => s.user.inviteCode
 export const selectBabyPrice = s => s.user.babyPrice
 export const selectBabyIncome = s => s.user.babyIncome
 export const selectTotalData = s => s.user.TotalData
+export const selectTotalRewards = s => s.user.allRewards
 
 export default slice.reducer
