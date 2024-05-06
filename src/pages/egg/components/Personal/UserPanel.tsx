@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Box, TextField, Button } from '@mui/material'
 import Image from 'next/image'
-import {useRouter} from "next/router"
+import { useRouter } from 'next/router'
 import currentEggPng from '@imgs/currentEgg.png'
 import grandmasterPng from '@imgs/grandmaster.png'
 import openEggPng from '@imgs/openEgg.png'
@@ -20,16 +20,28 @@ import MaticIcon from '@icons/matic.svg'
 import { useSelector } from 'react-redux'
 import { BurnContractAddr } from '@config/contants'
 import burnABI from '@config/abi/burnToken.json'
-import { useReadContract, useWriteContract } from 'wagmi'
-import { selectWalletInfo, selectUserInfo,selectAuthToken,setBabyIncome, selectIsBindParent, selectBabyPrice } from '@store/user'
-import { getGameEgg, openEgg, eggIncomeReinvestment, getCoin, getIncomeReceiveNumber, createOrder } from '@utils/api'
+import { useReadContract, useWriteContract, useAccount } from 'wagmi'
+import {
+  selectWalletInfo,
+  selectUserInfo,
+  selectAuthToken,
+  setBabyIncome,
+  selectIsBindParent,
+  selectBabyPrice,
+} from '@store/user'
+import {
+  getGameEgg,
+  openEgg,
+  eggIncomeReinvestment,
+  getCoin,
+  getIncomeReceiveNumber,
+  createOrder,
+} from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { getDecimalAmount } from '@utils/formatterBalance'
 import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
-
-
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -378,7 +390,7 @@ const ModalMain = styled.div`
   }
 `
 
-const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -399,22 +411,12 @@ const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
 `
 
-
-
 const UserPanel = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const LevelList = [
-    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
-    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
-    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
-    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
-    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
-    { name: 'Grandmaster', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
-  ]
-  const [loading, setLoading] = useState(false)
-  const [orderId, setOrderId] = useState(0)
-  const [progress, setProgress] = useState(0)
+  const router = useRouter()
+  const { address } = useAccount()
+
   const [userReward, setUserReward] = useState<any>([])
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
@@ -423,62 +425,27 @@ const UserPanel = () => {
     dragon_egg: 0,
     dragon_egg_babyloong: 0,
   })
+  const [eggVisible, setEggVisible] = useState(false)
+
   const userInfo: any = useSelector(selectUserInfo)
   const token = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
   const babyPrice: any = useSelector(selectBabyPrice)
-  const [eggVisible, setEggVisible] = useState(false)
-  const onError = (error: any) => {
-    setLoading(false)
-  }
-  const fetchGameEgg = useCallback(async () => {
-    try {
-      const res: any = await getGameEgg()
-      if (res.code === 0) {
-        setEggInfo(res.data)
-      } else {
-        setEggInfo({
-          dragon_egg: 0,
-          dragon_egg_babyloong: 0,
-        })
-        toast.warn('网络错误')
-      }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
-      setEggInfo({
-        dragon_egg: 0,
-        dragon_egg_babyloong: 0,
-      })
-    }
-  }, [walletInfo?.address])
+  const isBindParent: any = useSelector(selectIsBindParent)
 
-  const fetCoin = useCallback(async () => {
+  const LevelList = [
+    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt="" /> },
+    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt="" /> },
+    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt="" /> },
+    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt="" /> },
+    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt="" /> },
+    {
+      name: 'Grandmaster',
+      count: 3000,
+      imgSrc: <Image src={VIP5} width={61} height={66} alt="" />,
+    },
+  ]
 
-    try {
-      const res: any = await getCoin({
-        type: -1,
-      })
-      if (res.code === 0) {
-        setEggInfo(res.data)
-      } else {
-        setEggInfo({
-          dragon_egg: 0,
-          dragon_egg_babyloong: 0,
-        })
-        toast.warn('网络错误')
-      }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
-      setEggInfo({
-        dragon_egg: 0,
-        dragon_egg_babyloong: 0,
-      })
-    }
-  }, [walletInfo?.address])
-
-  // todo
   const openDialog = (type: string) => {
     if (!walletInfo) {
       toast.warn('请链接钱包')
@@ -490,131 +457,135 @@ const UserPanel = () => {
     } else {
       setPassVisible(true)
     }
-
   }
 
   const handleOpenEgg = async passParams => {
     if (eggType === 'open') {
       try {
         const res: any = await openEgg({
-          password: passParams.password
+          password: passParams.password,
         })
         if (res.code === 0) {
           setPassVisible(false)
-          setEggVisible(false)
           fetchGameEgg()
           toast.success('打开成功')
         } else {
           toast.warn(res.msg)
         }
       } catch (e) {
-        console.log('e', e)
+        console.log('open egg error', e)
         toast.warn('网络错误')
       }
     } else {
       try {
         const res: any = await eggIncomeReinvestment({
-          id: orderId,
+          id: passParams.id,
           password: passParams.password,
         })
-        console.log('res')
         if (res.code === 0) {
           setPassVisible(false)
-          setEggVisible(false)
           fetchGameEgg()
           toast.success('升级成功')
         } else {
           toast.warn(res.msg)
         }
       } catch (e) {
-        console.log('e', e)
+        console.log('level up error', e)
         toast.warn('网络错误')
       }
     }
   }
 
   const handleEggConfirm = async () => {
-    if (userInfo.pay_password) {
-      setEggLoading(true)
-      setPassVisible(true)
-      // setEggLoading(false)
-    } else {
-      setEggVisible(false)
-      setPassVisible(true)
-    }
+    setEggVisible(false)
+    setPassVisible(true)
   }
 
   const closeEggModal = async () => {
     setEggVisible(false)
   }
 
-  const fecthUserRewardInfo = async () => {
-    try {
-      const array = [-1, 0, 4, 5, 6, 7, 8, 9];
-      const resolve = array.map(async (e) => {
-        const res: any = await getIncomeReceiveNumber(e)
-        if (res.code === 0) {
-          return res.data
-        } else {
-          return null
-        }
-
-      })
-      const res = await Promise.all(resolve)
-      setUserReward(res?.flat())
-      // setBabyIncome(res?.flat()?[1])
-    } catch (error) {
-
-    }
-  }
-  // 设置密码，先调用扣币接口获取签名，然后拿到签名跟合约交互后，调用orderstatus接口轮询倒计时，拿到status成功后，调用updateuserInfo接口，然后再调用获取用户信息接口看看是否设置成功
-
-
   const passOK = async (passParams: any) => {
-    setPassVisible(false)
-    const { id, password } = passParams
-    if (id) {
-      setOrderId(id)
-    }
     await handleOpenEgg(passParams)
   }
 
-  useEffect(() => {
-    if (walletInfo?.address&&token) {
-      fetchGameEgg()
-      fecthUserRewardInfo()
+  const fetchGameEgg = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getGameEgg()
+        if (res.code === 0) {
+          setEggInfo(res.data)
+        } else {
+          setEggInfo({
+            dragon_egg: 0,
+            dragon_egg_babyloong: 0,
+          })
+          toast.warn(res.msg)
+        }
+      } catch (e) {
+        console.log('fetchGameEgg error', e)
+        toast.warn('网络错误')
+        setEggInfo({
+          dragon_egg: 0,
+          dragon_egg_babyloong: 0,
+        })
+      }
     }
-  }, [walletInfo?.address,token])
+  }, [address, isBindParent, token])
 
-  const router = useRouter()
+  const fetchUserRewardInfo = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const array = [-1, 0, 4, 5, 6, 7, 8, 9]
+        const resolve = array.map(async e => {
+          const res: any = await getIncomeReceiveNumber(e)
+          if (res.code === 0) {
+            return res.data
+          } else {
+            return null
+          }
+        })
+        const res = await Promise.all(resolve)
+        setUserReward(res?.flat())
+        // setBabyIncome(res?.flat()?[1])
+      } catch (error) {
+        console.log('fetchUserRewardInfo error', error)
+        toast.warn('网络错误')
+      }
+    }
+  }, [address, isBindParent, token])
+
+  useEffect(() => {
+    fetchGameEgg()
+    fetchUserRewardInfo()
+  }, [fetchGameEgg, fetchUserRewardInfo])
 
   const toHistory = () => {
     router.push('/history')
   }
+
   const variable = Number(userInfo.dragon_egg)
-  const level = useMemo(()=>{
-    const level = LevelList.find(level => level.count > Number(userInfo.dragon_egg));
+  const level = useMemo(() => {
+    const level = LevelList.find(level => level.count > Number(userInfo.dragon_egg))
 
     // 如果找到，返回前一个元素的 imgSrc
     if (level) {
-        const index = LevelList.indexOf(level);
-        return index > 0 ? LevelList[index - 1] : null;
+      const index = LevelList.indexOf(level)
+      return index > 0 ? LevelList[index - 1] : null
     }
 
     // 如果没有找到符合条件的元素，返回数组最后一个元素的 imgSrc
-    return LevelList[LevelList.length - 1];
-  },[Number(userInfo.dragon_egg)])
+    return LevelList[LevelList.length - 1]
+  }, [Number(userInfo.dragon_egg)])
 
-  const imgSrc = level ? level?.imgSrc : null;
-  const LevlName:string = level ? level?.name : 'Master';
+  const imgSrc = level ? level?.imgSrc : null
+  const LevlName: string = level ? level?.name : 'Master'
+
   return (
     <UserPanelWrap>
       <div className="header">
-        <div>
-          {imgSrc}
-        </div>
+        <div>{imgSrc}</div>
         <div className="prograssWrap">
-
           <div className="masterWrap">
             <div className="title">{t(LevlName)}</div>
             <span className="percent">{userInfo.dragon_egg || 0}/1000</span>
@@ -638,11 +609,11 @@ const UserPanel = () => {
         <div className="row mar">
           <div className="group">
             <span className="title">{t('Current Eggs Held')}</span>
-            <span className="count">{eggInfo.dragon_egg||'0'}</span>
+            <span className="count">{eggInfo.dragon_egg || '0'}</span>
           </div>
           <div className="group group2">
             <span className="title">{t('Your Master Rank')}</span>
-            <span className="count">{userInfo.index_num||'-'}</span>
+            <span className="count">{userInfo.index_num || '-'}</span>
           </div>
         </div>
       </Expenditure>
@@ -660,7 +631,7 @@ const UserPanel = () => {
                   <div>
                     <Image src={eggIconPng} alt="egg" />
                   </div>
-                  <span>{eggInfo.dragon_egg||'0'}</span>
+                  <span>{eggInfo.dragon_egg || '0'}</span>
                 </div>
               </div>
               <div className="infoItem">
@@ -668,10 +639,12 @@ const UserPanel = () => {
                 <div className="rit-bot">
                   <div className="t">
                     <EggTokenIcon />
-                    <span>{Number(eggInfo.dragon_egg_babyloong)||'0'}</span>
+                    <span>{Number(eggInfo.dragon_egg_babyloong) || '0'}</span>
                   </div>
                   <div className="rit">
-                    <span>≈ {(Number(eggInfo.dragon_egg_babyloong)*Number(babyPrice)).toFixed(4)}</span>
+                    <span>
+                      ≈ {(Number(eggInfo.dragon_egg_babyloong) * Number(babyPrice)).toFixed(4)}
+                    </span>
                     <span>Matic</span>
                   </div>
                 </div>
@@ -700,7 +673,7 @@ const UserPanel = () => {
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>{userReward[0]?.number||'-'}</span>
+            <span>{userReward[0]?.number || '-'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -710,7 +683,7 @@ const UserPanel = () => {
               <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[1]?.number||'-'}</span>
+              <span>{userReward[1]?.number || '-'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -719,7 +692,7 @@ const UserPanel = () => {
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[2]?.number||'-'}</span>
+              <span>{userReward[2]?.number || '-'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -730,7 +703,7 @@ const UserPanel = () => {
               <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[3]?.number||'-'}</span>
+              <span>{userReward[3]?.number || '-'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -739,7 +712,7 @@ const UserPanel = () => {
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[4]?.number||'-'}</span>
+              <span>{userReward[4]?.number || '-'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -749,7 +722,7 @@ const UserPanel = () => {
             <span>{t('Egg Rank Reward')}</span>
           </div>
           <div className="bot">
-            <span>{userReward[5]?.number||'-'}</span>
+            <span>{userReward[5]?.number || '-'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -759,7 +732,7 @@ const UserPanel = () => {
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[6]?.number||'-'}</span>
+              <span>{userReward[6]?.number || '-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -768,13 +741,19 @@ const UserPanel = () => {
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[7]?.number||'-'}</span>
+              <span>{userReward[7]?.number || '-'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
-      <PasswordModal visible={passVisible} type={userInfo.pay_password ? 'setpass' : 'inputpass'} onClose={() => setPassVisible(false)} setVisible={setPassVisible} onOk={passOK} />
+      <PasswordModal
+        visible={passVisible}
+        type={userInfo.pay_password ? 'normal' : 'set'}
+        onClose={() => setPassVisible(false)}
+        setVisible={setPassVisible}
+        onOk={passOK}
+      />
       <CommonModal visible={eggVisible} setVisible={setEggVisible} footer={<span></span>}>
         <ModalMain>
           {eggType === 'open' ? (
@@ -825,7 +804,7 @@ const UserPanel = () => {
           )}
           <BtnWrap>
             <BuyBtn className="confirm" onClick={handleEggConfirm}>
-              {!userInfo.pay_password ? t("Yes") : eggLoading ? 'Loading...' : t("Yes")}
+              {t('Yes')}
             </BuyBtn>
             <BuyBtn onClick={closeEggModal}>{t('No')}</BuyBtn>
           </BtnWrap>

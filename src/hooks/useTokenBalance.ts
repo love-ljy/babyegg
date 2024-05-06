@@ -1,19 +1,15 @@
-import { useEffect,useState } from 'react'
-import { erc20Abi, maxUint256 } from 'viem'
+import { useEffect, useState } from 'react'
+import { erc20Abi } from 'viem'
 import { useAccount, useReadContract } from 'wagmi'
 import { NULL_ADDRESS } from '@config/contants'
-import {getBalanceNumber} from '@utils/formatterBalance'
+import { getBalanceNumber } from '@utils/formatterBalance'
 import BigNumber from 'bignumber.js'
-import { dispatch } from '@store/index'
-import { setWalletInfo } from '@store/user'
 
 const useTokenBalance = (tokenAddress: `0x${string}`) => {
   const { address } = useAccount()
-  const [tokenBalance,setTokenBalance] = useState(0)  
-  const enabled = Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS &&address)
-  const {
-    data: balance,
-  } = useReadContract({
+  const [tokenBalance, setTokenBalance] = useState(0)
+  const enabled = Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS && address)
+  const { data: balance } = useReadContract({
     abi: erc20Abi,
     address: tokenAddress,
     functionName: 'balanceOf',
@@ -25,16 +21,16 @@ const useTokenBalance = (tokenAddress: `0x${string}`) => {
 
   useEffect(() => {
     if (balance) {
-        const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18);
-        setTokenBalance(formattedBalance)
-    }else{
-        setTokenBalance(0)
+      const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18)
+      setTokenBalance(formattedBalance)
+    } else {
+      setTokenBalance(0)
     }
   }, [balance])
 
   return {
     balance,
-    formatBalance:tokenBalance
+    formatBalance: tokenBalance,
   }
 }
 
