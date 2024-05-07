@@ -10,11 +10,19 @@ const getUserInfo = async () => {
 }
 
 // 更新用信息
+<<<<<<< HEAD
 const UpdateUserInfo = async (params: { pay_password: any; pay_password_v: any }) => {
   return request({
     url: '/api/user/info',
     method: 'post',
     params,
+=======
+const updateUserInfo = async (data) => {
+  return request({
+    url: '/api/user/info',
+    method: 'post',
+    data
+>>>>>>> 3b7d5337237fbba2d1260bb8427b5d4afa06788c
   })
 }
 // 用户登录
@@ -34,11 +42,10 @@ const getUserHadParent = async (params: CheckUser) => {
   })
 }
 // 获取龙蛋排名
-const getUserRanking = async (params: PageInfo) => {
+const getUserRanking = async () => {
   return request({
     url: '/api/user/ranking',
     method: 'get',
-    params,
   })
 }
 // 获取龙蛋倒计时 /api/dragonegg/gameinfo
@@ -84,14 +91,13 @@ const queryTotalNet = async () => {
 }
 
 // 扣币下单
-const buyEgg = async (data: any) => {
+const createOrder = async (data: any) => {
   return request({
     url: '/api/order/create',
     method: 'post',
     data,
   })
 }
-
 // 获取币种信息
 const getCoin = async (params: any) => {
   return request({
@@ -105,7 +111,7 @@ const getCoin = async (params: any) => {
 const getRankingLevel = async () => {
   return request({
     url: '/api/user/rankingLevel',
-    method: 'get',
+    method: 'get'
   })
 }
 
@@ -173,10 +179,19 @@ export {
   openEgg,
   eggIncomeReinvestment,
   queryTotalNet,
-  buyEgg,
   getCoin,
-  UpdateUserInfo,
+  createOrder,
+  updateUserInfo,
   getRankingLevel,
   getRankingYuLong,
   getOrderStatus,
+<<<<<<< HEAD
+=======
+  getLast100,
+  getRealTimeTraffic,
+  getIncomeReceiveNumber,
+  queryUserInfoByTeam,
+  incomeReceive,
+  getUserHistory
+>>>>>>> 3b7d5337237fbba2d1260bb8427b5d4afa06788c
 }

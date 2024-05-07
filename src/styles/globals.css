@@ -51,6 +51,7 @@ body {
   background-color: #000;
   color: #fff;
   padding: 0 !important;
+  overflow-wrap: break-word;
 }
 
 .slick-dots li {

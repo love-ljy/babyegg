@@ -13,6 +13,8 @@ const themes = createTheme({
 
   typography: {
     fontFamily: ['CustomFont', 'Arial', 'sans-serif'].join(','),
+    fontSize: 12,
+    fontWeightLight: 300,
   },
   components: {
     MuiDrawer: {

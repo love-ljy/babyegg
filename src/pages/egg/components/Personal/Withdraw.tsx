@@ -1,13 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import styled from '@emotion/styled'
-import CopyIcon from '@icons/copy.svg'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo } from '@store/user'
+import { selectWalletInfo, selectAuthToken, selectIsBindParent } from '@store/user'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
+import { useTranslation } from 'next-i18next'
+import { getIncomeReceiveNumber, incomeReceive } from '@utils/api'
+import { selectGamingId } from '@store/user'
+import useMaticReward from '@hooks/useMaticReward'
+import useBabyLongReward from '@hooks/useBabyLongReward'
+import useGetBalance from '@hooks/useGetBalance'
+import { BabyToken, MainContractAddr } from '@config/contants'
+import { useAccount } from 'wagmi'
+import { getBalanceAmount } from '@utils/formatterBalance'
+import BigNumber from 'bignumber.js'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -128,11 +137,11 @@ const ModalMain = styled.div`
   }
 `
 
-const BtnWrap = styled.div<{ width?: string; isCancel?: boolean }>`
+const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
 `
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -150,9 +159,62 @@ const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
 `
 
 const Withdraw = () => {
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
+  const [btnLoading, setLoading] = useState(false)
   const [withdrawType, setWithdrawType] = useState('')
   const walletInfo = useSelector(selectWalletInfo)
+  const [maticMidReward, setMaticMidReward] = useState<any>('')
+  const [babyLongReward, setBabyLongReward] = useState<any>('')
+  const { userBalance } = useGetBalance()
+
+  const gamingId: any = useSelector(selectGamingId)
+
+  const { address } = useAccount()
+
+  const token = useSelector(selectAuthToken)
+  const isBindParent: any = useSelector(selectIsBindParent)
+
+  const { maticContractReward, refetch, isMaticLoading, setMaticParam } = useMaticReward({
+    onSuccess() {
+      toast.success('提取成功')
+      userBalance.refetch()
+      refetch()
+      fetchUserRewardInfo()
+      setVisible(false)
+      setMaticParam([])
+    },
+    onError(error, rawError) {
+      console.log('maticWithDraw rawError', rawError)
+      toast.warn('提取失败')
+      setMaticParam([])
+    },
+    args: [[+gamingId]],
+    mutationError() {
+      setMaticParam([])
+      setLoading(false)
+    },
+  })
+
+  const { isBabyLongLoading, setBabyLongParam } = useBabyLongReward({
+    onSuccess() {
+      toast.success('提取成功')
+      userBalance.refetch()
+      fetchUserRewardInfo()
+      setVisible(false)
+      setBabyLongParam([])
+    },
+    onError(error, rawError) {
+      console.log('babyLongWithdraw rawError', rawError)
+      toast.warn('提取失败')
+      setBabyLongParam([])
+    },
+    mutationError() {
+      setBabyLongParam([])
+      setLoading(false)
+    },
+  })
 
   const openModal = (type: string) => {
     if (!walletInfo) {
@@ -167,93 +229,196 @@ const Withdraw = () => {
     setVisible(false)
   }
 
-  const handleWithdraw = () => {}
+  const handleWithdraw = () => {
+    if (withdrawType === 'Matic') {
+      handleMatic()
+    } else {
+      handleBabyLong()
+    }
+  }
+
+  const handleMatic = async () => {
+    try {
+      setLoading(true)
+      const res: any = await incomeReceive({
+        type: -1,
+        coin_type: 0,
+      })
+      if (res.code === 0) {
+        const { oid, token_amount, _deadline, v, r, s } = res.data
+        setMaticParam([MainContractAddr, +token_amount, +_deadline, +oid, v, r, s])
+      } else {
+        toast.warn(res.msg)
+        setLoading(false)
+      }
+    } catch (e) {
+      console.log('matic withdraw error', e)
+      toast.warn('网络错误')
+      setLoading(false)
+    }
+  }
+
+  const handleBabyLong = async () => {
+    try {
+      setLoading(true)
+      const res: any = await incomeReceive({
+        type: -1,
+        coin_type: 1,
+      })
+      if (res.code === 0) {
+        const { oid, token_amount, _deadline, v, r, s } = res.data
+        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid, +v, r, s])
+      } else {
+        toast.warn(res.msg)
+        setLoading(false)
+      }
+    } catch (e) {
+      console.log('baby withdraw error', e)
+      toast.warn('网络错误')
+      setLoading(false)
+    }
+  }
+
+  const fetchUserRewardInfo = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getIncomeReceiveNumber(-1)
+        if (res.code === 0) {
+          setMaticMidReward(res.data.find(v => v.coin_type === '0')?.number || 0)
+          setBabyLongReward(res.data.find(v => v.coin_type === '1')?.number || 0)
+        } else {
+          toast.warn(res.msg)
+        }
+      } catch (e) {
+        console.log('e', e)
+        toast.warn('网络错误')
+      }
+    }
+  }, [address && isBindParent && token])
+
+  const maticWithdrawInfo = useMemo(() => {
+    const mergeMaticBalance =
+      (maticContractReward ? +getBalanceAmount(maticContractReward as BigNumber)?.toString() : 0) +
+        +maticMidReward || 0
+    const maticFee = mergeMaticBalance * 0.05 || 0
+    const maticTotal = mergeMaticBalance - maticFee || 0
+    const maticRepeat = maticTotal * 0.6 || 0
+    const maticReal = maticTotal - maticRepeat || 0
+    return {
+      mergeMaticBalance,
+      maticFee,
+      maticTotal,
+      maticRepeat,
+      maticReal,
+    }
+  }, [maticContractReward, maticMidReward])
+
+  const babyLongWithdrawInfo = useMemo(() => {
+    const babyLongFee = +babyLongReward * 0.05 || 0
+    const babyLongReal = +babyLongReward - babyLongFee
+    return {
+      babyLongFee,
+      babyLongReal,
+    }
+  }, [babyLongReward])
+
+  useEffect(() => {
+    fetchUserRewardInfo()
+  }, [fetchUserRewardInfo])
 
   return (
     <InvitationWrap>
-      <div className="title">Your Current Earning Balance</div>
+      <div className="title">{t('Your Current Earning Balance')}</div>
       <div className="row">
         <RowLeft>
-          <span className="text">10,000.00</span>
+          <span className="text">{maticWithdrawInfo.mergeMaticBalance}</span>
           <MaticIcon />
         </RowLeft>
-        <div className="draw" onClick={() => openModal('babyloong')}>
-          Withdraw
+        <div className="draw" onClick={() => openModal('Matic')}>
+          {t('Withdraw')}
         </div>
       </div>
       <div className="row">
         <RowLeft>
-          <span className="text">10,000.00</span>
+          <span className="text">{babyLongReward}</span>
           <EggTokenIcon />
         </RowLeft>
-        <div className="draw2" onClick={() => openModal('Matic')}>
-          Withdraw
+        <div className="draw2" onClick={() => openModal('BabyLong')}>
+          {t('Withdraw')}
         </div>
       </div>
       <div className="noteWrap">
-        <div className="note">Note:</div>
+        <div className="note">{t('Note')}:</div>
         <div>
-          The platform will charge a 5% fee on withdrawals as revenue.When choosing to withdraw
-          $Matic, a portion of the amount will be automatically reinvested.
+          {t(`The platform will charge a 5% fee on withdrawals as revenue`)}.{' '}
+          {t(
+            `When choosing to withdraw $Matic,a portion of the amount will be automatically reinvested`
+          )}
         </div>
       </div>
       <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
         <ModalMain>
-          {withdrawType === 'babyloong' ? (
+          {withdrawType === 'BabyLong' ? (
             <div>
-              <div className="title">*提现数量的5%作为手续费</div>
-              <div className="countWrap">
-                <span className="label">提现的 $BabyLoong 数量</span>
-                <span>100</span>
+              <div className="title">
+                {t('The platform will charge a 5% fee on withdrawals as revenue')}
               </div>
               <div className="countWrap">
-                <span className="label">手续费</span>
-                <span>10,000,00</span>
+                <span className="label">{t('Withdrawal $ Babyloong Amount')}</span>
+                <span>{babyLongReward}</span>
+              </div>
+              <div className="countWrap">
+                <span className="label">{t('Fee')}</span>
+                <span>{babyLongWithdrawInfo.babyLongFee}</span>
               </div>
               <div className="divied"></div>
               <div className="countWrap">
-                <span>实际到账</span>
+                <span>{t('Actual Amout Received"')}</span>
                 <div className="r">
-                  <span>10,000,00</span>
+                  <span>{babyLongWithdrawInfo.babyLongReal}</span>
                   <EggTokenIcon />
                 </div>
               </div>
             </div>
           ) : (
             <div>
-              <div className="title">*提现数量的5%作为手续费</div>
+              <div className="title">{t('*5%Fee On Withdrawal Amount')}</div>
               <div className="countWrap">
-                <span className="label">提现的 $Matic 数量</span>
-                <span>100</span>
+                <span className="label">{t('Withdrawal $Matic  Amount')}</span>
+                <span>{maticWithdrawInfo.mergeMaticBalance}</span>
               </div>
               <div className="countWrap">
-                <span className="label">手续费</span>
-                <span>10,000,00</span>
+                <span className="label">{t('Fee')}</span>
+                <span>{maticWithdrawInfo.maticFee}</span>
               </div>
               <div className="countWrap">
-                <span className="label">总计</span>
-                <span>10,000,00</span>
-              </div>
-              <div className="divied"></div>
-              <div className="countWrap">
-                <span className="label">自动复投 (60%)</span>
-                <span>10,000,00</span>
+                <span className="label">{t('Total')}</span>
+                <span>{maticWithdrawInfo.maticTotal}</span>
               </div>
               <div className="divied"></div>
               <div className="countWrap">
-                <span>实际到账</span>
+                <span className="label">{t('Automatic reinvestment')} (60%)</span>
+                <span>{maticWithdrawInfo.maticRepeat}</span>
+              </div>
+              <div className="divied"></div>
+              <div className="countWrap">
+                <span>{t('Actual Amout Received')}</span>
                 <div className="r">
-                  <span>10,000,00</span>
+                  <span>{maticWithdrawInfo.maticReal}</span>
                   <EggTokenIcon />
                 </div>
               </div>
             </div>
           )}
           <BtnWrap>
-            <BuyBtn className="confirm" onClick={handleWithdraw}>
-              是
+            <BuyBtn
+              className="confirm"
+              disabled={isMaticLoading || isBabyLongLoading || btnLoading}
+              onClick={handleWithdraw}
+            >
+              {isMaticLoading || isBabyLongLoading || btnLoading ? t('Loading...') : t('YES')}
             </BuyBtn>
-            <BuyBtn onClick={closeModal}>否</BuyBtn>
+            <BuyBtn onClick={closeModal}>{t('NO')}</BuyBtn>
           </BtnWrap>
         </ModalMain>
       </CommonModal>

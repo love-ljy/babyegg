@@ -50,7 +50,60 @@ export const slice = createSlice({
     walletInfo: {
       address: '',
     },
+    TotalData: {
+      "loong_user_count": "-",
+      "dragon_egg_count": "-",
+      "wait_out_babyloong": "-",
+      "reward_total": "-",
+      "last100_reward": "-",
+      "last_reward": "-"
+    },
+    babyPrice: 0,
     isBindParent: false,
+    gamingId: '',
+    authToken: '',
+    inviteCode: '',
+    babyIncome: 0,
+    allRewards: [
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      }, {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      },
+      {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      }, {
+        "number": "0",
+        "coin_type": "1",
+        "coin_name": "BABYLOONG"
+      }
+    ]
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
@@ -62,14 +115,42 @@ export const slice = createSlice({
     setIsBindParent: (state, { payload }) => {
       state.isBindParent = payload
     },
+    setGamingId: (state, { payload }) => {
+      state.gamingId = payload
+    },
+    setAuthToken: (state, { payload }) => {
+      state.authToken = payload
+    },
+    setInviteCode: (state, { payload }) => {
+      state.inviteCode = payload
+    },
+    setBabyPrice: (state, { payload }) => {
+      state.babyPrice = payload
+    },
+    setBabyIncome: (state, { payload }) => {
+      state.babyIncome = payload
+    },
+    setTotalData: (state, { payload }) => {
+      state.TotalData = payload
+    },
+    setTotalRewards: (state, { payload }) => {
+      state.allRewards = payload
+    }
   },
 })
 
-export const { setUserInfo, setWalletInfo, setIsBindParent } = slice.actions
+export const {setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
 export const selectUserInfo = s => s.user.userInfo
 export const selectIsBindParent = s => s.user.isBindParent
+export const selectGamingId = s => s.user.gamingId
+export const selectAuthToken = s => s.user.authToken
+export const selectInviteCode = s => s.user.inviteCode
+export const selectBabyPrice = s => s.user.babyPrice
+export const selectBabyIncome = s => s.user.babyIncome
+export const selectTotalData = s => s.user.TotalData
+export const selectTotalRewards = s => s.user.allRewards
 
 export default slice.reducer

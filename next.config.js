@@ -1,16 +1,18 @@
-/** @type {import('next').NextConfig} */
-/** @type {import('next').NextConfig} */
-import nextI18NextConfig from './next-i18next.config.mjs';
-const isDev = process.env.NODE_ENV === 'development'
+const { i18n } = require('./next-i18next.config')
 
-const nextConfig = {
-  reactStrictMode: true,
-  i18n: nextI18NextConfig.i18n,
+const isDev = process.env.NODE_ENV === 'development'
+/**
+ * @type {import('next').NextConfig}
+ */
+module.exports = {
+  reactStrictMode: false,
+  i18n,
   swcMinify: true, // 开启 SWC 编译器来提升构建性能
+  generateEtags: false,
   experimental: {
     // 开启 React 18 特性支持
-    reactRoot: true,
-    concurrentFeatures: true,
+    // reactRoot: true,
+    // concurrentFeatures: true,
   },
   images: {
     unoptimized: true,
@@ -23,6 +25,7 @@ const nextConfig = {
     EXPLORER_HOST: process.env.EXPLORER_HOST,
     SERVER_HOST: process.env.SERVER_HOST,
   },
+  distDir: 'out',
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }
     const fileLoaderRule = config.module.rules.find(rule => rule.test?.test?.('.svg'))
@@ -41,18 +44,20 @@ const nextConfig = {
     )
     return config
   },
-}
-if (isDev) {
-  nextConfig.rewrites = async () => {
+  async rewrites() {
+    if (isDev) {
+      return [
+        {
+          source: '/api/:path*',
+          destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
+        },
+      ]
+    }
     return [
       {
         source: '/api/:path*',
         destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
       },
     ]
-  }
-} else {
-  nextConfig.output = 'export'
+  },
 }
-
-export default nextConfig

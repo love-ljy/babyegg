@@ -92,6 +92,10 @@ export const formatTeamNumber = (num: number): string => {
   });
 };
 
+export const formatAddress = (address: string, unit = 6) => {
+  return `${address?.substring(0, unit)}...${address.substring(address.length - unit)}`
+}
+
 export const formatThoudNumber = (num: number): string => {
   return num.toLocaleString();
 };

@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "clean": "rimraf node_modules/.cache .next",
     "generate-types": "typechain --target ethers-v5 ./src/config/abi/*.json --out-dir ./src/types"
   },
   "eslintConfig": {
@@ -29,10 +30,12 @@
     "bignumber.js": "^9.1.0",
     "copy-to-clipboard": "^3.3.2",
     "ethers": "^5.7.0",
+    "i18next": "^23.11.3",
     "md5": "^2.3.0",
     "next": "14.2.2",
     "next-i18next": "^15.3.0",
     "react": "^18",
+    "react-countdown": "^2.3.5",
     "react-dom": "^18",
     "react-i18next": "^14.1.1",
     "react-number-format": "^5.3.4",
@@ -40,6 +43,7 @@
     "react-slick": "^0.30.2",
     "react-swipeable-views": "^0.14.0",
     "react-toastify": "^10.0.5",
+    "rimraf": "^5.0.5",
     "slick-carousel": "^1.8.1",
     "swr": "^2.2.5",
     "typechain": "^8.3.2",

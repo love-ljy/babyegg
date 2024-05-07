@@ -1,19 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import styled from '@emotion/styled'
 import LeftArrowIcon from '@icons/leftArrow.svg'
 import MaticIcon from '@icons/matic.svg'
+import { Typography } from '@mui/material'
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import { useRouter } from 'next/router'
+import { queryUserInfoByTeam } from '@utils/api'
+import { useAccount } from 'wagmi'
+import { selectIsBindParent, selectAuthToken } from '@store/user'
+import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
+import {formatAddress} from '@utils/formatterBalance'
 
 const InviteWrap = styled.div`
   position: relative;
 `
 
 const HistoryWrap = styled.div`
-  padding: 30px;
+  padding: 20px;
 `
 
 const Item = styled.div`
@@ -80,7 +87,7 @@ const Header = styled.div`
 
 const LastWrap = styled.div`
   display: flex;
-  min-height: 480px;
+  /* min-height: 480px; */
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
@@ -111,7 +118,7 @@ const Source = styled.div`
   align-self: flex-start;
   height: 100%;
   .empty {
-    color: rgba(255, 255, 255, 0.5);
+    color: #fff;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -175,22 +182,51 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }))
 
+interface MyType {
+  ids: string[]
+  team_num: number
+  performances: string
+  list: {
+    username: string
+    my_performance: string
+  }[]
+}
+
 const Invite = () => {
   const router = useRouter()
+  const { address } = useAccount()
   const [expanded, setExpanded] = useState<string | false>('panel1')
-  const [dataSource, setDataSource] = useState([
-    // {
-    //   no: 1,
-    //   address: '0x9a4E864aF8E...C71c88f1782bD',
-    // },
-  ])
+  const [dataSource, setDataSource] = useState<MyType[]>()
+  const isBindParent = useSelector(selectIsBindParent)
+  const token = useSelector(selectAuthToken)
+
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false)
   }
 
-  const goBack =() => {
+  const goBack = () => {
     router.push('/egg')
   }
+
+  const getUserInfoByTeam = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await queryUserInfoByTeam()
+        if (res.code === 0) {
+          setDataSource(res.data)
+        } else {
+          toast.warn(res.msg)
+        }
+      } catch (e) {
+        console.log('getUserInfoByTeam error', e)
+        toast.warn('网络错误')
+      }
+    }
+  }, [address, isBindParent, token])
+
+  useEffect(() => {
+    getUserInfoByTeam()
+  }, [getUserInfoByTeam])
 
   return (
     <InviteWrap>
@@ -202,91 +238,66 @@ const Invite = () => {
         <span>您的推广记录</span>
       </Header>
       <HistoryWrap>
-        <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-            <Item>
-              <div>1 代</div>
-              <div>
-                <span className="txt">人数: </span>
-                <span>19</span>
-              </div>
-              <div className="maticCount">
-                <span>3250.851</span> <MaticIcon />
-              </div>
-            </Item>
-          </AccordionSummary>
-          <AccordionDetails>
-            <LastWrap>
-              <div
-                style={{
-                  width: '100%',
-                }}
-              >
-                <Column>
-                  <div>No.</div>
-                  <div>Address</div>
-                </Column>
-                <Source>
-                  {dataSource.length ? (
-                    dataSource.map((item: any) => {
-                      return (
-                        <SourceItem>
-                          <div className="No">{item.no}</div>
-                          <div className="address">{item.address}</div>
-                        </SourceItem>
-                      )
-                    })
-                  ) : (
-                    <div className="empty">No Data</div>
-                  )}
-                </Source>
-              </div>
-            </LastWrap>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-            <Item>
-              <div>1 代</div>
-              <div>
-                <span className="txt">人数: </span>
-                <span>19</span>
-              </div>
-              <div className="maticCount">
-                <span>3250.851</span> <MaticIcon />
-              </div>
-            </Item>
-          </AccordionSummary>
-          <AccordionDetails>
-            <LastWrap>
-              <div
-                style={{
-                  width: '100%',
-                }}
-              >
-                <Column>
-                  <div>No.</div>
-                  <div>Address</div>
-                </Column>
-                <Source>
-                  {dataSource.length ? (
-                    dataSource.map((item: any) => {
-                      return (
-                        <SourceItem>
-                          <div className="No">{item.no}</div>
-                          <div className="address">{item.address}</div>
-                        </SourceItem>
-                      )
-                    })
-                  ) : (
-                    <div className="empty">No Data</div>
-                  )}
-                </Source>
-              </div>
-            </LastWrap>
-          </AccordionDetails>
-        </Accordion>
+        {dataSource &&
+          dataSource?.length > 0 &&
+          dataSource?.map((e: any, i) => {
+            return (
+              <>
+                <Accordion
+                  key={e?.team_num + i + 's'}
+                  expanded={expanded === 'panel1'}
+                  onChange={handleChange('panel1')}
+                >
+                  <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                    <Item>
+                      <div>{i + 1} 代</div>
+                      <div>
+                        <span className="txt">人数: </span>
+                        <span>{e?.team_num}</span>
+                      </div>
+                      <div className="maticCount">
+                        <span>{Number(e?.performances).toFixed(3)}</span> <MaticIcon />
+                      </div>
+                    </Item>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <LastWrap>
+                      <div
+                        style={{
+                          width: '100%',
+                        }}
+                      >
+                        <Column>
+                          <div>No.</div>
+                          <div>Address</div>
+                        </Column>
+                        <Source>
+                          {e && e?.list && e?.list?.length ? (
+                            e?.list.map((item: any) => {
+                              return (
+                                <SourceItem key={item?.username}>
+                                  <div className="No">{item?.id}</div>
+                                  <div className="address">{formatAddress(item?.username,8)}</div>
+                                </SourceItem>
+                              )
+                            })
+                          ) : (
+                            <div className="empty">No Data</div>
+                          )}
+                        </Source>
+                      </div>
+                    </LastWrap>
+                  </AccordionDetails>
+                </Accordion>
+              </>
+            )
+          })}
       </HistoryWrap>
+      {dataSource?.length === 0 && (
+        <Typography color="#fff" className="empty">
+          No Data
+        </Typography>
+      )}
     </InviteWrap>
   )
 }

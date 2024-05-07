@@ -16,18 +16,29 @@ import { NumericFormat, NumericFormatProps } from 'react-number-format'
 import BaseSelect from './BaseSelect'
 import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectUserInfo, selectIsBindParent } from '@store/user'
-import { useBalance, useAccount, useWriteContract } from 'wagmi'
-import { formatTeamNumber, getFullDisplayBalance } from '@utils/formatterBalance'
+import {
+  selectWalletInfo,
+  selectUserInfo,
+  selectAuthToken,
+  selectIsBindParent,
+  selectGamingId,
+  setBabyPrice,
+} from '@store/user'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
 import PasswordModal from '../PasswordModal/PasswordModal'
-import { buyEgg, getCoin, eggIncomeReinvestment } from '@utils/api'
+import { getCoin, eggIncomeReinvestment, createOrder } from '@utils/api'
 import useStake from '@hooks/useStake'
-import eggAbi from '../../../../config/abi/eggAbi.json'
-import { MainContractAddr } from '@config/contants'
+import { useTranslation } from 'next-i18next'
+import { formatUnits } from 'viem'
+import useGetBalance from '@hooks/useGetBalance'
+import useBabyLong from '@hooks/useBabyLong'
+import useAllowance from '@hooks/useAllowance'
+import { BurnContractAddr, MainContractAddr, BabyToken } from '@config/contants'
+import { useAccount } from 'wagmi'
+import { dispatch } from '@store/index'
+import useTokenBalance from '@hooks/useTokenBalance'
 
-const BuyBtn = styled(Button)<{ width?: string; isCancel?: boolean }>`
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -83,6 +94,7 @@ const BuyEggWrap = styled.div`
   }
   .available {
     align-self: flex-start;
+    margin-top: 10px;
   }
   .detailed {
     display: flex;
@@ -97,11 +109,13 @@ const BuyEggWrap = styled.div`
     }
   }
 `
+
 const AdornmentWrap = styled.div`
   display: flex;
   align-items: center;
   width: 140px;
 `
+
 const BuyNumStep = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -169,6 +183,7 @@ const CongContent = styled.div`
     }
   }
 `
+
 const DialogFooter = styled.div`
   width: 250px;
   height: 40px;
@@ -217,92 +232,144 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
   }
 )
 
+const MATIC = '0'
+const BABY = '1'
+const OTHER = '2' // todo 余额投资
+
+const tokenAddressMap = {
+  [BABY]: BabyToken,
+  // todo 余额投资待定
+}
+
 const BuyEgg = () => {
-  const [values, setValues] = useState('')
-  const [coinType, setCoinType] = useState('2')
-  const [loading, setLoading] = useState(false)
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const [coinType, setCoinType] = useState(BABY)
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [passVisible, setPassVisible] = useState(false)
-  const [inputPassVisible, setInputPassVisible] = useState(false)
   const [firstBuyVisible, setFirstBuyVisible] = useState(false)
-  const walletInfo = useSelector(selectWalletInfo)
-  const account = useAccount()
-  const [buyNum, setBuyNum] = useState(0)
+  const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
-  const [balance, setBalance] = useState<string>('0')
+  const [coinBalance, setCoinBalance] = useState('0')
+
   const isBindParent: any = useSelector(selectIsBindParent)
-  const result = useBalance({
-    address: account.address,
-  })
+  const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
-  // const { isPreparing, error, estimatedGas, handleStake, isLoading } = useStake()
+  const gamingId: any = useSelector(selectGamingId)
+  const token = useSelector(selectAuthToken)
+
+  const { address } = useAccount()
+  const { userBalance } = useGetBalance()
+  const { formatBalance } = useTokenBalance(tokenAddressMap[coinType]) // !
+
   const {
-    data: hash,
-    isPending,
-    error,
-    writeContract,
-  } = useWriteContract({
-    mutation: {
-      onError: (error: Error) => onError(error),
+    isAllowing,
+    allowance,
+    refetch: allowanceRefetch,
+    approveEstimatedGas,
+    allowSpendingTokens,
+  } = useAllowance(tokenAddressMap[coinType], BurnContractAddr) // !
+
+  const {
+    estimatedGas: stakeEstimatedGas,
+    handleStake,
+    isLoading: stakeLoading,
+  } = useStake({
+    value: BigInt(buyNum * 1e13),
+    onSuccess() {
+      toast.success('下单成功')
+      userBalance.refetch()
+    },
+    onError(error, rawError) {
+      console.log('stake error', rawError)
+      toast.warn('下单失败')
+      setLoading(false)
     },
   })
 
-  const onError = (error: any) => {
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    if (result && result.data?.value) {
-      const value = getFullDisplayBalance(
-        new BigNumber(result.data?.value.toString()),
-        result.data?.decimals
-      )
-      setBalance(value)
-    }
-  }, [result])
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues(event.target.value)
-  }
-
-  const selectChange = (option: any) => {
-    setCoinType(option.value)
-  }
+  const { isLoading: babyLoading, setBabyArgs } = useBabyLong({
+    onSuccess() {
+      toast.success('下单成功')
+      userBalance.refetch()
+      setBabyArgs([])
+      setLoading(false)
+    },
+    onError(error, rawError) {
+      console.log('babyLong rawError', rawError)
+      toast.warn('下单失败')
+      setLoading(false)
+      setBabyArgs([])
+    },
+    mutationError() {
+      setBabyArgs([])
+      setLoading(false)
+    },
+  })
 
   const handleBuy = async () => {
     if (!walletInfo) {
       toast.warn('请链接钱包')
       return
     }
-    if (coinType === '2') {
-      // usdt
+    if (coinType === OTHER) {
+      // todo 余额投资
       if (userInfo.pay_password) {
-        // 需输入密码
-        setInputPassVisible(true)
+        setPassVisible(true)
       } else {
         setFirstBuyVisible(true)
       }
     }
-    if (coinType === '1') {
-      // babyloong
+    if (coinType === BABY) {
+      handleBabyLong()
     }
-    console.info(332323,coinType === '0')
-    if (coinType === '0') {
-      // matic
-      // handleStake()
-      try {
-        writeContract({
-          address: MainContractAddr,
-          abi: eggAbi,
-          functionName: 'stake',
-          args: [],
-          value: BigInt(buyNum * 1e13)
-        })
-      } catch (error) {
-        console.info(error)
+    if (coinType === MATIC) {
+      handleMatic()
+    }
+  }
+
+  const handleMatic = () => {
+    const estimatedGasInFloat = stakeEstimatedGas
+      ? parseFloat(formatUnits(stakeEstimatedGas, walletInfo?.decimals))
+      : null
+    if (!estimatedGasInFloat) {
+      toast.warn("Couldn't estimate gas")
+      return
+    }
+    if (
+      +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals) + estimatedGasInFloat >
+      walletInfo?.balance
+    ) {
+      toast.warn('Insufficient balance for gas')
+      return
+    }
+    handleStake()
+  }
+
+  const handleBabyLong = async () => {
+    setLoading(true)
+    try {
+      const res: any = await createOrder({
+        type: 0,
+        number: buyNum,
+        id: gamingId,
+      })
+      if (res.code === 0) {
+        const { r, v, s, id, amount, type, bsc_amount, coin_token, sign_out_time } = res.data
+        if (Number(amount) > Number(formatBalance)) {
+          toast.warn('babylonng 余额不足')
+          return
+        }
+        setBabyArgs([coin_token, bsc_amount, type, id, sign_out_time, v, r, s])
+      } else {
+        toast.warn(res.msg)
+        setLoading(false)
       }
-     
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+      setLoading(false)
     }
   }
 
@@ -314,82 +381,99 @@ const BuyEgg = () => {
     setDescShow(true)
   }
 
-  const handleBuyEgg = async params => {
-    try {
-      // handleStake()
-      // const res: any = await buyEgg(params)
-      // console.log('res')
-      // if (res.code === 0) {
-      //   // setPassVisible(false)
-      //   // toast.success('购买成功')
-      //   handleStake()
-      // } else {
-      //   toast.warn(res.msg)
-      // }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
-    }
+  const passOK = async passParams => {
+    handleReinvestment(passParams)
   }
 
-  const passOK = async () => {
-    await handleBuyEgg({
-      type: 1,
-    })
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBuyNum(Number(event.target.value))
   }
 
-  const inputPassOK = async passParams => {
+  const selectChange = (option: any) => {
+    setCoinType(option.value)
+    setCoinBalance(option.balance)
+  }
+
+  const handleReinvestment = async passParams => {
     try {
       const res: any = await eggIncomeReinvestment({
-        id: '',
+        id: gamingId,
         password: passParams.pass,
       })
-      console.log('res')
       if (res.code === 0) {
-        setInputPassVisible(false)
-        toast.success('购买成功')
+        setPassVisible(false)
+        toast.success('下单成功')
+        userBalance.refetch()
       } else {
         toast.warn(res.msg)
       }
     } catch (e) {
       console.log('e', e)
       toast.warn('网络错误')
+    } finally {
+      setLoading(false)
     }
   }
 
-  const firstBuyClose = () => {
+  const firstBuyClose = async () => {
     setFirstBuyVisible(false)
     setPassVisible(true)
   }
 
-  const fetCoin = useCallback(async () => {
-    try {
-      const res: any = await getCoin({
-        type: -1,
-      })
-      if (res.code === 0) {
-        const options = res.data.map((item: any) => {
-          return {
-            label: item.name,
-            value: item.type,
-          }
+  const handleApprove = async () => {
+    const estimatedGasInFloat = approveEstimatedGas
+      ? parseFloat(formatUnits(approveEstimatedGas, walletInfo?.decimals))
+      : null
+    if (!estimatedGasInFloat) {
+      toast.warn("Couldn't estimate gas")
+      return
+    }
+    if (estimatedGasInFloat > walletInfo?.balance) {
+      toast.warn('Insufficient balance for gas')
+      return
+    }
+    allowSpendingTokens()
+  }
+
+  const fetCoin = useCallback(async () => {    
+    if (address && isBindParent && token) {
+      try {
+        allowanceRefetch()
+        const res: any = await getCoin({
+          type: -1,
         })
-        setCoinList(options)
-        setCoinType(options[0].value)
-      } else {
+        if (res.code === 0) {
+          const options = res.data.map((item: any) => {
+            return {
+              label: item.name,
+              value: item.type,
+            }
+          })
+          const balanceList = options
+            .filter((e: any) => e.label != 'USDT')
+            ?.map((v: any) => {
+              return {
+                label: v.label,
+                value: v.value,
+                balance: v.value === BABY ? formatBalance : +walletInfo?.balance.toFixed(2),
+              }
+            })
+          setCoinList(balanceList)
+          setCoinBalance(balanceList[0].balance)
+          dispatch(setBabyPrice(res.data[1].matic_price))
+        } else {
+          toast.warn(res.msg)
+        }
+      } catch (e) {
+        console.log('fetCoin error', e)
         toast.warn('网络错误')
       }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
     }
-  }, [])
+  }, [address, isBindParent, token])
 
   useEffect(() => {
-    if (walletInfo?.address && isBindParent) {
-      fetCoin()
-    }
-  }, [walletInfo?.address, isBindParent])
+    fetCoin()
+  }, [fetCoin])
 
   return (
     <BuyEggWrap>
@@ -405,9 +489,9 @@ const BuyEgg = () => {
           <RemoveIcon sx={{ color: '#fff' }} />
         </IconButton>
       </BuyNumStep>
-      <span className="buying">Buying Methods</span>
+      <span className="buying">{t('Buying Methods')}</span>
       <CountInput
-        value={values}
+        value={buyNum}
         onChange={handleChange}
         name="numberformat"
         id="formatted-numberformat-input"
@@ -431,25 +515,37 @@ const BuyEgg = () => {
         variant="standard"
       />
       <div className="available">
-        <span className="buying">Your Current $Matic available :</span>
-        <span className="count">{balance}</span>
+        <span className="buying">
+          {coinType === BABY ? t('Current BABYLONG available') : t('Current $Matic available')} :
+        </span>
+        <span className="count">{coinBalance}</span>
       </div>
-      <BuyBtn isCancel={loading} disabled={loading} onClick={handleBuy}>
-        {loading ? 'Loading...' : 'Buy'}
-      </BuyBtn>
+      {(allowance && +allowance.toString() > 0) || coinType === MATIC || coinType === OTHER ? (
+        <BuyBtn
+          iscancel={stakeLoading || loading || babyLoading}
+          disabled={stakeLoading || loading || babyLoading}
+          onClick={handleBuy}
+        >
+          {stakeLoading || loading || babyLoading ? t('Loading...') : t('BUY')}
+        </BuyBtn>
+      ) : (
+        <BuyBtn iscancel={isAllowing} disabled={isAllowing} onClick={handleApprove}>
+          {isAllowing ? t('Loading...') : t('APPROVE')}
+        </BuyBtn>
+      )}
       <div className="detailed">
         <div>
           <Image width={15} height={15} src={detailedPng} alt="detailed" />
         </div>
         <span className="desc" onClick={openDescDialog}>
-          Detailed Description
+          {t('Detailed Description')}
         </span>
       </div>
       <CommonModal visible={descShow} setVisible={setDescShow}>
         <DescContent>
-          <div>Detailed Description: </div>
-          <div>Each Egg Costs 10 $Matic</div>
-          <div className="minimum">*Minimum initial purchase requirement: </div>
+          <div>{t('Detailed Description')}: </div>
+          <div>{t('Each Egg Costs 10 $Matic')}</div>
+          <div className="minimum">{t('*Minimum initial purchase requirement')}: </div>
           <div className="matic">30 $Matic.</div>
         </DescContent>
       </CommonModal>
@@ -460,7 +556,9 @@ const BuyEgg = () => {
       >
         <DescContent className="firstBuy">
           <Image src={firstBuyPng} alt={'firstBuy'} />
-          <div>首次购买龙蛋需使用 $Matic 解锁</div>
+          <div>
+            {t('The first time you purchase a dragon egg, you need to use $Matic to unlock it.')}
+          </div>
         </DescContent>
       </CommonModal>
       <CommonModal
@@ -475,7 +573,7 @@ const BuyEgg = () => {
         }
         footer={
           <DialogFooter onClick={closeDialog}>
-            <span>receive now</span>
+            <span>{t('receive now')}</span>
           </DialogFooter>
         }
       >
@@ -483,7 +581,7 @@ const BuyEgg = () => {
           <div>
             <Image src={congratulationsTxtPng} alt="txt" />
           </div>
-          <div>you have received $BabyLoong</div>
+          <div>{t('you have received $BabyLoong')}</div>
           <div className="countWrap">
             <span>10,000</span>
             <div>
@@ -492,12 +590,11 @@ const BuyEgg = () => {
           </div>
         </CongContent>
       </CommonModal>
-      <PasswordModal visible={passVisible} setVisible={setPassVisible} onOk={passOK} />
       <PasswordModal
-        visible={inputPassVisible}
-        setVisible={setInputPassVisible}
-        onOk={inputPassOK}
-        type={'input'}
+        visible={passVisible}
+        setVisible={setPassVisible}
+        onOk={passOK}
+        type={userInfo.pay_password ? 'normal' : 'set'}
       />
     </BuyEggWrap>
   )

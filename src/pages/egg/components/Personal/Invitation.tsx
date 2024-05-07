@@ -3,9 +3,13 @@ import CopyIcon from '@icons/copy.svg'
 import invitePng from '@imgs/invite.png'
 import MaticIcon from '@icons/matic.svg'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectUserInfo } from '@store/user'
+import { selectUserInfo } from '@store/user'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import copy from 'copy-to-clipboard'
+import { toast } from 'react-toastify'
+import { useTranslation } from 'next-i18next'
+
 const InvitationWrap = styled.div`
   border-radius: 5px;
   background: rgba(8, 17, 33, 1);
@@ -69,6 +73,8 @@ const CommonRow = styled.div`
   }
 `
 const Invitation = () => {
+  // @ts-ignore
+  const { t } = useTranslation('common')
   const router = useRouter()
   const userInfo: any = useSelector(selectUserInfo)
 
@@ -76,36 +82,31 @@ const Invitation = () => {
     router.push('invite')
   }
 
+  const copyLink = () => {
+    copy(
+      `${typeof window !== 'undefined' ? window?.location?.origin : ''}?invite=${userInfo?.invite}`
+    )
+    toast.success('复制成功')
+  }
+
   return (
     <InvitationWrap>
-      <div className="title">Your Invitation Link</div>
-      <Copy>
-        <span className="text">www.babyloongworld.com/2fw718sfg</span>
+      <div className="title">{t('Your Invitation Link')}</div>
+      <Copy onClick={copyLink}>
+        <span className="text">{`${typeof window !== 'undefined' ? window?.location?.origin : ''}?invite=${userInfo?.invite}`}</span>
         <CopyIcon />
       </Copy>
       <CommonRow>
         <div className="topTxt">
-          <span>当前您的推荐有效地址数量</span>
+          <span>{t('Current Number of Your Valid Referral Addresses')}</span>
         </div>
         <div className="bot">
-          <span>10,000.00</span>
+          <span>{userInfo?.true_son_num || 0}</span>
         </div>
       </CommonRow>
       <CommonRow>
         <div className="topTxt">
-          <span>当前您的累计推广所得奖励</span>
-        </div>
-        <div className="bot">
-          <span>{userInfo.share_award || 0}</span>
-          <div className="bot-r">
-            <MaticIcon />
-            <span className="topTxt">Matic</span>
-          </div>
-        </div>
-      </CommonRow>
-      <CommonRow>
-        <div className="topTxt">
-          <span>当前您的小区业绩总额</span>
+          <span>{t('Current Total Earnings from Your Referrals')}</span>
         </div>
         <div className="bot">
           <span>{userInfo.share_award || 0}</span>
@@ -117,7 +118,7 @@ const Invitation = () => {
       </CommonRow>
       <CommonRow>
         <div className="topTxt">
-          <span>当前您的小区新增业绩总额（每周）</span>
+          <span>{t('Current Amount of Total Minor Group Sales')}</span>
         </div>
         <div className="bot">
           <span>{userInfo.share_award || 0}</span>
@@ -129,7 +130,19 @@ const Invitation = () => {
       </CommonRow>
       <CommonRow>
         <div className="topTxt">
-          <span>当前您的小区新增业绩总额（每月）</span>
+          <span>{t('Current Amount of Your Weekly New Sales')}</span>
+        </div>
+        <div className="bot">
+          <span>{userInfo.share_award || 0}</span>
+          <div className="bot-r">
+            <MaticIcon />
+            <span className="topTxt">Matic</span>
+          </div>
+        </div>
+      </CommonRow>
+      <CommonRow>
+        <div className="topTxt">
+          <span>{t('Current Amount of Your Monthly New Sales')}</span>
         </div>
         <div className="bot">
           <span>{userInfo.share_award || 0}</span>
@@ -141,7 +154,7 @@ const Invitation = () => {
       </CommonRow>
       <InvitationHistory onClick={toHistory}>
         <Image src={invitePng} alt="invite" />
-        <span>查看您的推广记录</span>
+        <span>{t('View your promotion history')}</span>
       </InvitationHistory>
     </InvitationWrap>
   )

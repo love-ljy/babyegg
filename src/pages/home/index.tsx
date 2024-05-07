@@ -18,6 +18,8 @@ import grounp4 from '@imgs/Group_7.png'
 import grounp5 from '@imgs/Group_8.png'
 import grounp6 from '@imgs/Group_9.png'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'next-i18next'
+
 
 const LayBox = styled.div`
   display: flex;
@@ -148,8 +150,13 @@ filter: blur(60.150001525878906px);
 `
 const TokenBurn = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: .2fr 1fr;
   grid-gap: 20px;
+  justify-content: space-between;
+  border-radius: 5px;
+border: 1px solid #8F0DF5;
+padding: 4px;
+  align-items: center;
 `
 
 const EcologyCard = styled.div`
@@ -169,36 +176,43 @@ const PartenerBox = styled.div`
 `
 const slides = [
   {
-    title: '踏上充满',
-    name: '惊奇之旅',
-    desc: '探索宝贝龙蛋的奥妙！',
+    title: 'A Journey of Wonder',
+    name: '',
+    desc: 'Discovering the Thrills of BabyLoong’s Treasury Egg',
     imageUrl: '/img/image1.png',
-    path:'/egg',
-    isComing:false
+    path: '/egg',
+    isComing: false
   },
-  { title: '准备好，', name: '冲吖', desc: '让宝贝龙激情的释放速度', imageUrl: '/img/image2.png', path:'/egg',
-  isComing:true },
-  { title: '狂欢中', name: '', desc: '喂饱您的宝贝龙！', imageUrl: '/img/image3.png', path:'/egg',
-  isComing:true },
+  {
+    title: 'Are you ready', name: 'Go', desc: 'Let the release speed of Babylong passion', imageUrl: '/img/image2.png', path: '/egg',
+    isComing: true
+  },
+  {
+    title: 'Carnival', name: '', desc: 'Feed your Babylong', imageUrl: '/img/image3.png', path: '/egg',
+    isComing: true
+  },
 ]
 
 const ecologyLits = [
-  { title: '宝贝龙蛋孵化大赛', comingsoon: false, image: hatch, description: '玩家使用 $MATIC 购买 BabyLoong 蛋，这些蛋会在 24 小时内孵化并释放更多代币。 游戏提供奖励、双倍收入和资产积累。 最终奖池将分配给最后 100 名玩家，从而提高盈利的可能性。 这款创新游戏融合了 Polygon 链上的社交和战略元素，以实现财富增长。' },
-  { title: '龙龙快跑', comingsoon: true, image: runlong, description: '“龙龙快跑”是一款激动人心的在线冲刺模拟游戏，参与者使用代币来预测比赛结果，猜对即可获得奖励。 最后一名 BabyLoong 的赌注将被销毁 5%，以增加悬念和价值，而 90% 的赌注将分配给表现最佳的赌注，另外 5% 的赌注将作为共享奖励。 该游戏融合了预测、策略和运气，以应对不可预测的比赛。' },
-  { title: '宝贝龙养成记', comingsoon: true, image: develop, description: '在这款独特的饲养游戏中，玩家每天用代币喂养 BabyLoongs，从而增加奖金。 每个周期后，最大和最小的 BabyLoongs 都会领取奖品。 该游戏融合了培育和战略投资，带来引人入胜的体验。' }
+  { title: 'The Egg Hatchathon', comingsoon: false, image: hatch, description: 'Players use $MATIC to buy BabyLoong eggs, which hatch in 24 hours to release more tokens.The game offers rewards, double income, and asset accumulation.The final prize pool is divided among the last 100 players, enhancing profit possibilities. This innovative game blends social and strategic elements on the Polygon chain for wealth growth' },
+  { title: 'BabyLoong Dash', comingsoon: true, image: runlong, description: 'BabyLoong Dash2' },
+  { title: 'BabyLoong Raising Saga', comingsoon: true, image: develop, description: 'In this unique raising game, players feed BabyLoongs daily with tokens, increasing the prize pot. Largest and smallest BabyLoongs claim prizes after each cycle. The game blends nurturing and strategic investment for an engaging experience' }
 
 ]
 const Parteners = [
   grounp1, grounp2, grounp3, grounp4, grounp5, grounp6
 ]
 
+
+
+
 const Home: React.FC = () => {
-  
+  const { t, i18n } = useTranslation('common')
   const router = useRouter();
-  const HandleGoGame = (e:any)=>{
-    if(!e.isComing){
-      router.push(e.path)
-    }else{
+  const HandleGoGame = (e: any) => {
+    if (!e.isComing) {
+      router.push(e.path + '?invite=' + router.query.invite)
+    } else {
       toast('敬请期待')
     }
   }
@@ -218,15 +232,15 @@ const Home: React.FC = () => {
               <SlideBox bg={e.imageUrl}>
                 <ContentBox>
                   <Box width="100%">
-                    <TitleBox>{e.title}</TitleBox>
-                    <TitleBox>{e.name}</TitleBox>
-                    <Typography>{e.desc}</Typography>
+                    <TitleBox>{t(e.title)}</TitleBox>
+                    <TitleBox>{t(e.name)}</TitleBox>
+                    <Typography>{t(e.desc)}</Typography>
                   </Box>
                 </ContentBox>
               </SlideBox>
               <Stack flexDirection="row">
-                <Button onClick={()=>{HandleGoGame(e)}} sx={{ margin: '30px 20px' }} fullWidth variant="contained">
-                  探索游戏
+                <Button onClick={() => { HandleGoGame(e) }} sx={{ margin: '30px 20px' }} fullWidth variant="contained">
+                  {t("Explore Game")}
                 </Button>
               </Stack>
             </InfoBox>
@@ -242,15 +256,15 @@ const Home: React.FC = () => {
           <Image width="124" height={99} src={shoub} alt="" />
         </RightBox>
         <Typography fontSize="40px" color="#fff" fontWeight="bold">
-          项目简介
+          {t("INTRODUCTION")}
         </Typography>
         <Typography fontSize="15px" color="#fff">
-          ⻢蹄链上⾸创社会实验meme币，融合燃烧机制与丰富游戏⽣态。它不仅是散户的福⾳，也是⾲菜崛起的新篇章，旨在重燃⻢蹄链的辉煌，致敬伟⼤的meme精神。这标志着区块链与NFT游戏领域的⼀次创新⻜跃。
+          {t("The first meme coin on the Polygon chain featuring a burn mechanism and multiple game ecosystems is here! It's a boon for crypto lovers, turning the tables on their investment stories and reviving the glory of the Polygon chain as we pay tribute to the great memes")}
         </Typography>
       </ProjectBox>
       <Container sx={{ width: '100%' }}>
         <Typography fontSize="40px" color="#fff" fontWeight="bold">
-          宝贝龙代币通证
+          {t("$BabyLoongnomices")}
         </Typography>
         <TokenContainer>
           <TokenBg />
@@ -258,22 +272,34 @@ const Home: React.FC = () => {
             <Image width="159" height={159} src={Token} alt="" />
           </TokenImg>
           <TokenDesc>
-            <TokenTitle>总供应</TokenTitle>
+            <TokenTitle> {t("Token Introduction")}</TokenTitle>
+            <Typography fontSize="12px" fontWeight="bold" color="#fff">{t('BabyLoong tokens are the value certificates of the game ecosystem, with a total supply of 12.8 billion. The liquidity pool tokens are burned at a rate of 0.375% per hour, continuing until the total circulating supply is reduced to 100 million tokens')}</Typography>
+          </TokenDesc>
+          <TokenDesc>
+            <TokenTitle> {t("Total Supply")}</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">12,800,000,000</Typography>
           </TokenDesc>
           <TokenDesc>
-            <TokenTitle>合约</TokenTitle>
+            <TokenTitle> {t("Contract")}</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">0x8cf572c204f3294267b0bfff180d0cea5ec3e903</Typography>
           </TokenDesc>
           <TokenDesc>
-            <TokenTitle>底池燃烧</TokenTitle>
+            <TokenTitle> {t("Liquidity Burn")}</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">0.375%/ 小时</Typography>
           </TokenDesc>
 
           <TokenDesc>
-            <TokenTitle>税收奖励池</TokenTitle>
+            <TokenTitle> {t("Buy &Sell Tax")}</TokenTitle>
             <Typography fontSize="12px" fontWeight="bold" color="#fff">5%</Typography>
           </TokenDesc>
+          <TokenBurn>
+            <TokenTitle> {t("Current Burned")}</TokenTitle>
+            <Stack flexDirection="row" alignItems="center" justifyContent="right">
+              <Typography fontSize="24px" fontWeight="bold" color="#fff">100,000,000</Typography>
+              <Image width="30" height={30} src={Token} alt="" />
+            </Stack>
+
+          </TokenBurn>
           {/* <TokenDesc>
             <TokenTitle>税收奖励池</TokenTitle>
             <TokenBurn>
@@ -294,29 +320,29 @@ const Home: React.FC = () => {
               1002383</Typography>
           </TokenDesc> */}
         </TokenContainer>
-       
+
       </Container>
-      <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">游戏生态</Typography>
+      <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">{t('GAMES ECOSYSTEM')}</Typography>
       <EcologyCard>
-          {ecologyLits.map(e => {
+        {ecologyLits.map(e => {
+          return (
+            <GameCard key={e.title} title={t(e.title)} image={e.image} description={t(e.description)} comingsoon={e.comingsoon} />
+          )
+        })}
+      </EcologyCard>
+      <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">{t('GAMES ECOSYSTEM')}</Typography>
+      <PartenerBox>
+        {
+          Parteners.map((e, i) => {
             return (
-              <GameCard key={e.title} title={e.title} image={e.image} description={e.description} comingsoon={e.comingsoon} />
+              // <PartenerCard key={e.title} title={e.title} image={e.image} />
+              <Box key={i + '2s'} margin="0 auto">
+                <Image width={140} src={e} alt="" />
+              </Box>
             )
-          })}
-        </EcologyCard>
-        <Typography my={2} fontSize="40px" color="#fff" fontWeight="bold">游戏生态</Typography>
-        <PartenerBox>
-          {
-            Parteners.map((e,i) => {
-              return (
-                // <PartenerCard key={e.title} title={e.title} image={e.image} />
-               <Box key={i+'2s'} margin="0 auto">
-                 <Image width={140} src={e}   alt=""/>
-               </Box>
-              )
-            })
-          }
-        </PartenerBox>
+          })
+        }
+      </PartenerBox>
     </LayBox>
   )
 }

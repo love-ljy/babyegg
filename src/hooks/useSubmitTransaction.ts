@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react'
-import processViemContractError from './processViemContractError'
+import { useEffect } from 'react'
+import processViemContractError from '@utils/processViemContractError'
 import {
   Abi,
   ContractFunctionArgs,
@@ -8,12 +8,7 @@ import {
   TransactionReceipt,
   decodeEventLog,
 } from 'viem'
-import {
-  UseSimulateContractParameters,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from 'wagmi'
+import { useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import useEstimateGas from './useEstimateGas'
 
 const getEvents = (
@@ -41,6 +36,7 @@ const useSubmitTransaction = (
     customErrorsMap?: Record<string, string>
     onSuccess?: (transactionReceipt: TransactionReceipt, events: DecodeEventLogReturnType[]) => void
     onError?: (errorMessage: string, rawError: any) => void
+    mutationError?: (error: Error) => void
   }
 ) => {
   const { error: simulateContractError, isLoading: isSimulateContractLoading } =
@@ -53,6 +49,7 @@ const useSubmitTransaction = (
     estimatedGas,
     gasEstimationError,
     isLoading: isGasEstimationLoading,
+    mutate: estimateGasMutate,
   } = useEstimateGas({
     abi: contractCallConfig.abi as Abi,
     address: contractCallConfig.address as `0x${string}`,
@@ -69,7 +66,14 @@ const useSubmitTransaction = (
     isError: isContractWriteError,
     isPending: isContractWriteLoading,
     reset,
-  } = useWriteContract()
+  } = useWriteContract({
+    mutation: {
+      onError: (error: Error) => {
+        console.info(error)
+        options?.mutationError && options?.mutationError(error)
+      },
+    },
+  })
 
   const {
     data: transactionReceipt,
@@ -89,6 +93,7 @@ const useSubmitTransaction = (
 
   const isError = isContractWriteError || isWaitForTransactionError
   const { onSuccess, onError } = options ?? {}
+
   useEffect(() => {
     if (!transactionReceipt && !isSuccess && !isError) return
 
@@ -108,19 +113,25 @@ const useSubmitTransaction = (
       reset()
     }
   }, [transactionReceipt, isSuccess, isError])
-
   return {
-    onSubmitTransaction: () => {
+    onSubmitTransaction: async () => {
       if (!writeContract && error) {
         onError?.(error, rawError)
         return
       }
-      writeContract(contractCallConfig)
+      writeContract({
+        ...contractCallConfig,
+        overrides: {
+          ...contractCallConfig.overrides,
+          gasLimit: estimatedGas,
+        },
+      })
     },
     isPreparing: isSimulateContractLoading || isGasEstimationLoading,
     isLoading: isWaitForTransactionLoading || isContractWriteLoading,
     estimatedGas,
     error,
+    estimateGasMutate,
   }
 }
 

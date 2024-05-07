@@ -1,18 +1,21 @@
-import { useState } from 'react'
-import { Box, Typography } from '@mui/material'
-import Image from 'next/image'
+import { useEffect, useState, useCallback } from 'react'
+import { Typography } from '@mui/material'
 import styled from '@emotion/styled'
-import markitipPng from '@imgs/markitip.png'
-import closePng from '@imgs/close.png'
-import desctipPng from '@imgs/desctip.png'
 import CommonTab from '../commonTab/commonTab'
 import MaticIcon from '@icons/matic.svg'
+import { useTranslation } from 'next-i18next'
+import { getRankingYuLong } from '@utils/api'
+import { selectAuthToken, selectIsBindParent } from '@store/user'
+import { useSelector } from 'react-redux'
+import { useAccount } from 'wagmi'
+import { toast } from 'react-toastify'
+import { formatAddress } from '@utils/formatterBalance'
+
 const MarketWrap = styled.div`
   .top {
     position: relative;
     height: 80px;
     .bg {
-      width: 367px;
       height: 80px;
       opacity: 1;
       background: radial-gradient(
@@ -99,7 +102,14 @@ const ContentWrap = styled.div`
   .bot {
     display: flex;
     justify-content: space-between;
-    align-items: end;
+    align-items: center;
+    .count {
+      font-size: 30px;
+      font-weight: 700;
+    }
+    .img {
+      margin-left: 10px;
+    }
   }
 `
 
@@ -111,13 +121,17 @@ interface tabItem {
 
 interface CompProps {
   dataSource: any[]
+  myInfo?: MyInfo
+  tabNum: number
 }
 const Bot = styled.div`
-  margin-top: 15px;
-  margin-bottom: 20px;
-  padding: 6px 36px;
-  border-radius: 51px;
-  background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(26, 16, 106, 1) 100%);
+  border-radius: 5px;
+  background: rgba(184, 3, 139, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 6px 15px 6px 15px;
 `
 const LastWrap = styled.div`
   margin-top: 10px;
@@ -178,6 +192,28 @@ const Source = styled.div`
     /* transform: translateY(50%); */
   }
 `
+const MyRank = styled.div`
+  opacity: 1;
+  background: rgba(22, 34, 54, 1);
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 3px;
+  padding: 15px 15px 15px 15px;
+  margin: 20px 0%;
+`
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+`
+const Flex2 = styled.div`
+  display: flex;
+  align-items: baseline;
+  /* gap: 15px; */
+`
 
 const SourceItem = styled.div`
   width: 100%;
@@ -205,20 +241,39 @@ const SourceItem = styled.div`
 `
 
 const Comp = (props: CompProps) => {
-  const { dataSource } = props
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const { dataSource, myInfo,tabNum } = props
   return (
     <ContentWrap>
       <Bot>
         <Typography fontSize={15} fontWeight={700}>
-          Total Prize Pool
+          {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
-          <span className="count">100,000,000</span>
+          <span className="count">{myInfo?.total_reward_matic}</span>
           <div className="img">
             <MaticIcon />
           </div>
         </div>
       </Bot>
+      <MyRank>
+        <div style={{textAlign:'left'}}>
+          <Typography fontSize="12px">{t('Your Bonus')}</Typography>
+          <Typography color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
+            {myInfo?.my_reward_matic||'-'}
+          </Typography>
+          <Typography fontSize="12px">
+            {tabNum!=0?t('Current Amount of Your Monthly New Sales'):t('Current Amount of Your Weekly New Sales')} {myInfo?.my_min_son_team_performance||'-'}
+          </Typography>
+        </div>
+        <Flex2>
+          <Typography fontSize="12px">NO</Typography>
+          <Typography fontWeight="bold" fontSize="44px">
+            {myInfo?.my_ranking||'-'}
+          </Typography>
+        </Flex2>
+      </MyRank>
       <LastWrap>
         <div
           style={{
@@ -227,24 +282,24 @@ const Comp = (props: CompProps) => {
         >
           <Column>
             <div className="No">No.</div>
-            <div className="address">Address</div>
-            <div className="amount">Amount</div>
-            <div className="time">Time</div>
+            <div className="address">{t('Address')}</div>
+            <div className="amount">{t('Amount')}</div>
+            <div className="time">{t('Time')}</div>
           </Column>
           <Source>
             {dataSource.length ? (
               dataSource.map((item: any) => {
                 return (
                   <SourceItem>
-                    <div className="No">{item.no}</div>
-                    <div className="address">{item.address}</div>
-                    <div className="amount">{item.amount}</div>
-                    <div className="time">{item.time}</div>
+                    <div className="No">{item.ranking}</div>
+                    <div className="address">{formatAddress(item.username)}</div>
+                    <div className="amount">{item.rate}</div>
+                    <div className="time">{item.expect_reward}</div>
                   </SourceItem>
                 )
               })
             ) : (
-              <div className="empty">No Data</div>
+              <div className="empty">{t('No Data')}</div>
             )}
           </Source>
         </div>
@@ -253,64 +308,107 @@ const Comp = (props: CompProps) => {
   )
 }
 
+interface MyInfo {
+  my_min_son_team_performance: string
+  my_ranking: string
+  my_reward: string
+  my_reward_matic: string
+  total_reward: string
+  total_reward_matic: string
+}
+
 const WeekMonth = () => {
-  const [loading, setLoading] = useState(false)
-  const [marketShow, setMarketShow] = useState(false)
-  const [dataSource, setDataSource] = useState([
-    // {
-    //   no: 100,
-    //   address: '0x4Bc48...3B98fD',
-    //   amount: 1000,
-    //   time: '12 hours ago',
-    // },
-  ])
-  const [dataSource2, setDataSource2] = useState([
-    {
-      no: 100,
-      address: '0x4Bc48...3B98fD',
-      amount: 1000,
-      time: '12 hours ago',
-    },
-  ])
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const [dataSource, setDataSource] = useState([])
+  const [myInfo, setMyInfo] = useState<MyInfo>({
+    my_min_son_team_performance: '',
+    my_ranking: '',
+    my_reward: '',
+    my_reward_matic: '',
+    total_reward: '',
+    total_reward_matic: '',
+  })
+  const [tabNum, setTabNum] = useState(0)
+
+  const token = useSelector(selectAuthToken)
+  const isBindParent: any = useSelector(selectIsBindParent)
+  const { address } = useAccount()
+
   const tabList: tabItem[] = [
     {
       label: 'Weekly',
       value: 'Weekly',
-      component: <Comp dataSource={dataSource} />,
+      component: <Comp tabNum={tabNum} myInfo={myInfo} dataSource={dataSource} />,
     },
     {
       label: 'Monthly',
       value: 'Monthly',
-      component: <Comp dataSource={dataSource} />,
+      component: <Comp tabNum={tabNum} myInfo={myInfo} dataSource={dataSource} />,
     },
   ]
+
   const tabChange = (_event: React.SyntheticEvent, i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   // setPageIndex(1);
-    //   // setList(rankAllList[i].list);
-    //   // setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    setTabNum(i)
   }
 
   const swipeChange = (i: number) => {
-    if (loading) return
-    // if (rankAllList.length) {
-    //   setPageIndex(1);
-    //   setList(rankAllList[i].list);
-    //   setPageCount(Math.ceil(rankAllList[i].list.length / pageSize));
-    // }
-    // setRankTitle(selectList[i].label);
+    setTabNum(i)
   }
 
-  const openMarketDialog = () => {
-    setMarketShow(true)
-  }
+  const fetchYuLong = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getRankingYuLong(tabNum)
+        if (res.code === 0) {
+          setDataSource(res.data.list)
+          const {
+            my_min_son_team_performance,
+            my_ranking,
+            my_reward,
+            my_reward_matic,
+            total_reward,
+            total_reward_matic,
+          } = res.data
+          setMyInfo({
+            my_min_son_team_performance,
+            my_ranking,
+            my_reward,
+            my_reward_matic,
+            total_reward,
+            total_reward_matic,
+          })
+        } else {
+          toast.warn(res.msg)
+          setDataSource([])
+          setMyInfo({
+            my_min_son_team_performance: '',
+            my_ranking: '',
+            my_reward: '',
+            my_reward_matic: '',
+            total_reward: '',
+            total_reward_matic: '',
+          })
+        }
+      } catch (e) {
+        console.log('fetchYuLong error', e)
+        toast.warn('网络错误')
+        setDataSource([])
+        setMyInfo({
+          my_min_son_team_performance: '',
+          my_ranking: '',
+          my_reward: '',
+          my_reward_matic: '',
+          total_reward: '',
+          total_reward_matic: '',
+        })
+      }
+    }
+  }, [address, isBindParent, token, tabNum])
 
-  const closeDialog = () => {
-    setMarketShow(false)
-  }
+  useEffect(() => {
+    fetchYuLong()
+  }, [fetchYuLong])
 
   return (
     <MarketWrap>
@@ -319,10 +417,10 @@ const WeekMonth = () => {
           tabList={tabList}
           tabChange={tabChange}
           swipeChange={swipeChange}
-          selectedColor={'rgba(184, 3, 139, 1)'}
+          selectedcolor={'rgba(184, 3, 139, 1)'}
         />
       </div>
-      <div className="seeMore">See More</div>
+      <div className="seeMore">{t('See More')}</div>
     </MarketWrap>
   )
 }

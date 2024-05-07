@@ -11,10 +11,11 @@ const PaginationWrap = styled(Pagination)`
   }
 `
 
-const CommonPage = () => {
+const CommonPage = (props) => {
+  const {count,page,handleChange} = props
   return (
     <Stack spacing={2}>
-      <PaginationWrap count={10} siblingCount={0} shape="rounded" color="secondary" />
+      <PaginationWrap count={count} page={page} siblingCount={0} onChange={handleChange} shape="rounded" color="secondary" />
     </Stack>
   )
 }

@@ -1,22 +1,27 @@
-import { useState } from 'react'
 import Image from 'next/image'
 import styled from '@emotion/styled'
-import markitipPng from '@imgs/markitip.png'
-import {getState} from '@store/index'
+import {useMemo} from 'react'
+import { Typography, Box } from '@mui/material'
 import rankBgPng from '@imgs/rankBg.png'
-import CommonTab from '../commonTab/commonTab'
-import CommonModal from 'src/pages/egg/components/commonModal/commonModal'
 import EggTokenIcon from '@icons/eggToken.svg'
+import { useTranslation } from 'next-i18next'
+import VIP0 from '@imgs/99.png'
+import VIP1 from '@imgs/100.png'
+import VIP2 from '@imgs/300.png'
+import VIP3 from '@imgs/500.png'
+import VIP4 from '@imgs/1000.png'
+import VIP5 from '@imgs/3000.png'
+import { formatAddress } from '@utils/formatterBalance'
+
 const MarketWrap = styled.div`
   .top {
     position: relative;
     height: 80px;
     .bg {
-      width: 367px;
       height: 80px;
       opacity: 1;
       background: radial-gradient(
-        41.14% 82.88% at 46% 100%,
+        49.14% 90.88% at 52% 100%,
         rgba(210, 9, 172, 1) 41.36%,
         rgba(210, 9, 172, 0) 100%
       );
@@ -83,10 +88,12 @@ const RankMain = styled.div`
   box-shadow: inset 0px 0px 12.1px rgba(246, 26, 126, 1);
   padding: 25px 17px 25px 17px;
   .row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
   .row:nth-child(1) {
-    margin-right: 10px;
+    /* margin-right: 10px; */
   }
 `
 const RankItem = styled.div`
@@ -114,7 +121,7 @@ const RankItem = styled.div`
     right: -30px;
   }
   &:nth-child(2) {
-    margin-left: 10px;
+    /* margin-left: 10px; */
   }
   .countIcon {
     display: flex;
@@ -180,6 +187,16 @@ const Column = styled.div`
     text-align: center;
   }
 `
+const MyRank = styled.div`
+  opacity: 1;
+  background: rgba(22, 34, 54, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 3px;
+  padding: 15px 15px 15px 15px;
+  margin: 20px 0%;
+`
 
 const Source = styled.div`
   width: 100%;
@@ -220,71 +237,157 @@ const SourceItem = styled.div`
     text-align: center;
   }
 `
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
+`
 
+const Flex2 = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: end;
+`
+interface MYRANK {
+  my_egg: string
+  my_ranking: string
+}
 interface Props {
   dataSource: any[]
+  myRank?: MYRANK
+  rankLevel: Level[]
+}
+type Level = {
+  grade: string
+  rate: string
+  user_num: string
+  total_reward_babyloong: string
+  total_reward_babyloong_matic: string
 }
 
 const Rank = (props: Props) => {
-  const { dataSource = [] } = props
-  const userInfo = getState('user').userInfo
-  console.info(userInfo,'userInfo')
+  // @ts-ignore
+  const { t } = useTranslation('common')
+  const { dataSource = [], myRank, rankLevel = [] } = props
+  const LevelList = [
+    { name: 'Intern', count: 1 },
+    { name: 'Novice', count: 2 },
+    { name: 'Elite', count: 3 },
+    { name: 'Expert', count: 4 },
+    { name: 'Master', count: 5 },
+    { name: 'Grandmaster', count: 6 }
+  ]
+  const LeveUserlList = [
+    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
+    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
+    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
+    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
+    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
+    { name: 'Grandmaster', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
+  ]
+  const variable = Number(myRank?.my_egg)
+  const UserLevel = useMemo(()=>{
+    const level = LeveUserlList.find(level => level.count > variable);
+
+    // 如果找到，返回前一个元素的 imgSrc
+    if (level) {
+        const index = LeveUserlList.indexOf(level);
+        return index > 0 ? LeveUserlList[index - 1] : null;
+    }
+
+    // 如果没有找到符合条件的元素，返回数组最后一个元素的 imgSrc
+    return LeveUserlList[LeveUserlList.length - 1];
+  },[variable])
+  const imgSrc = UserLevel ? UserLevel?.imgSrc : null;
+  const LevlName:string = UserLevel ? UserLevel?.name : 'Master';
+  const  renderUserTitle = (level:number)=>{
+    console.info(level)
+    return LevelList.find(e=>e.count===Number(level))?.name||'Intern'
+  }
   return (
     <MarketWrap>
       <div className="top">
         <div className="bg"></div>
         <div className="title">
-          <span>Ranking</span>
+          <span>{t('Ranking')}</span>
         </div>
       </div>
       <RankMain>
         <RankItem className="special">
           <Image src={rankBgPng} alt="rank" />
           <div className="countIcon">
-            <span className="big">10,000</span>
+            <span className="big">{rankLevel[4]?.total_reward_babyloong_matic}</span>
             <EggTokenIcon width={24} />
           </div>
-          <div className="second">10 Grandmaster</div>
-          <div className="third">Current Grandmaster Prize Pool</div>
+          <div className="second">
+            {rankLevel[4]?.user_num} {t('Grandmaster')}
+          </div>
+          <div className="third">{t('Current Grandmaster Prize Pool')}</div>
         </RankItem>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel[3]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">
+              {rankLevel[3]?.user_num} {t('Master')}
+            </div>
+            <div className="third">{t('Current Master Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel[2]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">
+              {rankLevel[2]?.user_num} {t('Expert')}
+            </div>
+            <div className="third">{t('Current Expert Prize Pool')}</div>
           </RankItem>
         </div>
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel[1]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">
+              {rankLevel[1]?.user_num} {t('Elite')}
+            </div>
+            <div className="third">{t('Current Elite Prize Pool')}</div>
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span>10,000</span>
+              <span className="big">{rankLevel[0]?.total_reward_babyloong_matic}</span>
               <EggTokenIcon width={24} />
             </div>
-            <div className="second">10 Grandmaster</div>
-            <div className="third">Current Grandmaster Prize Pool</div>
+            <div className="second">
+              {rankLevel[0]?.user_num} {t('Novice')}
+            </div>
+            <div className="third">{t('Current Novice Prize Pool')}</div>
           </RankItem>
         </div>
+        <MyRank>
+          <Flex>
+            {imgSrc}
+            <div>
+              <Typography fontSize="12px">{t('Your Ranking')}</Typography>
+              <Typography my={1} color="rgba(246, 26, 126, 1)" fontWeight="bold" fontSize="14px">
+                {t(LevlName)}
+              </Typography>
+              <Typography fontSize="12px">{t('Egg Amount')}{myRank?.my_egg}</Typography>
+            </div>
+          </Flex>
+          <Flex2>
+            <Typography fontSize="12px">NO</Typography>
+            <Typography fontWeight="bold" fontSize="44px">
+              {myRank?.my_ranking}
+            </Typography>
+          </Flex2>
+        </MyRank>
         <div>
-          <div>Loong Egg Rank</div>
+          <div>{t('Loong EGG Rank')}</div>
         </div>
         <LastWrap>
           <div
@@ -294,24 +397,24 @@ const Rank = (props: Props) => {
           >
             <Column>
               <div className="No">No.</div>
-              <div className="address">Address</div>
-              <div className="amount">Amount</div>
-              <div className="time">Time</div>
+              <div className="address">{t('Address')}</div>
+              <div className="amount">{t('Amount')}</div>
+              <div className="time">{t('Title')}</div>
             </Column>
             <Source>
               {dataSource.length ? (
                 dataSource.map((item: any) => {
                   return (
-                    <SourceItem>
-                      <div className="No">{item.no}</div>
-                      <div className="address">{item.address}</div>
-                      <div className="amount">{item.amount}</div>
-                      <div className="time">{item.time}</div>
+                    <SourceItem key={item.ranking}>
+                      <div className="No">{item.ranking}</div>
+                      <div className="address">{formatAddress(item.username)}</div>
+                      <div className="amount">{item.dragon_egg}</div>
+                      <div className="time">{t(renderUserTitle(item.level_grade))}</div>
                     </SourceItem>
                   )
                 })
               ) : (
-                <div className="empty">No Data</div>
+                <div className="empty">{t('No Data')}</div>
               )}
             </Source>
           </div>

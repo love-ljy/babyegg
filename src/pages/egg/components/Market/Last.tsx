@@ -1,6 +1,10 @@
 import styled from '@emotion/styled'
 import CommonPage from '../commonPage/commonPage'
-import { Box } from '@mui/material'
+import { Typography } from '@mui/material'
+import { useTranslation } from 'next-i18next'
+import MaticIcon from '@icons/matic.svg'
+import { useSelector } from 'react-redux'
+import {selectTotalData} from '@store/user'
 
 const LastWrap = styled.div`
   display: flex;
@@ -64,13 +68,62 @@ const SourceItem = styled.div`
     text-align: left;
   }
 `
+const RewardBox = styled.div`
+border-radius: 5px;
+background: rgba(184, 3, 139, 1);
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 6px 15px 6px 15px;
+`
+const LastBox = styled.div`
+border-radius: 5px;
+background: rgba(49, 32, 204, 1);
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 6px 15px 6px 15px;
+margin: 20px 0;
+`
+const RewardBoxItem = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: .9fr .1fr;
+  justify-content: start;
+  align-items: center;
+  color: rgba(255, 255, 255, 1);
+`
+
+interface TrafficProps {
+  list: {
+    id: string
+    event: string
+    created_at: string
+    username: string
+  }[]
+  page: {
+    total_count: string
+    total_page: number
+    current_page: number
+  }
+}
 
 interface Props {
-  dataSource: any[]
+  dataSource?: string[]
+  changePage: (i: number) => void
 }
 
 const Last = (props: Props) => {
-  const { dataSource = [] } = props
+  const { dataSource, changePage } = props
+  const totalData = useSelector(selectTotalData)
+  const { t } = useTranslation('common')
+  console.info(dataSource, '--',totalData)
+  const changePageFormat = (event: React.ChangeEvent<unknown>, value: number) => {
+    changePage(value)
+  }
+
   return (
     <LastWrap>
       <div
@@ -78,27 +131,50 @@ const Last = (props: Props) => {
           width: '100%',
         }}
       >
+        <RewardBox>
+          <Typography>{t('Current Last 100 Bonus per pac')}</Typography>
+          <RewardBoxItem>
+            <Typography fontSize="35px">{totalData.last100_reward}</Typography>
+            <MaticIcon />
+          </RewardBoxItem>
+        </RewardBox>
+        <LastBox>
+          <Typography>{t('current Ultimate Bonus')}</Typography>
+          <RewardBoxItem>
+            <Typography fontSize="35px">{totalData.last_reward}</Typography>
+            <MaticIcon />
+          </RewardBoxItem>
+        </LastBox>
         <Column>
           <div>No.</div>
-          <div>Address</div>
+          <div>{t('Address')}</div>
         </Column>
         <Source>
-          {dataSource.length ? (
-            dataSource.map((item: any) => {
+          {dataSource?.length ? (
+            dataSource?.map((item: any, index: number) => {
               return (
                 <SourceItem>
-                  <div className="No">{item.no}</div>
-                  <div className="address">{item.address}</div>
+                  <div className="No">{index}</div>
+                  <div className="address">{item}</div>
                 </SourceItem>
               )
             })
           ) : (
-            <div className="empty">No Data</div>
+            <div className="empty">{t('No Data')}</div>
           )}
         </Source>
       </div>
-      <Box mt={2}>{dataSource.length ? <CommonPage /> : null}</Box>
+      {/* <Box mt={2}>
+        {dataSource?.list?.length ? (
+          <CommonPage
+            count={dataSource?.page?.total_count}
+            page={dataSource?.page?.current_page}
+            handleChange={changePageFormat}
+          />
+        ) : null}
+      </Box> */}
     </LastWrap>
   )
 }
+
 export default Last

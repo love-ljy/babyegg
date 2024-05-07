@@ -1,4 +1,10 @@
 import axios from 'axios'
+import { setAuthToken } from '@store/user'
+import { submitUserLogin } from '@utils/api'
+import md5 from 'md5'
+import { dispatch } from '@store/index'
+import { TOKEN } from '@config/contants'
+import { toast } from 'react-toastify'
 
 // create an axios instance
 const service = axios.create({
@@ -11,7 +17,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     config.headers['Language'] = 'cn'
-    config.headers['Token'] = window.localStorage.getItem('token')
+    config.headers['Token'] = localStorage.getItem('token') || ''
     return config
   },
   error => {
@@ -22,11 +28,32 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  response => {
+  async response => {
     const res = response.data
     if (response.status !== 200) {
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
+      if (res.code === 40200) {
+        const invite = localStorage.getItem('inviteCode') || ''
+        const userAddress = localStorage.getItem('userAddress') || ''
+        try {
+          const refreshRes: any = await submitUserLogin({
+            password: md5(md5(userAddress + 'babyloong') + 'babyloong'),
+            username: userAddress as `0x${string}`,
+            invite,
+          })
+          if (refreshRes.code === 0) {
+            localStorage.setItem(TOKEN, refreshRes.data.Token)
+            dispatch(setAuthToken(refreshRes.data.Token))
+          } else {
+            localStorage.setItem(TOKEN, '')
+            toast.warn(refreshRes.msg)
+          }
+        } catch (e) {
+          console.log('refresh error', e)
+          toast.warn('网络错误')
+        }
+      }
       return res
     }
   },
