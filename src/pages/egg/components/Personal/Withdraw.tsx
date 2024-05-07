@@ -177,10 +177,10 @@ const Withdraw = () => {
 
   const token = useSelector(selectAuthToken)
   const isBindParent: any = useSelector(selectIsBindParent)
-  // const gameIds = useMemo(() => {
-  //   const start = 1
-  //   return Array.from({ length: +gamingId - start + 1 }, (_, index) => index + start)
-  // }, [gamingId])
+  const gameIds = useMemo(() => {
+    const start = 1
+    return Array.from({ length: +gamingId - start + 1 }, (_, index) => index + start)
+  }, [gamingId])
   const { maticContractReward, refetch, isMaticLoading, setMaticParam } = useMaticReward({
     onSuccess() {
       toast.success('提取成功')
@@ -197,12 +197,13 @@ const Withdraw = () => {
       setMaticParam([])
       setLoading(false)
     },
-    args: [[+gamingId]],
+    args: [[...gameIds]],
     mutationError() {
       setMaticParam([])
       setLoading(false)
     },
   })
+  console.info(maticContractReward,'maticContractReward')
 
   const { isMaticWithdrawLoading, maticWithdraw, maticEstimateGas } = useMaticWithdraw({
     onSuccess() {
@@ -216,7 +217,7 @@ const Withdraw = () => {
       console.log('useMaticWithdraw rawError', rawError)
       toast.warn('提取失败')
     },
-    args: [[+gamingId]],
+    args: [[...gameIds]],
   })
 
   const { isBabyLongLoading, setBabyLongParam } = useBabyLongReward({

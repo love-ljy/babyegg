@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import { formatUnits } from 'viem'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo } from '@store/user'
+import { BigNumber } from 'ethers'
 
 interface Props {
   args: any[]
@@ -31,12 +32,15 @@ const useMaticReward = ({ mutationError, onError, onSuccess, args }: Props) => {
   } = useReadContract({
     abi: eggAbi,
     address: MainContractAddr,
-    functionName: 'userRewards',
-    args: [...args, address],
+    functionName: 'getUserRewards',
+    args: [address,...args],
     query: {
       enabled,
     },
   })
+  console.info(maticContractReward,'maticContractReward')
+  const rewards = maticContractReward as bigint[]
+  const totalSum = rewards?.reduce((acc, current) => acc + current, BigInt(0));
 
   const contractCallParams = {
     abi: eggAbi,
@@ -83,7 +87,7 @@ const useMaticReward = ({ mutationError, onError, onSuccess, args }: Props) => {
   
   return {
     isMaticLoading,
-    maticContractReward: maticContractReward ? maticContractReward.toString() : '0',
+    maticContractReward: totalSum ? totalSum.toString() : '0',
     refetch,
     setMaticParam,
   }
