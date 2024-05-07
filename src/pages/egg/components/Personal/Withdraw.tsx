@@ -168,14 +168,14 @@ const Withdraw = () => {
   const [maticMidReward, setMaticMidReward] = useState<any>('')
   const [babyLongReward, setBabyLongReward] = useState<any>('')
   const { userBalance } = useGetBalance()
-
+  
   const gamingId: any = useSelector(selectGamingId)
 
   const { address } = useAccount()
 
   const token = useSelector(selectAuthToken)
   const isBindParent: any = useSelector(selectIsBindParent)
-
+  
   const { maticContractReward, refetch, isMaticLoading, setMaticParam } = useMaticReward({
     onSuccess() {
       toast.success('提取成功')
@@ -196,7 +196,7 @@ const Withdraw = () => {
       setLoading(false)
     },
   })
-
+  
   const { isBabyLongLoading, setBabyLongParam } = useBabyLongReward({
     onSuccess() {
       toast.success('提取成功')
@@ -238,23 +238,33 @@ const Withdraw = () => {
   }
 
   const handleMatic = async () => {
-    try {
-      setLoading(true)
-      const res: any = await incomeReceive({
-        type: -1,
-        coin_type: 0,
-      })
-      if (res.code === 0) {
-        const { oid, token_amount, _deadline, v, r, s } = res.data
-        setMaticParam([MainContractAddr, +token_amount, +_deadline, +oid, v, r, s])
-      } else {
-        toast.warn(res.msg)
+    if(+maticContractReward + +maticMidReward === 0){
+      toast.warn('提现额度为0')
+      return
+    }
+    if(+maticMidReward > 0){
+      try {
+        setLoading(true)
+        const res: any = await incomeReceive({
+          type: -1,
+          coin_type: 0,
+        })
+        if (res.code === 0) {
+          const { oid, token_amount, _deadline, v, r, s } = res.data
+          setMaticParam([MainContractAddr, +token_amount, +_deadline, +oid, v, r, s])
+        } else {
+          toast.warn(res.msg)
+          setLoading(false)
+        }
+      } catch (e) {
+        console.log('matic withdraw error', e)
+        toast.warn('网络错误')
         setLoading(false)
       }
-    } catch (e) {
-      console.log('matic withdraw error', e)
-      toast.warn('网络错误')
-      setLoading(false)
+    } else {
+      if(+maticContractReward > 0){
+        // todo
+      }
     }
   }
 
@@ -297,9 +307,10 @@ const Withdraw = () => {
   }, [address && isBindParent && token])
 
   const maticWithdrawInfo = useMemo(() => {
-    const mergeMaticBalance =
-      (maticContractReward ? +getBalanceAmount(maticContractReward as BigNumber)?.toString() : 0) +
-        +maticMidReward || 0
+    const mergeMaticBalance = 0
+    // const mergeMaticBalance =
+    //   (maticContractReward ? +getBalanceAmount(maticContractReward)?.toString() : 0) +
+    //     +maticMidReward || 0
     const maticFee = mergeMaticBalance * 0.05 || 0
     const maticTotal = mergeMaticBalance - maticFee || 0
     const maticRepeat = maticTotal * 0.6 || 0
