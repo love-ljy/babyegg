@@ -64,46 +64,17 @@ export const slice = createSlice({
     authToken: '',
     inviteCode: '',
     babyIncome: 0,
-    allRewards: [
-      {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      },
-      {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      },
-      {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      }, {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      },
-      {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      },
-      {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      },
-      {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      }, {
-        "number": "0",
-        "coin_type": "1",
-        "coin_name": "BABYLOONG"
-      }
-    ]
+    allRewards: {
+      "egg_income": "0",
+      "index_income": "0",
+      "invite_income": "0",
+      "last_100_income": "0",
+      "last_one_income": "0",
+      "lucky_income": "0",
+      "level_income": "0",
+      "yulong_week_income": "0",
+      "yulong_month_income": "0"
+    }
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
@@ -139,7 +110,7 @@ export const slice = createSlice({
   },
 })
 
-export const {setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
+export const { setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo

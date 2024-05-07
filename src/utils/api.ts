@@ -177,6 +177,13 @@ const getUserHistory = async () => {
   })
 }
 
+// 获取我的累计收益 /api/user/allIncome
+const getUserAllIncome = async () => {
+  return request({
+    url: '/api/user/allIncome',
+    method: 'get',
+  })
+}
 
 export {
   getUserInfo,
@@ -199,5 +206,6 @@ export {
   getIncomeReceiveNumber,
   queryUserInfoByTeam,
   incomeReceive,
-  getUserHistory
+  getUserHistory,
+  getUserAllIncome
 }

@@ -458,9 +458,11 @@ const BuyEgg = () => {
                 balance: v.value === BABY ? formatBalance : +walletInfo?.balance.toFixed(2),
               }
             })
+          const babyMaticPrice = res.data.filter((e:any)=>Number(e.type)===1)[0];
+          console.info(babyMaticPrice,res.data)  
           setCoinList(balanceList)
           setCoinBalance(balanceList[0].balance)
-          dispatch(setBabyPrice(res.data[1].matic_price))
+          dispatch(setBabyPrice(babyMaticPrice.matic_price))
         } else {
           toast.warn(res.msg)
         }
