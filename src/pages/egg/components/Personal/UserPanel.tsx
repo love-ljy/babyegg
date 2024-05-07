@@ -693,7 +693,7 @@ const UserPanel = () => {
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>{userReward?.egg_income || '-'}</span>
+            <span>{userReward?.egg_income || '0'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -703,7 +703,7 @@ const UserPanel = () => {
               <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.index_income || '-'}</span>
+              <span>{userReward?.index_income || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
