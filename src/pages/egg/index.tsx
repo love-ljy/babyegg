@@ -43,7 +43,7 @@ const LongEggWrap = styled.div`
   padding: 8rem 20px 0 20px;
   background-image: url('/img/countBg.png');
   background-size: cover;
-  height: 475px;
+  /* height: 475px; */
   width: 100%;
 `
 

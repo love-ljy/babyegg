@@ -35,7 +35,7 @@ import {
   eggIncomeReinvestment,
   getCoin,
   getIncomeReceiveNumber,
-  createOrder,
+  getUserAllIncome,
 } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
@@ -418,7 +418,7 @@ const UserPanel = () => {
   const router = useRouter()
   const { address } = useAccount()
 
-  const [userReward, setUserReward] = useState<any>([])
+  const [userReward, setUserReward] = useState<any>()
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
   const [eggType, setEggType] = useState('')
@@ -548,7 +548,7 @@ const UserPanel = () => {
         })
         const res = await Promise.all(resolve)
         setUserReward(res?.flat())
-        dispatch(setTotalRewards(res?.flat()))
+       
         // setBabyIncome(res?.flat()?[1])
       } catch (error) {
         console.log('fetchUserRewardInfo error', error)
@@ -557,10 +557,28 @@ const UserPanel = () => {
     }
   }, [address, isBindParent, token])
 
+  const fetchUserTotalRewards = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getUserAllIncome()
+        if (res.code === 0) {
+          setUserReward(res.data)
+          dispatch(setTotalRewards(res.data))
+        } else {
+          return null
+        }
+      } catch (error) {
+        console.log('fetchUserRewardInfo error', error)
+        toast.warn('网络错误')
+      }
+    }
+  }, [address, isBindParent, token])
+
+
   useEffect(() => {
     fetchGameEgg()
-    fetchUserRewardInfo()
-  }, [fetchGameEgg, fetchUserRewardInfo])
+    fetchUserTotalRewards()
+  }, [fetchGameEgg,fetchUserTotalRewards])
 
   const toHistory = () => {
     router.push('/history')
@@ -675,7 +693,7 @@ const UserPanel = () => {
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>{userReward[0]?.number || '-'}</span>
+            <span>{userReward?.egg_income || '-'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -685,7 +703,7 @@ const UserPanel = () => {
               <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[1]?.number || '-'}</span>
+              <span>{userReward?.index_income || '-'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -694,7 +712,7 @@ const UserPanel = () => {
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[2]?.number || '-'}</span>
+              <span>{userReward?.lucky_income || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -705,7 +723,7 @@ const UserPanel = () => {
               <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[3]?.number || '-'}</span>
+              <span>{userReward?.last_100_income || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -714,7 +732,7 @@ const UserPanel = () => {
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[4]?.number || '-'}</span>
+              <span>{userReward?.last_one_income || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -724,7 +742,7 @@ const UserPanel = () => {
             <span>{t('Egg Rank Reward')}</span>
           </div>
           <div className="bot">
-            <span>{userReward[5]?.number || '-'}</span>
+            <span>{userReward?.level_income || '0'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -734,7 +752,7 @@ const UserPanel = () => {
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[6]?.number || '-'}</span>
+              <span>{userReward?.yulong_week_income || '0'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -743,7 +761,7 @@ const UserPanel = () => {
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward[7]?.number || '-'}</span>
+              <span>{userReward?.yulong_month_income || '0'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>

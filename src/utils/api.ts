@@ -10,19 +10,11 @@ const getUserInfo = async () => {
 }
 
 // 更新用信息
-<<<<<<< HEAD
-const UpdateUserInfo = async (params: { pay_password: any; pay_password_v: any }) => {
-  return request({
-    url: '/api/user/info',
-    method: 'post',
-    params,
-=======
 const updateUserInfo = async (data) => {
   return request({
     url: '/api/user/info',
     method: 'post',
     data
->>>>>>> 3b7d5337237fbba2d1260bb8427b5d4afa06788c
   })
 }
 // 用户登录
@@ -116,11 +108,11 @@ const getRankingLevel = async () => {
 }
 
 // 获取育龙榜 /api/user/rankingYuLong
-const getRankingYuLong = async (type: number) => {
+const getRankingYuLong = async (type:number) => {
   return request({
     url: '/api/user/rankingYuLong',
     method: 'get',
-    params: { type },
+    params: {type}
   })
 }
 // 查询订单状态 /api/order/orderStatus
@@ -131,45 +123,68 @@ const getOrderStatus = async (params: any) => {
     params,
   })
 }
-//我的NFT质押列表
-// page: 1, // 页码 limit: 10, // 每页数量
-const pledgeList = async (params: any) => {
+
+// 获取最后100  /api/dragonegg/last100
+const getLast100 = async (params:any) => {
   return request({
-    url: '/api/nft/pledgeList',
+    url: '/api/dragonegg/last100',
     method: 'get',
-    params,
+    params
   })
 }
-//我的NFT列表
-// page: 1, // 页码 limit: 10, // 每页数量
-const nftList = async (params: any) => {
+
+// 实时流量 /api/dragonegg/realTimeTraffic
+const getRealTimeTraffic = async (params:any) => {
   return request({
-    url: ' /api/nft/list',
+    url: '/api/dragonegg/realTimeTraffic',
     method: 'get',
-    params,
+    params
   })
 }
-// 设置我的NFT
-const setMyList = async (params: any) => {
+
+// 获取用户各种奖励 /api/user/incomeReceiveNumber
+const getIncomeReceiveNumber = async (type:number) => {
   return request({
-    url: '/api/Nftpledge/setMyNft',
+    url: '/api/user/incomeReceiveNumber',
     method: 'get',
-    params,
+    params: {type}
   })
 }
-// 领取记录
-const history = async (params: any) => {
+
+// 获取用户7层 /api/user/infoByTeam
+const queryUserInfoByTeam = async () => {
+  return request({
+    url: '/api/user/infoByTeam',
+    method: 'get',
+  })
+}
+
+
+// 领取奖励
+const incomeReceive = async (data: any) => {
+  return request({
+    url: '/api/user/incomeReceive',
+    method: 'post',
+    data,
+  })
+}
+
+// 历史纪录 getIncomeReceiveNumber
+const getUserHistory = async () => {
   return request({
     url: '/api/user/income',
     method: 'get',
-    params,
   })
 }
+// 获取我的累计收益 /api/user/allIncome
+const getUserAllIncome = async () => {
+  return request({
+    url: '/api/user/allIncome',
+    method: 'get',
+  })
+}
+
 export {
-  history,
-  pledgeList,
-  nftList,
-  setMyList,
   getUserInfo,
   submitUserLogin,
   getUserHadParent,
@@ -185,13 +200,11 @@ export {
   getRankingLevel,
   getRankingYuLong,
   getOrderStatus,
-<<<<<<< HEAD
-=======
   getLast100,
   getRealTimeTraffic,
   getIncomeReceiveNumber,
   queryUserInfoByTeam,
   incomeReceive,
-  getUserHistory
->>>>>>> 3b7d5337237fbba2d1260bb8427b5d4afa06788c
+  getUserHistory,
+  getUserAllIncome
 }
