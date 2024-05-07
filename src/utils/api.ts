@@ -183,8 +183,45 @@ const getUserAllIncome = async () => {
     method: 'get',
   })
 }
+// page: 1, // 页码 limit: 10, // 每页数量
+const pledgeList = async (params: any) => {
+  return request({
+    url: '/api/nft/pledgeList',
+    method: 'get',
+    params,
+  })
+}
+//我的NFT列表
+// page: 1, // 页码 limit: 10, // 每页数量
+const nftList = async (params: any) => {
+  return request({
+    url: ' /api/nft/list',
+    method: 'get',
+    params,
+  })
+}
+// 设置我的NFT
+const setMyList = async (params: any) => {
+  return request({
+    url: '/api/Nftpledge/setMyNft',
+    method: 'get',
+    params,
+  })
+}
+// 领取记录
+const history = async (params: any) => {
+  return request({
+    url: '/api/user/income',
+    method: 'get',
+    params,
+  })
+}
 
 export {
+  history,
+  pledgeList,
+  nftList,
+  setMyList,
   getUserInfo,
   submitUserLogin,
   getUserHadParent,
