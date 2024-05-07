@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import { formatUnits } from 'viem'
 import { useSelector } from 'react-redux'
 import { selectWalletInfo } from '@store/user'
+
 interface Props {
   args: any[]
   onSuccess: () => void
@@ -80,10 +81,10 @@ const useMaticReward = ({ mutationError, onError, onSuccess, args }: Props) => {
   useEffect(() => {
     doContract()
   }, [doContract])
-
+  
   return {
     isMaticLoading,
-    maticContractReward,
+    maticContractReward: maticContractReward ? maticContractReward.toString() : '0',
     refetch,
     setMaticParam,
   }
