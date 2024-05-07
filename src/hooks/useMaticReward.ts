@@ -3,8 +3,7 @@ import { useAccount, useReadContract } from 'wagmi'
 import useSubmitTransaction from './useSubmitTransaction'
 import { NULL_ADDRESS } from '@config/contants'
 import eggAbi from '@config/abi/eggAbi.json'
-import { MainContractAddr, withDrawAddr } from '@config/contants'
-import withdrawAbi from '@config/abi/withdraw.json'
+import { MainContractAddr } from '@config/contants'
 import { toast } from 'react-toastify'
 import { formatUnits } from 'viem'
 import { useSelector } from 'react-redux'
@@ -40,9 +39,9 @@ const useMaticReward = ({ mutationError, onError, onSuccess, args }: Props) => {
   })
 
   const contractCallParams = {
-    abi: withdrawAbi,
-    address: withDrawAddr,
-    functionName: 'withdraw',
+    abi: eggAbi,
+    address: MainContractAddr,
+    functionName: 'withdrawRewardBySign',
     args: maticParam,
     query: {
       enabled: withDrawEnabled,

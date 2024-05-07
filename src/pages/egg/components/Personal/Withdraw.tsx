@@ -11,12 +11,14 @@ import { useTranslation } from 'next-i18next'
 import { getIncomeReceiveNumber, incomeReceive } from '@utils/api'
 import { selectGamingId } from '@store/user'
 import useMaticReward from '@hooks/useMaticReward'
+import useMaticWithdraw from '@hooks/useMaticWithdraw'
 import useBabyLongReward from '@hooks/useBabyLongReward'
 import useGetBalance from '@hooks/useGetBalance'
-import { BabyToken, MainContractAddr } from '@config/contants'
+import { BabyToken } from '@config/contants'
 import { useAccount } from 'wagmi'
 import { getBalanceAmount } from '@utils/formatterBalance'
 import BigNumber from 'bignumber.js'
+import { formatUnits } from 'viem'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -168,14 +170,17 @@ const Withdraw = () => {
   const [maticMidReward, setMaticMidReward] = useState<any>('')
   const [babyLongReward, setBabyLongReward] = useState<any>('')
   const { userBalance } = useGetBalance()
-  
+
   const gamingId: any = useSelector(selectGamingId)
 
   const { address } = useAccount()
 
   const token = useSelector(selectAuthToken)
   const isBindParent: any = useSelector(selectIsBindParent)
-  
+  // const gameIds = useMemo(() => {
+  //   const start = 1
+  //   return Array.from({ length: +gamingId - start + 1 }, (_, index) => index + start)
+  // }, [gamingId])
   const { maticContractReward, refetch, isMaticLoading, setMaticParam } = useMaticReward({
     onSuccess() {
       toast.success('提取成功')
@@ -184,11 +189,13 @@ const Withdraw = () => {
       fetchUserRewardInfo()
       setVisible(false)
       setMaticParam([])
+      setLoading(false)
     },
     onError(error, rawError) {
-      console.log('maticWithDraw rawError', rawError)
+      console.log('useMaticReward rawError', rawError)
       toast.warn('提取失败')
       setMaticParam([])
+      setLoading(false)
     },
     args: [[+gamingId]],
     mutationError() {
@@ -196,7 +203,22 @@ const Withdraw = () => {
       setLoading(false)
     },
   })
-  
+
+  const { isMaticWithdrawLoading, maticWithdraw, maticEstimateGas } = useMaticWithdraw({
+    onSuccess() {
+      toast.success('提取成功')
+      userBalance.refetch()
+      refetch()
+      fetchUserRewardInfo()
+      setVisible(false)
+    },
+    onError(error, rawError) {
+      console.log('useMaticWithdraw rawError', rawError)
+      toast.warn('提取失败')
+    },
+    args: [[+gamingId]],
+  })
+
   const { isBabyLongLoading, setBabyLongParam } = useBabyLongReward({
     onSuccess() {
       toast.success('提取成功')
@@ -204,11 +226,13 @@ const Withdraw = () => {
       fetchUserRewardInfo()
       setVisible(false)
       setBabyLongParam([])
+      setLoading(false)
     },
     onError(error, rawError) {
       console.log('babyLongWithdraw rawError', rawError)
       toast.warn('提取失败')
       setBabyLongParam([])
+      setLoading(false)
     },
     mutationError() {
       setBabyLongParam([])
@@ -238,11 +262,11 @@ const Withdraw = () => {
   }
 
   const handleMatic = async () => {
-    if(+maticContractReward + +maticMidReward === 0){
+    if (+maticContractReward + +maticMidReward === 0) {
       toast.warn('提现额度为0')
       return
     }
-    if(+maticMidReward > 0){
+    if (+maticMidReward > 0) {
       try {
         setLoading(true)
         const res: any = await incomeReceive({
@@ -251,7 +275,7 @@ const Withdraw = () => {
         })
         if (res.code === 0) {
           const { oid, token_amount, _deadline, v, r, s } = res.data
-          setMaticParam([MainContractAddr, +token_amount, +_deadline, +oid, v, r, s])
+          setMaticParam([+oid, +token_amount, +_deadline, +oid, v, r, s])
         } else {
           toast.warn(res.msg)
           setLoading(false)
@@ -262,8 +286,19 @@ const Withdraw = () => {
         setLoading(false)
       }
     } else {
-      if(+maticContractReward > 0){
-        // todo
+      if (+maticContractReward > 0) {
+        const estimatedGasInFloat = maticEstimateGas
+          ? parseFloat(formatUnits(maticEstimateGas, walletInfo?.decimals))
+          : null
+        if (!estimatedGasInFloat) {
+          toast.warn("Couldn't estimate gas")
+          return
+        }
+        if (estimatedGasInFloat > walletInfo?.balance) {
+          toast.warn('Insufficient balance for gas')
+          return
+        }
+        maticWithdraw()
       }
     }
   }
@@ -307,29 +342,28 @@ const Withdraw = () => {
   }, [address && isBindParent && token])
 
   const maticWithdrawInfo = useMemo(() => {
-    const mergeMaticBalance = 0
-    // const mergeMaticBalance =
-    //   (maticContractReward ? +getBalanceAmount(maticContractReward)?.toString() : 0) +
-    //     +maticMidReward || 0
-    const maticFee = mergeMaticBalance * 0.05 || 0
-    const maticTotal = mergeMaticBalance - maticFee || 0
-    const maticRepeat = maticTotal * 0.6 || 0
-    const maticReal = maticTotal - maticRepeat || 0
+    const mergeMaticBalance = getBalanceAmount(new BigNumber(maticContractReward)).plus(
+      new BigNumber(maticMidReward)
+    )
+    const maticFee = mergeMaticBalance.multipliedBy(new BigNumber(0.05))
+    const maticTotal = mergeMaticBalance.minus(maticFee)
+    const maticRepeat = maticTotal.multipliedBy(new BigNumber(0.6))
+    const maticReal = maticTotal.minus(maticRepeat)
     return {
-      mergeMaticBalance,
-      maticFee,
-      maticTotal,
-      maticRepeat,
-      maticReal,
+      mergeMaticBalance: mergeMaticBalance.toNumber() || 0,
+      maticFee: maticFee.toNumber() || 0,
+      maticTotal: maticTotal.toNumber() || 0,
+      maticRepeat: maticRepeat.toNumber() || 0,
+      maticReal: maticReal.toNumber() || 0,
     }
   }, [maticContractReward, maticMidReward])
 
   const babyLongWithdrawInfo = useMemo(() => {
-    const babyLongFee = +babyLongReward * 0.05 || 0
-    const babyLongReal = +babyLongReward - babyLongFee
+    const babyLongFee = new BigNumber(babyLongReward).multipliedBy(new BigNumber(0.05))
+    const babyLongReal = new BigNumber(babyLongReward).minus(babyLongFee)
     return {
-      babyLongFee,
-      babyLongReal,
+      babyLongFee: babyLongFee.toNumber() || 0,
+      babyLongReal: babyLongReal.toNumber() || 0,
     }
   }, [babyLongReward])
 
@@ -424,10 +458,12 @@ const Withdraw = () => {
           <BtnWrap>
             <BuyBtn
               className="confirm"
-              disabled={isMaticLoading || isBabyLongLoading || btnLoading}
+              disabled={isMaticLoading || isBabyLongLoading || isMaticWithdrawLoading || btnLoading}
               onClick={handleWithdraw}
             >
-              {isMaticLoading || isBabyLongLoading || btnLoading ? t('Loading...') : t('YES')}
+              {isMaticLoading || isBabyLongLoading || isMaticWithdrawLoading || btnLoading
+                ? t('Loading...')
+                : t('YES')}
             </BuyBtn>
             <BuyBtn onClick={closeModal}>{t('NO')}</BuyBtn>
           </BtnWrap>
