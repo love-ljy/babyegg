@@ -448,7 +448,7 @@ const UserPanel = () => {
   ]
 
   const openDialog = (type: string) => {
-    if (!walletInfo) {
+    if (!address) {
       toast.warn('请链接钱包')
       return
     }

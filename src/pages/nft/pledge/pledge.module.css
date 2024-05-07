@@ -40,9 +40,10 @@
   color: rgba(255, 255, 255, 0.5);
 }
 .ispledge_title {
+  margin: 0 auto;
   width: 321px;
   height: 18px;
-  padding: 10px 15px 6px 15px;
+  padding: 10px 15px 20px 15px;
 }
 .number {
   font-size: 15px;
@@ -91,6 +92,7 @@
   font-weight: 700;
 }
 .withdraw_icon {
+  vertical-align: middle; /* 垂直居中对齐 */
   width: 20px;
   height: 18px;
   margin-right: 8px;

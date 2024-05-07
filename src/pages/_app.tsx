@@ -30,7 +30,6 @@ const queryClient = new QueryClient()
 
 const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
-
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

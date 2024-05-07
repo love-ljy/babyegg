@@ -84,7 +84,7 @@ const CountInput = styled(TextField)`
   border: 1px solid rgba(143, 13, 245, 1);
 `
 
-const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 40px;
   border-radius: 32px;
@@ -111,6 +111,7 @@ function LongEgg() {
   const [gameEnd, setGameEnd] = useState(false)
   const [allNet, setAllNet] = useState<any>({})
   const [countDown, setCountDown] = useState<number>(0)
+  const [hadParent, setHadParent] = useState(0)
 
   const inviteCode = useSelector(selectInviteCode)
   const walletInfo: any = useSelector(selectWalletInfo)
@@ -123,13 +124,16 @@ function LongEgg() {
   } = useBind2({
     args: [bindAddress],
     onSuccess() {
-      login(inviteCode)
       toast.success('绑定上级成功')
+      dispatch(setIsBindParent(true))
+      fetchEggCountDown()
+      fetchAllNetwork()
+      setVisible(false)
+      userBalance.refetch()
     },
     onError(error, rawError) {
       console.log('bind rawError', rawError)
       toast.warn('绑定上级失败')
-      setFetchLoading(false)
     },
   })
 
@@ -141,19 +145,28 @@ function LongEgg() {
     try {
       const res: any = await getUserInfo()
       if (res.code === 0) {
+        const bindRes = await refetch()
+        console.log('bindRes', bindRes);
+        
+        if (bindRes.data !== res.data.parent) {
+          toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
+          setBindAddress(res.data.parent)
+          setVisible(true)
+          setHadParent(1)
+        } else {
+          dispatch(setIsBindParent(true))
+          fetchEggCountDown()
+          fetchAllNetwork()
+        }
+        setFetchLoading(false)
         dispatch(setUserInfo(res.data))
-        dispatch(setIsBindParent(true))
-        fetchEggCountDown()
-        fetchAllNetwork()
-        setVisible(false)
-        userBalance.refetch()
       } else {
+        setFetchLoading(false)
         toast.warn(res.msg)
       }
     } catch (e) {
-      console.log('e', e)
+      console.log('fetchUserInfo error', e)
       toast.warn('网络错误')
-    } finally {
       setFetchLoading(false)
     }
   }
@@ -184,21 +197,23 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
-    setFetchLoading(true)
-    const estimatedGasInFloat = bindEstimatedGas
+    if(hadParent === 1){
+      const estimatedGasInFloat = bindEstimatedGas
       ? parseFloat(formatUnits(bindEstimatedGas, walletInfo?.decimals))
       : null
-    if (!estimatedGasInFloat) {
-      toast.warn("Couldn't estimate gas")
-      setFetchLoading(false)
-      return
+      if (!estimatedGasInFloat) {
+        toast.warn("Couldn't estimate gas")
+        return
+      }
+      if (estimatedGasInFloat > walletInfo?.balance) {
+        toast.warn('Insufficient balance for gas')
+        return
+      }
+      bindParent()
+    } else {
+      setFetchLoading(true)
+      login(inviteCode)
     }
-    if (estimatedGasInFloat > walletInfo?.balance) {
-      toast.warn('Insufficient balance for gas')
-      setFetchLoading(false)
-      return
-    }
-    bindParent()
   }
 
   const fetchEggCountDown = async () => {
@@ -209,8 +224,8 @@ function LongEgg() {
         const { end_time } = res.data
         const endDate = new Date(end_time).getTime()
         const startDate = new Date().getTime()
-        setCountDown(Math.ceil(endDate-startDate))
-        const isEnd = Math.ceil(endDate-startDate) < 0
+        setCountDown(Math.ceil(endDate - startDate))
+        const isEnd = Math.ceil(endDate - startDate) < 0
         setGameEnd(isEnd)
         dispatch(setGamingId(res.data.id))
       } else if (res.code === 1) {
@@ -242,7 +257,6 @@ function LongEgg() {
   const fetchUserParent = useCallback(async () => {
     try {
       if (address && router.isReady) {
-        const bindRes = await refetch()
         const { invite } = router.query
         const res: any = await getUserHadParent({
           username: address,
@@ -251,27 +265,16 @@ function LongEgg() {
         if (res.code === 0) {
           if (res.data.had_parent === 0) {
             setVisible(true)
-            dispatch(setInviteCode(invite ? invite : res.data.invite))
             setBindAddress(res.data.username)
             dispatch(setIsBindParent(false))
-            localStorage.setItem('inviteCode', invite ? invite : res.data.invite)
-            localStorage.setItem('userAddress', address)
           } else {
-            if (bindRes.data !== res.data.username) {
-              setVisible(true)
-              dispatch(setInviteCode(invite ? invite : res.data.invite))
-              localStorage.setItem('inviteCode', invite ? invite : res.data.invite)
-              localStorage.setItem('userAddress', address)
-              setBindAddress(res.data.username)
-              dispatch(setIsBindParent(false))
-              toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
-            } else {
-              setVisible(false)
-              login(res.data.invite)
-              localStorage.setItem('inviteCode', res.data.invite)
-              localStorage.setItem('userAddress', address)
-            }
+            // 已绑定上级
+            login(res.data.invite)
           }
+          setHadParent(res.data.had_parent)
+          dispatch(setInviteCode(res.data.invite))
+          localStorage.setItem('inviteCode', res.data.invite)
+          localStorage.setItem('userAddress', address)
         } else {
           toast.warn(res.msg)
         }
@@ -286,13 +289,13 @@ function LongEgg() {
   }, [fetchUserParent])
 
   const LongHeader = () => {
-    const timer = new Date().getTime()+Number(Number(gameInfo?.remaining_time)*1000)
+    const timer = new Date().getTime() + Number(Number(gameInfo?.remaining_time) * 1000)
     const deadlineDate = new Date(timer);
     return (
       <LongEggWrap>
         <Typography fontWeight={700} fontSize={25}>
-          {Number(gameInfo?.state)!=0 ? t('Waiting for the next round to start') : t('Countdown')}
-          {Number(gameInfo?.state)===0 && <CountDown initialTimeInSeconds={deadlineDate} />}
+          {Number(gameInfo?.state) != 0 ? t('Waiting for the next round to start') : t('Countdown')}
+          {Number(gameInfo?.state) === 0 && <CountDown initialTimeInSeconds={deadlineDate} />}
         </Typography>
         <Box mt={2}>
           <Participation allNet={allNet} />

@@ -309,7 +309,7 @@ const BuyEgg = () => {
   })
 
   const handleBuy = async () => {
-    if (!walletInfo) {
+    if (!address) {
       toast.warn('请链接钱包')
       return
     }
@@ -421,6 +421,10 @@ const BuyEgg = () => {
   }
 
   const handleApprove = async () => {
+    if (!address) {
+      toast.warn('请链接钱包')
+      return
+    }
     const estimatedGasInFloat = approveEstimatedGas
       ? parseFloat(formatUnits(approveEstimatedGas, walletInfo?.decimals))
       : null

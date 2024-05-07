@@ -176,7 +176,6 @@ const getUserHistory = async () => {
     method: 'get',
   })
 }
-
 // 获取我的累计收益 /api/user/allIncome
 const getUserAllIncome = async () => {
   return request({

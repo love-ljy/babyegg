@@ -1,41 +1,78 @@
 // ClaimRecord.js
 
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styles from './ClaimRecord.module.css'
-
+import { history } from '@utils/api'
+import Image from 'next/image'
+import chehui from '@imgs/chehui.png'
+import { toast } from 'react-toastify'
 function ClaimRecord() {
+  const [claimData, setClaimData] = useState<
+    { created_at: string; number: number; state: string }[]
+  >([])
+  // 初始化一个状态来存储领取记录数据
+  const fetchUserInfo = useCallback(async () => {
+    try {
+      const res: any = await history({
+        state: -2,
+        type: 1,
+        page: 1,
+        limit: 10,
+      })
+      if (res.code === 0) {
+        setClaimData(res.data.list)
+        console.log(res.data, 'res')
+      } else {
+        toast.warn('网络错误')
+      }
+    } catch (e) {
+      console.log('e', e)
+      toast.warn('网络错误')
+    }
+  }, [])
+  useEffect(() => {
+    fetchUserInfo()
+  }, [])
   return (
     <div className={styles.container}>
       <div className={styles.padding_box}>
         <div className={styles.title}>
           <div className={styles.title_left}>领取记录</div>
         </div>
-        <div className={styles.content_root}>
-          <div className={styles.content}>
-            <div className={styles.root}>
-              <div className={styles.item}>
-                <div className={styles.item_left}>领取时间</div>
-                <div className={styles.item_right}>12/04/2024</div>
-              </div>
-              <div className={styles.item}>
-                <div className={styles.item_left}>领取数量</div>
-                <div className={styles.item_right}>10 USDT</div>
-              </div>
-              <div className={styles.item}>
-                <div className={styles.item_left}>领取类型</div>
-                <div className={styles.item_right}>本金赎回</div>
-              </div>
-              <div className={styles.item}>
-                <div className={styles.item_left}>领取类型</div>
-                <div className={styles.item_right}>成功</div>
+        {claimData.length > 0 &&
+          claimData.map((record, index) => (
+            <div className={styles.content_root} key={index}>
+              <div className={styles.content}>
+                <div className={styles.root}>
+                  <div className={styles.item}>
+                    <div className={styles.item_left}>领取时间</div>
+                    <div className={styles.item_right}>{record.created_at}</div>
+                  </div>
+                  <div className={styles.item}>
+                    <div className={styles.item_left}>领取数量</div>
+                    <div className={styles.item_right}>{record.number}</div>
+                  </div>
+                  {/* <div className={styles.item}>
+                  <div className={styles.item_left}>领取类型</div>
+                  <div className={styles.item_right}>{record.}</div>
+                </div> */}
+                  <div className={styles.item}>
+                    <div className={styles.item_left}>领取状态</div>
+                    <div className={styles.item_right}>{record.state}</div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          {/* 重复的content内容省略 */}
-        </div>
+          ))}
         <div className={styles.withdraw}>
-          {/* <img className={styles.withdraw_icon} src={require('../../static/icon/chehui.png')}></img>
-          撤回 */}
+          <Image
+            src={chehui}
+            alt="1"
+            width={20}
+            height={18}
+            className={styles.withdraw_icon}
+          ></Image>
+          撤回
         </div>
       </div>
     </div>

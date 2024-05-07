@@ -217,7 +217,7 @@ const Withdraw = () => {
   })
 
   const openModal = (type: string) => {
-    if (!walletInfo) {
+    if (!address) {
       toast.warn('请链接钱包')
       return
     }
