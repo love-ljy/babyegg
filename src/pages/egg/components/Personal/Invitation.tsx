@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import copy from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
+import useBatchFetchData from '@hooks/useBatchFetchData'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -77,7 +78,8 @@ const Invitation = () => {
   const { t } = useTranslation('common')
   const router = useRouter()
   const userInfo: any = useSelector(selectUserInfo)
-
+  const { flowwers } = useBatchFetchData();
+  console.info(flowwers)
   const toHistory = () => {
     router.push('invite')
   }
@@ -101,7 +103,7 @@ const Invitation = () => {
           <span>{t('Current Number of Your Valid Referral Addresses')}</span>
         </div>
         <div className="bot">
-          <span>{userInfo?.true_son_num || 0}</span>
+          <span>{flowwers?.toString() || 0}</span>
         </div>
       </CommonRow>
       <CommonRow>

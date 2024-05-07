@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import chehui from '@imgs/chehui.png'
 function Pledge() {
-  const [pledgeData, setPledgeData] = useState([]) // 初始化一个状态来存储质押列表数据
+  const [pledgeData, setPledgeData] = useState<any>() // 初始化一个状态来存储质押列表数据
   const router = useRouter() // 将 useRouter 移动到组件顶部
   // 点击按钮跳转到新路由
   const handleClick = () => {
@@ -33,8 +33,7 @@ function Pledge() {
   useEffect(() => {
     fetchUserInfo()
   }, [])
-  //已获得总收益
-  const firstPledge = pledgeData || {}
+
   return (
     <div className={styles.container}>
       <div className={styles.padding_box}>
@@ -49,7 +48,7 @@ function Pledge() {
           <div className={styles.ispledge_box}>
             <div className={styles.ispledge_title}>
               <div className={styles.redeemable}>可领取收益</div>
-              <div className={styles.number}>{firstPledge.total_revenue}</div>
+              <div className={styles.number}>{pledgeData?.total_revenue}</div>
             </div>
             <div className={styles.bottom}>确认领取</div>
           </div>
@@ -59,7 +58,7 @@ function Pledge() {
             <div className={styles.redeemable}>可赎回本金</div>
             <div className={styles.number}>1,000.00 USDT</div>
           </div>
-          <div className={styles.bottom}>{firstPledge.state}</div>
+          <div className={styles.bottom}>{pledgeData?.state}</div>
         </div>
       </div>
 

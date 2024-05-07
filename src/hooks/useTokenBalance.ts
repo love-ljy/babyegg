@@ -19,6 +19,7 @@ const useTokenBalance = (tokenAddress: `0x${string}`) => {
     },
   })
 
+
   useEffect(() => {
     if (balance) {
       const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18)

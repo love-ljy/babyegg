@@ -24,6 +24,7 @@ const useBind2 = ({ args, onSuccess, onError }: Props) => {
     },
   } as const
 
+
   const { refetch } = useReadContract({
     abi: eggAbi,
     address: MainContractAddr,

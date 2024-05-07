@@ -338,7 +338,7 @@ const BuyEgg = () => {
       return
     }
     if (
-      +formatUnits(BigInt(buyNum * 1e18), walletInfo?.decimals) + estimatedGasInFloat >
+      +formatUnits(BigInt(buyNum * 1e13), walletInfo?.decimals) + estimatedGasInFloat >
       walletInfo?.balance
     ) {
       toast.warn('Insufficient balance for gas')

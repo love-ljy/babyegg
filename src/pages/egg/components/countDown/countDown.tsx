@@ -52,17 +52,17 @@ function CountDown({ initialTimeInSeconds }: Props) {
       // Render a countdown
       return <div> <TimeWrap>
         <div className="time-item">
-          <span className="counter">{hours}</span>
+          <span className="counter">{hours<10?`0${hours}`:hours}</span>
           <span className="label">{t('hours')}</span>
         </div>
         <Image src={quotePng} width={3} height={12} alt=":" />
         <div className="time-item">
-          <span className="counter">{minutes}</span>
+          <span className="counter">{minutes<10?`0${minutes}`:minutes}</span>
           <span className="label">{t('minute')}</span>
         </div>
         <Image src={quotePng} width={3} height={12} alt=":" />
         <div className="time-item">
-          <span className="counter">{seconds}</span>
+          <span className="counter">{seconds<10?`0${seconds}`:seconds}</span>
           <span className="label">{t('second')}</span>
         </div>
       </TimeWrap></div>;
