@@ -10,11 +10,11 @@ const getUserInfo = async () => {
 }
 
 // 更新用信息
-const UpdateUserInfo = async (params:{pay_password:any,pay_password_v:any}) => {
+const UpdateUserInfo = async (params: { pay_password: any; pay_password_v: any }) => {
   return request({
     url: '/api/user/info',
     method: 'post',
-    params
+    params,
   })
 }
 // 用户登录
@@ -110,11 +110,11 @@ const getRankingLevel = async () => {
 }
 
 // 获取育龙榜 /api/user/rankingYuLong
-const getRankingYuLong = async (type:number) => {
+const getRankingYuLong = async (type: number) => {
   return request({
     url: '/api/user/rankingYuLong',
     method: 'get',
-    params: {type}
+    params: { type },
   })
 }
 // 查询订单状态 /api/order/orderStatus
@@ -125,9 +125,45 @@ const getOrderStatus = async (params: any) => {
     params,
   })
 }
-
-
+//我的NFT质押列表
+// page: 1, // 页码 limit: 10, // 每页数量
+const pledgeList = async (params: any) => {
+  return request({
+    url: '/api/nft/pledgeList',
+    method: 'get',
+    params,
+  })
+}
+//我的NFT列表
+// page: 1, // 页码 limit: 10, // 每页数量
+const nftList = async (params: any) => {
+  return request({
+    url: ' /api/nft/list',
+    method: 'get',
+    params,
+  })
+}
+// 设置我的NFT
+const setMyList = async (params: any) => {
+  return request({
+    url: '/api/Nftpledge/setMyNft',
+    method: 'get',
+    params,
+  })
+}
+// 领取记录
+const history = async (params: any) => {
+  return request({
+    url: '/api/user/income',
+    method: 'get',
+    params,
+  })
+}
 export {
+  history,
+  pledgeList,
+  nftList,
+  setMyList,
   getUserInfo,
   submitUserLogin,
   getUserHadParent,
@@ -142,5 +178,5 @@ export {
   UpdateUserInfo,
   getRankingLevel,
   getRankingYuLong,
-  getOrderStatus
+  getOrderStatus,
 }

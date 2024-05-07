@@ -10,15 +10,11 @@
   font-weight: 700;
   padding: 20px 0 10px 0;
   width: 92vw;
-  margin: 0 auto;
+  margin: auto;
   color: #fff;
 }
 .container_list {
-  width: 92vw;
-  justify-content: space-between;
-  display: flex;
-  margin: 0 auto;
-  flex-wrap: wrap; /* 允许子元素换行 */
+  /* margin: 0 auto; */
 }
 .list {
   margin-bottom: 15px;
@@ -48,34 +44,9 @@
   align-items: center;
   justify-content: center;
 }
-.list_item_cross {
-  position: relative;
-  width: 70px; /* 设置适当的宽度 */
-  height: 70px; /* 设置适当的高度 */
-}
 
-.list_item_cross::before,
-.list_item_cross::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 14px; /* 设置十字架的粗细 */
-  background-color: rgba(217, 217, 217, 1); /* 十字架的颜色*/
-  transform-origin: center;
-  border-radius: 5px; /* 圆角大小 */
-}
-
-.list_item_cross::before {
-  transform: translate(-50%, -50%) rotate(90deg);
-}
-
-.list_item_cross::after {
-  transform: translate(-50%, -50%) rotate(-180deg);
-}
 .nft_name {
-  font-size: 10px;
+  font-size: 15px;
   color: rgba(255, 255, 255, 0.5);
 }
 .nfg_itemName {
@@ -104,4 +75,14 @@
   text-align: center;
   line-height: 40px;
   border-radius: 5px;
+}
+.fl {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(150px, 1fr)
+  ); /* 自适应宽度，至少150px宽，多余空间均分 */
+  gap: 10px; /* 控制网格项之间的间距 */
+  justify-content: start; /* 多余空间靠左 */
 }

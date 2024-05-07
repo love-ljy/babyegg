@@ -29,7 +29,7 @@
   justify-content: center;
 }
 .modal-center {
-  justify-content: space-between;
+  justify-content: center;
   display: flex;
   margin-top: 30px;
   width: 227px;
@@ -39,9 +39,6 @@
 .center {
   width: 94px;
   height: 90px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 .box {
   width: 94px;
@@ -52,7 +49,7 @@
   font-weight: 700;
 }
 .box_title {
-  font-size: 10px;
+  font-size: 15px;
   color: rgba(255, 255, 255, 0.5);
 }
 .modal-footer {
