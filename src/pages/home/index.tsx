@@ -209,9 +209,10 @@ const Parteners = [
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation('common')
   const router = useRouter();
+  const extraPath = router.query.invite?'?invite=' + router.query.invite:''
   const HandleGoGame = (e: any) => {
     if (!e.isComing) {
-      router.push(e.path + '?invite=' + router.query.invite)
+      router.push(e.path + extraPath)
     } else {
       toast('敬请期待')
     }

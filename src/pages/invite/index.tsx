@@ -281,7 +281,7 @@ const Invite = () => {
                                 <SourceItem key={item?.username}>
                                   
                                   <div className="address">{formatAddress(item?.username,8)}</div>
-                                  <div className="No">{item?.my_performance}</div>
+                                  <div className="No">{item?.my_performance&&Number(item?.my_performance).toFixed(4)}</div>
                                 </SourceItem>
                               )
                             })

@@ -107,8 +107,10 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
   const { t } = useTranslation('common')
   const router = useRouter();
   const { locales, locale: currentLocale } = router;
+  const extraPath = router.query.invite?'?invite=' + router.query.invite:''
+
   const toggleDrawer = (path: string) => {
-    Router.push(path+'?invite='+router.query.invite);
+    Router.push(path+extraPath);
     onClose()
   }
   const [checked, setChecked] = React.useState(false);

@@ -7,9 +7,9 @@ export const config = getDefaultConfig({
   projectId: '339296f0d3af3f76bce150594097de48',
   chains: [
     // mainnet,
-    polygonAmoy,
-    polygon,
-    bscTestnet,
+    // polygonAmoy,
+    polygon
+    // bscTestnet,
     // optimism,
     // arbitrum,
     // base,
