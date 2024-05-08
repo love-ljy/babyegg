@@ -451,7 +451,7 @@ const Withdraw = () => {
                 <span>{t('Actual Amout Received')}</span>
                 <div className="r">
                   <span>{maticWithdrawInfo.maticReal}</span>
-                  <EggTokenIcon />
+                  <MaticIcon />
                 </div>
               </div>
             </div>

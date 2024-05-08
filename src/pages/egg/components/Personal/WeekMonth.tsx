@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { Typography } from '@mui/material'
 import styled from '@emotion/styled'
 import CommonTab from '../commonTab/commonTab'
-import MaticIcon from '@icons/matic.svg'
+import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
 import { getRankingYuLong } from '@utils/api'
 import { selectAuthToken, selectIsBindParent } from '@store/user'
@@ -253,7 +253,7 @@ const Comp = (props: CompProps) => {
         <div className="bot">
           <span className="count">{myInfo?.total_reward_matic}</span>
           <div className="img">
-            <MaticIcon />
+            <EggTokenIcon />
           </div>
         </div>
       </Bot>

@@ -14,34 +14,19 @@ const LastWrap = styled.div`
   background: rgba(8, 17, 33, 1);
   border: 1px solid rgba(143, 13, 245, 1);
   box-shadow: inset 0px 0px 12.1px rgba(143, 13, 245, 1);
-  padding: 25px 30px 25px;
+  padding: 15px;
   position: relative;
 `
 
 const Column = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr  1fr;
   background: rgba(22, 34, 54, 1);
   font-size: 10px;
   color: rgba(255, 255, 255, 0.5);
   padding: 2px;
-  .No {
-    flex: 1 6%;
-    text-align: center;
-  }
-  .address {
-    flex: 1 40%;
-    text-align: center;
-  }
-  .amount {
-    flex: 1 20%;
-    text-align: center;
-  }
-  .time {
-    flex: 1 20%;
-    text-align: center;
-  }
+  
 `
 
 const Source = styled.div`
@@ -63,29 +48,12 @@ const Source = styled.div`
 `
 
 const SourceItem = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: start;
-  font-size: 10px;
-  color: rgba(255, 255, 255, 1);
-  margin-top: 20px;
-  align-items: center;
-  .No {
-    flex: 1 6%;
-    text-align: center;
-  }
-  .address {
-    flex: 1 40%;
-    text-align: center;
-  }
-  .amount {
-    flex: 1 20%;
-    text-align: center;
-  }
-  .time {
-    flex: 1 20%;
-    text-align: center;
-  }
+display: grid;
+grid-template-columns:  1fr 1fr 1fr  1fr;
+align-items: center;
+font-size: 12px;
+margin: 10px 0;
+
 `
 
 interface TrafficProps {
@@ -140,9 +108,9 @@ const Traffic = (props: Props) => {
         }}
       >
         <Column>
-          <div className="No">No.</div>
           <div className="address">{t('Address')}</div>
-          <div className="amount">{t('Amount')}</div>
+          <div className="amount">{t('Event')}</div>
+          <div className="No">{t('Amount')}</div>
           <div className="time">{t('Time')}</div>
         </Column>
         <Source>
@@ -150,10 +118,10 @@ const Traffic = (props: Props) => {
             dataSource?.list?.map((item: any) => {
               return (
                 <SourceItem>
-                  <div className="No">{item.id}</div>
-                  <div className="address">{formatAddress(item.username)}</div>
-                  <div className="amount">{t(item.event)}</div>
-                  <div className="time">{item.created_at}</div>
+                  <div className="item">{formatAddress(item.username)}</div>
+                  <div className="item">{t(item.event)}</div>
+                  <div className="item">{item.amount}</div>
+                  <div className="item">{item.created_at}</div>
                 </SourceItem>
               )
             })
@@ -165,7 +133,7 @@ const Traffic = (props: Props) => {
       <Box mt={2}>
         {dataSource?.list?.length ? (
           <CommonPage
-            count={dataSource?.page?.total_count}
+            count={dataSource?.page?.total_page}
             page={dataSource?.page?.current_page}
             handleChange={changePageFormat}
           />

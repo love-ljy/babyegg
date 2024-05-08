@@ -134,14 +134,14 @@ const Last = (props: Props) => {
         <RewardBox>
           <Typography>{t('Current Last 100 Bonus per pac')}</Typography>
           <RewardBoxItem>
-            <Typography fontSize="35px">{totalData.last100_reward}</Typography>
+            <Typography fontSize="35px">{totalData.last100_reward&&Number(totalData.last100_reward).toFixed(4)||'0'}</Typography>
             <MaticIcon />
           </RewardBoxItem>
         </RewardBox>
         <LastBox>
           <Typography>{t('current Ultimate Bonus')}</Typography>
           <RewardBoxItem>
-            <Typography fontSize="35px">{totalData.last_reward}</Typography>
+            <Typography fontSize="35px">{totalData.last_reward&&Number(totalData.last_reward).toFixed(4)||'0'}</Typography>
             <MaticIcon />
           </RewardBoxItem>
         </LastBox>

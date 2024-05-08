@@ -10,10 +10,12 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import { useRouter } from 'next/router'
 import { queryUserInfoByTeam } from '@utils/api'
 import { useAccount } from 'wagmi'
+import { useTranslation } from 'next-i18next'
 import { selectIsBindParent, selectAuthToken } from '@store/user'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import {formatAddress} from '@utils/formatterBalance'
+import { t } from 'i18next'
 
 const InviteWrap = styled.div`
   position: relative;
@@ -193,6 +195,7 @@ interface MyType {
 }
 
 const Invite = () => {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const { address } = useAccount()
   const [expanded, setExpanded] = useState<string | false>('panel1')
@@ -268,16 +271,17 @@ const Invite = () => {
                         }}
                       >
                         <Column>
-                          <div>No.</div>
-                          <div>Address</div>
+                          <div>{t('Address')}</div>
+                          <div>{t('Sales')}</div>
                         </Column>
                         <Source>
                           {e && e?.list && e?.list?.length ? (
                             e?.list.map((item: any) => {
                               return (
                                 <SourceItem key={item?.username}>
-                                  <div className="No">{item?.id}</div>
+                                  
                                   <div className="address">{formatAddress(item?.username,8)}</div>
+                                  <div className="No">{item?.my_performance}</div>
                                 </SourceItem>
                               )
                             })

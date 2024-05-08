@@ -84,7 +84,7 @@ const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {
           {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
-          <span className="count">{allNet?.reward_total||'-'}</span>
+          <span className="count">{allNet?.reward_total&&Number(allNet?.reward_total).toFixed(2)||'-'}</span>
           <div className="img">
             <MaticIcon />
           </div>

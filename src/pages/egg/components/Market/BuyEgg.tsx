@@ -118,18 +118,29 @@ const AdornmentWrap = styled.div`
 
 const BuyNumStep = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
-  width: 40vw;
+  grid-template-columns: repeat(12, 1fr); /* 总列数取最小公倍数 */
+  grid-gap: 20px; /* 网格间隔 */
+  width: 100%;
   align-items: center;
   align-content: center;
-  margin-top: 20px;
+  margin: 20px 0;
 `
-const BuyNumStepItem = styled.div`
+const BuyNumStepItem = styled.div<{chose: boolean}>`
   border: 1px solid #fff;
   border-radius: 5px;
   height: 40px;
   line-height: 40px;
+  border-color:${props => props.chose ? 'rgba(143, 13, 245, 1)' : 'gray'}; 
+  color:${props => props.chose ? 'rgba(143, 13, 245, 1)' : '#fff'}; 
+  /* 第一行的列配置 */
+  &:nth-child(-n+3) { 
+    grid-column: span 4; /* 前三个子项，每项跨4列 */
+  }
+
+  /* 第二行的列配置 */
+  &:nth-child(n+4):nth-child(-n+7) { 
+    grid-column: span 3; /* 第4至第7个子项，每项跨3列 */
+  }
 `
 
 const DescContent = styled.div`
@@ -240,6 +251,7 @@ const tokenAddressMap = {
   [BABY]: BabyToken,
   // todo 余额投资待定
 }
+const BuyList = [500,1000,3000,30,70,150,300]
 
 const BuyEgg = () => {
   // @ts-ignore
@@ -253,7 +265,7 @@ const BuyEgg = () => {
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
   const [coinBalance, setCoinBalance] = useState('0')
-
+  const [chosenIndex, setChosenIndex] = useState(0)
   const isBindParent: any = useSelector(selectIsBindParent)
   const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
@@ -386,8 +398,29 @@ const BuyEgg = () => {
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBuyNum(Number(event.target.value))
-  }
+    const newBuyNum = Number(event.target.value);
+    setBuyNum(newBuyNum);
+
+    if (newBuyNum > 0) {
+        // Initialize a variable to store the index if found
+        let foundIndex = -1;
+
+        // Iterate over the array to find the index
+        BuyList.some((item, index) => {
+            if (item === newBuyNum) {
+                foundIndex = index;
+                return true; // Stop the iteration after a match is found
+            }
+            return false;
+        });
+
+        // Set the chosen index based on the result of the search
+        setChosenIndex(foundIndex);
+    } else {
+        setChosenIndex(-1); // Set to -1 if the input is not positive
+    }
+}
+
 
   const selectChange = (option: any) => {
     setCoinType(option.value)
@@ -487,13 +520,11 @@ const BuyEgg = () => {
         <Image src={buyEggPng} alt="buyegg" />
       </div>
       <BuyNumStep>
-        <IconButton onClick={() => setBuyNum(buyNum + 1)}>
-          <AddIcon sx={{ color: '#fff' }} />
-        </IconButton>
-        <BuyNumStepItem>{buyNum}</BuyNumStepItem>
-        <IconButton disabled={buyNum <= 0} onClick={() => buyNum > 0 && setBuyNum(buyNum - 1)}>
-          <RemoveIcon sx={{ color: '#fff' }} />
-        </IconButton>
+       {BuyList.map((e,i)=>{
+        return ( <BuyNumStepItem onClick={()=>{setChosenIndex(i);setBuyNum(e)}} chose={chosenIndex===i} key={e}>{e}</BuyNumStepItem>)
+       })}
+       
+       
       </BuyNumStep>
       <span className="buying">{t('Buying Methods')}</span>
       <CountInput
