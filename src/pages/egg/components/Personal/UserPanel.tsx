@@ -705,7 +705,7 @@ const UserPanel = () => {
         <div className="row mar">
           <div className="group">
             <span className="title">{t('Current Eggs Held')}</span>
-            <span className="count">{eggInfo.dragon_egg || '0'}</span>
+            <span className="count">{userInfo.dragon_egg || '0'}</span>
           </div>
           <div className="group group2">
             <span className="title">{t('Your Master Rank')}</span>
