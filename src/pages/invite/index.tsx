@@ -15,7 +15,6 @@ import { selectIsBindParent, selectAuthToken } from '@store/user'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import {formatAddress} from '@utils/formatterBalance'
-import { t } from 'i18next'
 
 const InviteWrap = styled.div`
   position: relative;
@@ -238,7 +237,7 @@ const Invite = () => {
         <div className="icon" onClick={goBack}>
           <LeftArrowIcon />
         </div>
-        <span>您的推广记录</span>
+        <span>{t('promotion history')}</span>
       </Header>
       <HistoryWrap>
         {dataSource &&

@@ -233,7 +233,7 @@ const History = () => {
                 <div className="icon" onClick={goBack}>
                     <LeftArrowIcon />
                 </div>
-                <span>您的历史记录</span>
+                <span>{t('history')}</span>
             </Header>
             <HistoryWrap>
                 {dataSource &&

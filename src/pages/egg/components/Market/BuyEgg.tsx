@@ -271,7 +271,7 @@ const BuyEgg = () => {
   const userInfo: any = useSelector(selectUserInfo)
   const gamingId: any = useSelector(selectGamingId)
   const token = useSelector(selectAuthToken)
-
+  const [babyLongPrice,setBabyLongPrice] = useState(0)
   const { address } = useAccount()
   const { userBalance } = useGetBalance()
   const { formatBalance } = useTokenBalance(tokenAddressMap[coinType]) // !
@@ -501,6 +501,7 @@ const BuyEgg = () => {
           setCoinList(balanceList)
           setCoinBalance(balanceList[0].balance)
           dispatch(setBabyPrice(babyMaticPrice.matic_price))
+          setBabyLongPrice(babyMaticPrice.matic_price)
         } else {
           toast.warn(res.msg)
         }

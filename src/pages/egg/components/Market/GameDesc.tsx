@@ -182,11 +182,11 @@ const GameDesc = () => {
     { num: '3000 $Matic or Above', level: 10, downLevel: 30 },
   ]
   const loonList = [
-    { num: 'Novice', level: 100, downLevel: 60 },
-    { num: 'Elite', level: 300, downLevel: 50 },
-    { num: 'Expert', level: 500, downLevel: 40 },
-    { num: 'Master', level: 1000, downLevel: 30 },
-    { num: 'Grandmaster', level: 3000, downLevel: 30 },
+    { num: 'Novice', level: 1000, downLevel: 60 },
+    { num: 'Elite', level: 3000, downLevel: 50 },
+    { num: 'Expert', level: 5000, downLevel: 40 },
+    { num: 'Master', level: 10000, downLevel: 30 },
+    { num: 'Grandmaster', level: 30000, downLevel: 30 },
   ]
   return (
     <LastWrap>

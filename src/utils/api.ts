@@ -219,9 +219,10 @@ const history = async (params: any) => {
 const whitelistedUserList = async () => {
   return request({
     url: '/api/user/whitelistedUserReward',
-    method: 'get',
+    method: 'get'
   })
 }
+
 export {
   whitelistedUserList,
   history,
@@ -250,4 +251,9 @@ export {
   incomeReceive,
   getUserHistory,
   getUserAllIncome,
+<<<<<<< HEAD
 }
+=======
+  whitelistedUserList
+}
+>>>>>>> 81a7b3b80f473fc2a577285fd28df6d550d64716
