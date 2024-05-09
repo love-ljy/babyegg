@@ -216,6 +216,13 @@ const history = async (params: any) => {
     params,
   })
 }
+// 领取记录
+const whitelistedUserList = async () => {
+  return request({
+    url: '/api/user/whitelistedUserReward',
+    method: 'get'
+  })
+}
 
 export {
   history,
@@ -243,5 +250,6 @@ export {
   queryUserInfoByTeam,
   incomeReceive,
   getUserHistory,
-  getUserAllIncome
+  getUserAllIncome,
+  whitelistedUserList
 }
