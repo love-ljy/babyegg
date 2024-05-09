@@ -273,5 +273,19 @@
     "time":"时间",
     "amount":"数量",
     "coin":"币种",
-    "status":"状态"
+    "status":"状态",
+    "Get":"领取",
+    "Double dragon eggs for first activation":"首次激活可获得双倍龙蛋",
+    "Only valid for the first activation":"仅第一次激活有效",
+    "activate now":"立即激活",
+    "30% Available amount":"30% 可领取额度",
+    "70% Only receive it after activation":"70% 激活后才能领取",
+    "you have $BabyLoong awaiting collection":"您有 $BabyLoong 待领取",
+    "NFT name":"NFT 名称",
+    "Golden Dragon": "金龙",
+    "Wood Dragon":"木龙",
+    "Water Dragon":"水龙",
+    "Fire Dragon":"火龙",
+    "Earth Dragon":"土龙",
+    "Pledges": "质押"
 }

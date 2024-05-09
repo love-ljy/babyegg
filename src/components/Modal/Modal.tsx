@@ -2,6 +2,9 @@ import React, { FC } from 'react'
 import styles from './Modal.module.css'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
+import nextI18NextConfig from '../../../next-i18next.config.js'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
@@ -9,6 +12,7 @@ interface ModalProps {
 }
 
 const Modal: FC<ModalProps> = ({ isOpen, onClose, nft }) => {
+  const { t } = useTranslation('common')
   const router = useRouter() // 将 useRouter 移动到组件顶部
   const handleClose = () => {
     onClose() // 在关闭时调用 onClose 函数
@@ -29,13 +33,13 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, nft }) => {
               <div className={styles['modal-center']}>
                 <div className={styles.center}>
                   <div className={styles.box}>
-                    <div className={styles['box_title']}>NFT名称</div>
-                    <div className={styles['box_text']}>{nft ? nft.name : ''}</div>
+                    <div className={styles['box_title']}>{t('NFT name')}</div>
+                    <div className={styles['box_text']}>{nft ? t(nft.name) : ''}</div>
                   </div>
                 </div>
               </div>
               <div onClick={handleClick} className={styles['modal-footer']}>
-                质押
+                {t('Pledges')}
               </div>
             </div>
           </div>
@@ -46,3 +50,8 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, nft }) => {
 }
 
 export default Modal
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'], nextI18NextConfig)),
+  },
+})
