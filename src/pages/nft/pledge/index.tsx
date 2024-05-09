@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import chehui from '@imgs/chehui.png'
 function Pledge() {
-  const [pledgeData, setPledgeData] = useState([]) // 初始化一个状态来存储质押列表数据
+  const [pledgeData, setPledgeData] = useState<any>({}) // 初始化一个状态来存储质押列表数据
   const router = useRouter() // 将 useRouter 移动到组件顶部
   // 点击按钮跳转到新路由
   const handleClick = () => {
