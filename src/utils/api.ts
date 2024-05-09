@@ -251,9 +251,4 @@ export {
   incomeReceive,
   getUserHistory,
   getUserAllIncome,
-<<<<<<< HEAD
 }
-=======
-  whitelistedUserList
-}
->>>>>>> 81a7b3b80f473fc2a577285fd28df6d550d64716
