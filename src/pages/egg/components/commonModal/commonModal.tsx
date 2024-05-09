@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from '@mui/material'
 import { CSSProperties } from '@mui/styled-engine'
 import Image from 'next/image'
 import closePng from '@imgs/close.png'
+import { useTranslation } from 'next-i18next'
 
 const CommonModalContainer = styled.div`
   .MuiDialog-paper {
@@ -60,6 +61,7 @@ type Props = {
 
 const CommonModal = (props: Props) => {
   const { visible, children, setVisible, footer, title, onClose } = props
+  const { t } = useTranslation('common')
   const close = () => {
     setVisible && setVisible(false)
     onClose && onClose()
@@ -73,7 +75,7 @@ const CommonModal = (props: Props) => {
           {!footer && (
             <div className="close" onClick={close}>
               <Image src={closePng} width={13} height={13} alt="close" />
-              <span>Close</span>
+              <span>{t('Close')}</span>
             </div>
           )}
         </DialogContentWrap>

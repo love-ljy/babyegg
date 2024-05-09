@@ -120,6 +120,12 @@ const ModalMain = styled.div`
     margin-top: 50px;
     color: rgba(255, 255, 255, 0.5);
   }
+  .txt2 {
+    font-size: 10px;
+    text-align: left;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.5);
+  }
   .mid {
     display: flex;
     justify-content: space-between;
@@ -419,12 +425,13 @@ const Withdraw = () => {
               </div>
               <div className="divied"></div>
               <div className="countWrap">
-                <span>{t('Actual Amout Received"')}</span>
+                <span>{t('Actual Amout Received')}</span>
                 <div className="r">
                   <span>{babyLongWithdrawInfo.babyLongReal}</span>
                   <EggTokenIcon />
                 </div>
               </div>
+              <div className="txt2">{t('Minimum 10 matic withdrawals')}</div>
             </div>
           ) : (
             <div>
@@ -454,6 +461,7 @@ const Withdraw = () => {
                   <MaticIcon />
                 </div>
               </div>
+              <div className="txt2">{t('Minimum 10 matic withdrawals')}</div>
             </div>
           )}
           <BtnWrap>

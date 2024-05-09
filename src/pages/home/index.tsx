@@ -286,7 +286,7 @@ const Home: React.FC = () => {
           </TokenDesc>
           <TokenDesc>
             <TokenTitle> {t("Liquidity Burn")}</TokenTitle>
-            <Typography fontSize="12px" fontWeight="bold" color="#fff">0.375%/ 小时</Typography>
+            <Typography fontSize="12px" fontWeight="bold" color="#fff">0.375%/ {t('hours')}</Typography>
           </TokenDesc>
 
           <TokenDesc>

@@ -286,5 +286,8 @@
     "time":"Time",
     "amount":"Amount",
     "coin":"Coin",
-    "status":"Status"
+    "status":"Status",
+    "promotion history":"promotion history",
+    "history":"Your History",
+    "When choosing to withdraw $Matic,a portion of the amount will be automatically reinvested":"When choosing to withdraw $Matic,a portion of the amount will be automatically reinvested"
 }
