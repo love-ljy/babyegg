@@ -9,22 +9,25 @@ import hotdragon from '@imgs/hotdragon.png'
 import earthridge from '@imgs/earthridge.png'
 import { getUserInfo, nftList } from '@utils/api'
 import { toast } from 'react-toastify'
+
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { config } from '../../wagmi/wagmi'
 import abi from './abi.json'
-
+import { useTranslation } from 'next-i18next'
+import nextI18NextConfig from '../../../next-i18next.config.js'
 const NftBazaar: React.FC = () => {
+  const { t } = useTranslation('common')
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   const [selectedNft, setSelectedNft] = useState<any>(null) // 用于存储选中的NFT信息
   const LevelList = [
-    { name: '金龙', imgSrc: goldendragon },
+    { name: 'Golden Dragon', imgSrc: goldendragon },
     {
-      name: '木龙',
-
+      name: 'Wood Dragon',
       imgSrc: Woodendragon,
     },
-    { name: '水龙', imgSrc: hose },
-    { name: '火龙', imgSrc: hotdragon },
-    { name: '土龙', imgSrc: earthridge },
+    { name: 'Water Dragon', imgSrc: hose },
+    { name: 'Fire Dragon', imgSrc: hotdragon },
+    { name: 'Earth Dragon', imgSrc: earthridge },
   ]
   const closeModal = () => {
     setModalOpen(false)
@@ -75,9 +78,9 @@ const NftBazaar: React.FC = () => {
                       <div className={styles.list_item_title}>
                         <Image src={item.imgSrc} alt="egg" />
                       </div>
-                      <div className={styles.nft_name}>NFT名称</div>
-                      <div className={styles.nfg_itemName}>{item.name}</div>
-                      <div className={styles.pledge}>质押</div>
+                      <div className={styles.nft_name}>{t('NFT name')}</div>
+                      <div className={styles.nfg_itemName}>{t(item.name)}</div>
+                      <div className={styles.pledge}>{t('Pledges')}</div>
                     </div>
                   </div>
                 </div>
@@ -92,3 +95,8 @@ const NftBazaar: React.FC = () => {
 }
 
 export default NftBazaar
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'], nextI18NextConfig)),
+  },
+})
