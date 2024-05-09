@@ -265,7 +265,7 @@ const BuyEgg = () => {
   const [buyNum, setBuyNum] = useState(30)
   const [coinList, setCoinList] = useState([])
   const [coinBalance, setCoinBalance] = useState('0')
-  const [chosenIndex, setChosenIndex] = useState(0)
+  const [chosenIndex, setChosenIndex] = useState(3)
   const isBindParent: any = useSelector(selectIsBindParent)
   const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
@@ -289,7 +289,7 @@ const BuyEgg = () => {
     handleStake,
     isLoading: stakeLoading,
   } = useStake({
-    value: BigInt(buyNum * 1e13),
+    value: BigInt(buyNum * 1e18),
     onSuccess() {
       toast.success('下单成功')
       userBalance.refetch()
@@ -342,6 +342,7 @@ const BuyEgg = () => {
   }
 
   const handleMatic = () => {
+    console.info(stakeEstimatedGas,'stakeEstimatedGas')
     const estimatedGasInFloat = stakeEstimatedGas
       ? parseFloat(formatUnits(stakeEstimatedGas, walletInfo?.decimals))
       : null

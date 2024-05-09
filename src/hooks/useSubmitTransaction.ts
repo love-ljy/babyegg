@@ -59,6 +59,7 @@ const useSubmitTransaction = (
     shouldFetch: contractCallConfig.query?.enabled ?? true,
   })
 
+  console.info(estimatedGas,gasEstimationError)
   const {
     writeContract,
     data: hash,
