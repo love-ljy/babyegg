@@ -28,21 +28,26 @@ import {
   setTotalRewards,
   selectIsBindParent,
   selectBabyPrice,
+  selectGamingId
 } from '@store/user'
 import {
   getGameEgg,
-  openEgg,
-  eggIncomeReinvestment,
-  getCoin,
-  getIncomeReceiveNumber,
+  // openEgg,
+  // eggIncomeReinvestment,
+  // getCoin,
+  // getIncomeReceiveNumber,
   getUserAllIncome,
+  createOrder
 } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { getDecimalAmount } from '@utils/formatterBalance'
-import PasswordModal from '../PasswordModal/PasswordModal'
+// import PasswordModal from '../PasswordModal/PasswordModal'
 import { useTranslation } from 'next-i18next'
 import { dispatch } from '@store/index'
+import useBabyLong from '@hooks/useBabyLong'
+import useGetBalance from '@hooks/useGetBalance'
+
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -391,7 +396,7 @@ const ModalMain = styled.div`
   }
 `
 
-const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -421,6 +426,7 @@ const UserPanel = () => {
   const [userReward, setUserReward] = useState<any>()
   const [passVisible, setPassVisible] = useState(false)
   const [eggLoading, setEggLoading] = useState(false)
+  const [upLoading, setUpLoading] = useState(false)
   const [eggType, setEggType] = useState('')
   const [eggInfo, setEggInfo] = useState({
     dragon_egg: 0,
@@ -433,6 +439,30 @@ const UserPanel = () => {
   const walletInfo: any = useSelector(selectWalletInfo)
   const babyPrice: any = useSelector(selectBabyPrice)
   const isBindParent: any = useSelector(selectIsBindParent)
+  const gamingId: any = useSelector(selectGamingId)
+  const { userBalance } = useGetBalance()
+
+  const { isLoading: babyLoading, setBabyArgs } = useBabyLong({
+    onSuccess() {
+      toast.success('操作成功')
+      userBalance.refetch()
+      setBabyArgs([])
+      setEggLoading(false)
+      setUpLoading(false)
+    },
+    onError(error, rawError) {
+      console.log('babyLong rawError', rawError)
+      toast.warn('操作失败')
+      setEggLoading(false)
+      setUpLoading(false)
+      setBabyArgs([])
+    },
+    mutationError() {
+      setBabyArgs([])
+      setEggLoading(false)
+      setUpLoading(false)
+    },
+  })
 
   const LevelList = [
     { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt="" /> },
@@ -447,55 +477,55 @@ const UserPanel = () => {
     },
   ]
 
-  const openDialog = (type: string) => {
-    if (!address) {
-      toast.warn('请链接钱包')
-      return
-    }
-    if (userInfo.pay_password) {
-      setEggVisible(true)
-      setEggType(type)
-    } else {
-      setPassVisible(true)
-    }
-  }
+  // const openDialog = async(type: string) => {
+  //   if (!address) {
+  //     toast.warn('请链接钱包')
+  //     return
+  //   }
+  // if (userInfo.pay_password) {
+  //   setEggVisible(true)
+  //   setEggType(type)
+  // } else {
+  //   setPassVisible(true)
+  // }
+  // }
 
-  const handleOpenEgg = async passParams => {
-    if (eggType === 'open') {
-      try {
-        const res: any = await openEgg({
-          password: passParams.password,
-        })
-        if (res.code === 0) {
-          setPassVisible(false)
-          fetchGameEgg()
-          toast.success('打开成功')
-        } else {
-          toast.warn(res.msg)
-        }
-      } catch (e) {
-        console.log('open egg error', e)
-        toast.warn('网络错误')
-      }
-    } else {
-      try {
-        const res: any = await eggIncomeReinvestment({
-          id: passParams.id,
-          password: passParams.password,
-        })
-        if (res.code === 0) {
-          setPassVisible(false)
-          fetchGameEgg()
-          toast.success('升级成功')
-        } else {
-          toast.warn(res.msg)
-        }
-      } catch (e) {
-        console.log('level up error', e)
-        toast.warn('网络错误')
-      }
-    }
-  }
+  // const handleOpenEgg = async passParams => {
+  //   if (eggType === 'open') {
+  //     try {
+  //       const res: any = await openEgg({
+  //         password: passParams.password,
+  //       })
+  //       if (res.code === 0) {
+  //         setPassVisible(false)
+  //         fetchGameEgg()
+  //         toast.success('打开成功')
+  //       } else {
+  //         toast.warn(res.msg)
+  //       }
+  //     } catch (e) {
+  //       console.log('open egg error', e)
+  //       toast.warn('网络错误')
+  //     }
+  //   } else {
+  //     try {
+  //       const res: any = await eggIncomeReinvestment({
+  //         id: passParams.id,
+  //         password: passParams.password,
+  //       })
+  //       if (res.code === 0) {
+  //         setPassVisible(false)
+  //         fetchGameEgg()
+  //         toast.success('升级成功')
+  //       } else {
+  //         toast.warn(res.msg)
+  //       }
+  //     } catch (e) {
+  //       console.log('level up error', e)
+  //       toast.warn('网络错误')
+  //     }
+  //   }
+  // }
 
   const handleEggConfirm = async () => {
     setEggVisible(false)
@@ -506,9 +536,9 @@ const UserPanel = () => {
     setEggVisible(false)
   }
 
-  const passOK = async (passParams: any) => {
-    await handleOpenEgg(passParams)
-  }
+  // const passOK = async (passParams: any) => {
+  //   await handleOpenEgg(passParams)
+  // }
 
   const fetchGameEgg = useCallback(async () => {
     if (address && isBindParent && token) {
@@ -534,28 +564,28 @@ const UserPanel = () => {
     }
   }, [address, isBindParent, token])
 
-  const fetchUserRewardInfo = useCallback(async () => {
-    if (address && isBindParent && token) {
-      try {
-        const array = [-1, 0, 4, 5, 6, 7, 8, 9]
-        const resolve = array.map(async e => {
-          const res: any = await getIncomeReceiveNumber(e)
-          if (res.code === 0) {
-            return res.data
-          } else {
-            return null
-          }
-        })
-        const res = await Promise.all(resolve)
-        setUserReward(res?.flat())
-       
-        // setBabyIncome(res?.flat()?[1])
-      } catch (error) {
-        console.log('fetchUserRewardInfo error', error)
-        toast.warn('网络错误')
-      }
-    }
-  }, [address, isBindParent, token])
+  // const fetchUserRewardInfo = useCallback(async () => {
+  //   if (address && isBindParent && token) {
+  //     try {
+  //       const array = [-1, 0, 4, 5, 6, 7, 8, 9]
+  //       const resolve = array.map(async e => {
+  //         const res: any = await getIncomeReceiveNumber(e)
+  //         if (res.code === 0) {
+  //           return res.data
+  //         } else {
+  //           return null
+  //         }
+  //       })
+  //       const res = await Promise.all(resolve)
+  //       setUserReward(res?.flat())
+
+  //       // setBabyIncome(res?.flat()?[1])
+  //     } catch (error) {
+  //       console.log('fetchUserRewardInfo error', error)
+  //       toast.warn('网络错误')
+  //     }
+  //   }
+  // }, [address, isBindParent, token])
 
   const fetchUserTotalRewards = useCallback(async () => {
     if (address && isBindParent && token) {
@@ -578,10 +608,56 @@ const UserPanel = () => {
   useEffect(() => {
     fetchGameEgg()
     fetchUserTotalRewards()
-  }, [fetchGameEgg,fetchUserTotalRewards])
+  }, [fetchGameEgg, fetchUserTotalRewards])
 
   const toHistory = () => {
     router.push('/history')
+  }
+
+  const handleOpen = async () => {
+    try {
+      setEggLoading(true)
+      const res: any = await createOrder({
+        type: 2,
+        id: gamingId,
+        event_type: 1
+      })
+      if (res.code === 0) {
+        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
+        const bigAmount = getDecimalAmount(amount, 18)
+        setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
+      } else {
+        toast.warn(res.msg)
+        setEggLoading(false)
+      }
+    } catch (e) {
+      console.log('open egg error', e)
+      toast.warn('网络错误')
+      setEggLoading(false)
+    }
+  }
+
+  const handleUpgrade = async () => {
+    try {
+      setUpLoading(true)
+      const res: any = await createOrder({
+        type: 2,
+        id: gamingId,
+        event_type: 2
+      })
+      if (res.code === 0) {
+        const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
+        const bigAmount = getDecimalAmount(amount, 18)
+        setBabyArgs([coin_token, bigAmount, type, id, sign_out_time, v, r, s])
+      } else {
+        toast.warn(res.msg)
+        setUpLoading(false)
+      }
+    } catch (e) {
+      console.log('open egg error', e)
+      toast.warn('网络错误')
+      setUpLoading(false)
+    }
   }
 
   const variable = Number(userInfo.dragon_egg)
@@ -671,11 +747,11 @@ const UserPanel = () => {
               </div>
             </div>
             <div className="btnWrap">
-              <div className="open" onClick={() => openDialog('open')}>
-                {t('Open Egg')}
+              <div className="open" onClick={handleOpen}>
+                {eggLoading || babyLoading && !upLoading ? t('Loading...') : t('Open Egg')}
               </div>
-              <div className="repu" onClick={() => openDialog('up')}>
-                {t('Upgrade')}
+              <div className="repu" onClick={handleUpgrade}>
+                {upLoading || babyLoading && !eggLoading ? t('Loading...') : t('Upgrade')}
               </div>
             </div>
           </SwipeItem>
@@ -767,13 +843,13 @@ const UserPanel = () => {
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
-      <PasswordModal
+      {/* <PasswordModal
         visible={passVisible}
         type={userInfo.pay_password ? 'normal' : 'set'}
         onClose={() => setPassVisible(false)}
         setVisible={setPassVisible}
         onOk={passOK}
-      />
+      /> */}
       <CommonModal visible={eggVisible} setVisible={setEggVisible} footer={<span></span>}>
         <ModalMain>
           {eggType === 'open' ? (
@@ -788,7 +864,7 @@ const UserPanel = () => {
               </div>
               <div className="title">{t('Open all eggs to receive double earnings')}</div>
               <div className="countWrap">
-                <span>{Number(eggInfo.dragon_egg_babyloong)*2}</span>
+                <span>{Number(eggInfo.dragon_egg_babyloong) * 2}</span>
                 <EggTokenIcon />
               </div>
               <div className="txt">{t('Confirm to open all eggs?')}</div>
