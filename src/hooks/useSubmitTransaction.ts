@@ -58,7 +58,6 @@ const useSubmitTransaction = (
     value: contractCallConfig.value as bigint,
     shouldFetch: contractCallConfig.query?.enabled ?? true,
   })
-
   const {
     writeContract,
     data: hash,

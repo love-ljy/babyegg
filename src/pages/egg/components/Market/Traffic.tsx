@@ -118,9 +118,9 @@ const Traffic = (props: Props) => {
             dataSource?.list?.map((item: any) => {
               return (
                 <SourceItem>
-                  <div className="item">{formatAddress(item.username)}</div>
+                  <div className="item">{formatAddress(item.username,4)}</div>
                   <div className="item">{t(item.event)}</div>
-                  <div className="item">{item.amount}</div>
+                  <div className="item">{Number(item.amount).toFixed(3)}</div>
                   <div className="item">{item.created_at}</div>
                 </SourceItem>
               )

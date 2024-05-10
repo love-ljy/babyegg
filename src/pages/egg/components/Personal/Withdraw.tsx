@@ -431,7 +431,7 @@ const Withdraw = () => {
                   <EggTokenIcon />
                 </div>
               </div>
-              <div className="txt2">{t('Minimum 10 matic withdrawals')}</div>
+            
             </div>
           ) : (
             <div>
@@ -472,9 +472,9 @@ const Withdraw = () => {
             >
               {isMaticLoading || isBabyLongLoading || isMaticWithdrawLoading || btnLoading
                 ? t('Loading...')
-                : t('YES')}
+                : t('Yes')}
             </BuyBtn>
-            <BuyBtn onClick={closeModal}>{t('NO')}</BuyBtn>
+            <BuyBtn onClick={closeModal}>{t('No')}</BuyBtn>
           </BtnWrap>
         </ModalMain>
       </CommonModal>

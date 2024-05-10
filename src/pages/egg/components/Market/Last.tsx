@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next'
 import MaticIcon from '@icons/matic.svg'
 import { useSelector } from 'react-redux'
 import {selectTotalData} from '@store/user'
+import { formatAddress } from '@utils/formatterBalance'
 
 const LastWrap = styled.div`
   display: flex;
@@ -155,7 +156,7 @@ const Last = (props: Props) => {
               return (
                 <SourceItem>
                   <div className="No">{index}</div>
-                  <div className="address">{item}</div>
+                  <div className="address">{formatAddress(item,10)}</div>
                 </SourceItem>
               )
             })

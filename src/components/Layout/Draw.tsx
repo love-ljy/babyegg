@@ -98,7 +98,7 @@ const config = [
 
 const config2 = [
   { name: 'The Egg Hatchathon', path: '/egg', icon: <Image src={recharge} width="35" height="35" alt='' />, activeIcon: <Image src={recharge} width="35" height="35" alt='' /> },
-  { name: 'BabyLoong Dash', path: '/nft', icon: <Image src={LiveIcon} width="35" height="35" alt='' />, activeIcon: <Image src={LiveIcon} width="35" height="35" alt='' />  },
+  { name: 'BabyLoong Dash', path: '/dd', icon: <Image src={LiveIcon} width="35" height="35" alt='' />, activeIcon: <Image src={LiveIcon} width="35" height="35" alt='' />  },
   { name: 'BabyLoong Raising Saga', icon: <Image src={RunIcon} width="35" height="35" alt='' />, activeIcon: <Image src={RunIcon} width="35" height="35" alt='' />, path: '/link' },
 ]
 
