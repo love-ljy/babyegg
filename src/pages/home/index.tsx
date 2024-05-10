@@ -19,9 +19,9 @@ import grounp5 from '@imgs/Group_8.png'
 import grounp6 from '@imgs/Group_9.png'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
-import { useAccount } from 'wagmi'
-import  {BabyToken,NULL_ADDRESS} from '@config/contants'
-import useTokenBalance from '@hooks/useTokenBalance'
+import { useAccount,useReadContract } from 'wagmi'
+import {BabyToken} from '@config/contants'
+import babyABI from '@config/abi/baby.json'
 
 
 const LayBox = styled.div`
@@ -212,7 +212,18 @@ const Parteners = [
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation('common')
   const { address } = useAccount()
-
+  const enabled = Boolean( address)
+  const { data: totalSupply} = useReadContract({
+    address: BabyToken,
+    abi: babyABI,
+    functionName: 'totalSupply',
+    args: [],
+    query: {
+      enabled: enabled,
+    },
+  })
+  
+  const burnNum = totalSupply ? (12800000000-(parseInt(totalSupply.toString()) / 1e18)).toFixed(0) : 0
   const router = useRouter();
   const extraPath = router.query.invite?'?invite=' + router.query.invite:''
   const HandleGoGame = (e: any) => {
@@ -301,7 +312,7 @@ const Home: React.FC = () => {
           <TokenBurn>
             <TokenTitle> {t("Current Burned")}</TokenTitle>
             <Stack flexDirection="row" alignItems="center" justifyContent="right">
-              <Typography fontSize="24px" fontWeight="bold" color="#fff">100,000,000</Typography>
+              <Typography fontSize="24px" fontWeight="bold" color="#fff">{new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Number(burnNum))}</Typography>
               <Image width="30" height={30} src={Token} alt="" />
             </Stack>
 
