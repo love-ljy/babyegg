@@ -6,7 +6,9 @@ import { history } from '@utils/api'
 import Image from 'next/image'
 import chehui from '@imgs/chehui.png'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'next-i18next'
 function ClaimRecord() {
+  const { t } = useTranslation('common')
   const [claimData, setClaimData] = useState<
     { created_at: string; number: number; state: string }[]
   >([])
@@ -37,7 +39,7 @@ function ClaimRecord() {
     <div className={styles.container}>
       <div className={styles.padding_box}>
         <div className={styles.title}>
-          <div className={styles.title_left}>领取记录</div>
+          <div className={styles.title_left}> {t('Claim record')}</div>
         </div>
         {claimData.length > 0 &&
           claimData.map((record, index) => (
@@ -45,11 +47,11 @@ function ClaimRecord() {
               <div className={styles.content}>
                 <div className={styles.root}>
                   <div className={styles.item}>
-                    <div className={styles.item_left}>领取时间</div>
+                    <div className={styles.item_left}>{t('draw time')}</div>
                     <div className={styles.item_right}>{record.created_at}</div>
                   </div>
                   <div className={styles.item}>
-                    <div className={styles.item_left}>领取数量</div>
+                    <div className={styles.item_left}>{t('Quantity claimed')}</div>
                     <div className={styles.item_right}>{record.number}</div>
                   </div>
                   {/* <div className={styles.item}>
@@ -57,7 +59,7 @@ function ClaimRecord() {
                   <div className={styles.item_right}>{record.}</div>
                 </div> */}
                   <div className={styles.item}>
-                    <div className={styles.item_left}>领取状态</div>
+                    <div className={styles.item_left}>{t('Claim status')}</div>
                     <div className={styles.item_right}>{record.state}</div>
                   </div>
                 </div>
@@ -72,7 +74,7 @@ function ClaimRecord() {
             height={18}
             className={styles.withdraw_icon}
           ></Image>
-          撤回
+          {t('Withdraw')}
         </div>
       </div>
     </div>

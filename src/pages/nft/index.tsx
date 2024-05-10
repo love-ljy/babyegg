@@ -61,7 +61,7 @@ const NftBazaar: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.box}>
         <div>
-          <div className={styles.title}>NFT市场</div>
+          <div className={styles.title}>{t('NFT market')}</div>
         </div>
         <div className={styles.fl}>
           {LevelList.map((item, index) => (
