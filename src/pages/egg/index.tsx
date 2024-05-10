@@ -22,7 +22,9 @@ import {
   selectInviteCode,
   setIsBindParent,
   setGamingId,
-  setTotalData
+  setTotalData,
+  selectBindVisible,
+  setBindVisible
 } from '@store/user'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
@@ -104,7 +106,6 @@ function LongEgg() {
   const router = useRouter()
   const { address } = useAccount()
 
-  const [visible, setVisible] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(false)
   const [bindAddress, setBindAddress] = useState<any>('')
   const [gameInfo, setGameInfo] = useState<any>({})
@@ -115,6 +116,7 @@ function LongEgg() {
 
   const inviteCode = useSelector(selectInviteCode)
   const walletInfo: any = useSelector(selectWalletInfo)
+  const bindVisible = useSelector(selectBindVisible)
   const { userBalance } = useGetBalance()
   const {
     estimatedGas: bindEstimatedGas,
@@ -129,7 +131,7 @@ function LongEgg() {
       dispatch(setIsBindParent(true))
       fetchEggCountDown()
       fetchAllNetwork()
-      setVisible(false)
+      dispatch(setBindVisible(false))
       userBalance.refetch()
     },
     onError(error, rawError) {
@@ -152,7 +154,7 @@ function LongEgg() {
         if (bindRes.data !== res.data.parent) {
           toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
           setBindAddress(res.data.parent)
-          setVisible(true)
+          dispatch(setBindVisible(true))
           setHadParent(1)
         } else {
           dispatch(setIsBindParent(true))
@@ -265,7 +267,9 @@ function LongEgg() {
         })
         if (res.code === 0) {
           if (res.data.had_parent === 0) {
-            setVisible(true)
+            if(invite){
+              dispatch(setBindVisible(true))
+            }
             setBindAddress(res.data.username)
             dispatch(setIsBindParent(false))
           } else {
@@ -316,7 +320,7 @@ function LongEgg() {
           <Personal />
         </Box>
       </Content>
-      <CommonModal visible={visible} setVisible={setVisible} footer={<span></span>}>
+      <CommonModal visible={bindVisible} footer={<span></span>}>
         <ModalMain>
           <div className="title">{t('Bind superior address')}</div>
           <CountInput type="text" value={bindAddress} onChange={handleChange} variant="standard" />

@@ -28,7 +28,8 @@ import {
   setTotalRewards,
   selectIsBindParent,
   selectBabyPrice,
-  selectGamingId
+  selectGamingId,
+  setBindVisible
 } from '@store/user'
 import {
   getGameEgg,
@@ -477,18 +478,22 @@ const UserPanel = () => {
     },
   ]
 
-  // const openDialog = async(type: string) => {
-  //   if (!address) {
-  //     toast.warn('请链接钱包')
-  //     return
-  //   }
-  // if (userInfo.pay_password) {
-  //   setEggVisible(true)
-  //   setEggType(type)
-  // } else {
-  //   setPassVisible(true)
-  // }
-  // }
+  const openDialog = (type: string) => {
+    if (!address) {
+      toast.warn('请链接钱包')
+      return
+    }
+    if(!isBindParent){
+      dispatch(setBindVisible(true))
+      return
+    }
+    if (userInfo.pay_password) {
+      setEggVisible(true)
+      setEggType(type)
+    } else {
+      setPassVisible(true)
+    }
+  }
 
   // const handleOpenEgg = async passParams => {
   //   if (eggType === 'open') {

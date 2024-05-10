@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectAuthToken, selectIsBindParent } from '@store/user'
+import { selectWalletInfo, selectAuthToken, selectIsBindParent, setBindVisible } from '@store/user'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
@@ -19,6 +19,7 @@ import { useAccount } from 'wagmi'
 import { getBalanceAmount } from '@utils/formatterBalance'
 import BigNumber from 'bignumber.js'
 import { formatUnits } from 'viem'
+import { dispatch } from '@store/index'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -250,6 +251,10 @@ const Withdraw = () => {
   const openModal = (type: string) => {
     if (!address) {
       toast.warn('请链接钱包')
+      return
+    }
+    if(!isBindParent){
+      dispatch(setBindVisible(true))
       return
     }
     setWithdrawType(type)

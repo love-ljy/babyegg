@@ -74,7 +74,8 @@ export const slice = createSlice({
       "level_income": "0",
       "yulong_week_income": "0",
       "yulong_month_income": "0"
-    }
+    },
+    bindVisible:false
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
@@ -106,11 +107,14 @@ export const slice = createSlice({
     },
     setTotalRewards: (state, { payload }) => {
       state.allRewards = payload
+    },
+    setBindVisible: (state, { payload }) => {
+      state.bindVisible = payload
     }
   },
 })
 
-export const { setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId } = slice.actions
+export const { setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId, setBindVisible } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
@@ -123,5 +127,6 @@ export const selectBabyPrice = s => s.user.babyPrice
 export const selectBabyIncome = s => s.user.babyIncome
 export const selectTotalData = s => s.user.TotalData
 export const selectTotalRewards = s => s.user.allRewards
+export const selectBindVisible = s => s.user.bindVisible
 
 export default slice.reducer
