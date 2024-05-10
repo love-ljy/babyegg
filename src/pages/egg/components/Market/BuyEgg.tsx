@@ -23,6 +23,7 @@ import {
   selectIsBindParent,
   selectGamingId,
   setBabyPrice,
+  selectBabyPrice
 } from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
@@ -95,6 +96,12 @@ const BuyEggWrap = styled.div`
   .available {
     align-self: flex-start;
     margin-top: 10px;
+    
+    & i{
+      font-style: normal;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+    }
   }
   .detailed {
     display: flex;
@@ -557,8 +564,8 @@ const BuyEgg = () => {
         <span className="buying">
           {coinType === BABY ? t('Current BABYLONG available') : t('Current $Matic available')} :
         </span>
-        <span className="count">{coinBalance}</span>
-      </div>
+        <span className="count">{coinBalance} <i>{coinType === BABY ?` ≈  ${(Number(formatBalance)*Number(babyLongPrice)).toFixed(3)}$Matic`:''}</i> </span>
+      </div> 
       {(allowance && +allowance.toString() > 0) || coinType === MATIC || coinType === OTHER ? (
         <BuyBtn
           iscancel={stakeLoading || loading || babyLoading}

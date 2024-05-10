@@ -769,7 +769,7 @@ const UserPanel = () => {
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>{userReward?.egg_income || '0'}</span>
+            <span>{userReward?.egg_income&&Number(userReward?.egg_income).toFixed(2) || '0'}</span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -779,7 +779,7 @@ const UserPanel = () => {
               <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.index_income || '0'}</span>
+              <span>{userReward?.index_income&&Number(userReward?.index_income).toFixed(2) || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -788,7 +788,7 @@ const UserPanel = () => {
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.lucky_income || '0'}</span>
+              <span>{userReward?.lucky_income&&Number(userReward?.lucky_income).toFixed(2) || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -828,7 +828,7 @@ const UserPanel = () => {
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.yulong_week_income || '0'}</span>
+              <span>{userReward?.yulong_week_income&&Number(userReward?.yulong_week_income).toFixed(2) || '0'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -837,7 +837,7 @@ const UserPanel = () => {
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.yulong_month_income || '0'}</span>
+              <span>{userReward?.yulong_month_income&&Number(userReward?.yulong_month_income).toFixed(2) || '0'}</span>
               <EggTokenIcon />
             </div>
           </CommonRow>

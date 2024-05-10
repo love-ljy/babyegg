@@ -121,6 +121,7 @@ function LongEgg() {
     bindParent,
     isLoading: bindLoading,
     refetch,
+
   } = useBind2({
     args: [bindAddress],
     onSuccess() {
@@ -132,7 +133,7 @@ function LongEgg() {
       userBalance.refetch()
     },
     onError(error, rawError) {
-      console.log('bind rawError', rawError)
+      console.log('bind rawError', error)
       toast.warn('绑定上级失败')
     },
   })

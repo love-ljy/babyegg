@@ -19,6 +19,9 @@ import grounp5 from '@imgs/Group_8.png'
 import grounp6 from '@imgs/Group_9.png'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'next-i18next'
+import { useAccount } from 'wagmi'
+import  {BabyToken,NULL_ADDRESS} from '@config/contants'
+import useTokenBalance from '@hooks/useTokenBalance'
 
 
 const LayBox = styled.div`
@@ -208,6 +211,8 @@ const Parteners = [
 
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation('common')
+  const { address } = useAccount()
+
   const router = useRouter();
   const extraPath = router.query.invite?'?invite=' + router.query.invite:''
   const HandleGoGame = (e: any) => {
