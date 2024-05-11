@@ -323,8 +323,8 @@ const Withdraw = () => {
         coin_type: 1,
       })
       if (res.code === 0) {
-        const { oid, token_amount, _deadline, v, r, s } = res.data
-        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid, +v, r, s])
+        const { oid, token_amount, _deadline,_fee, v, r, s } = res.data
+        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid,_fee, +v, r, s])
       } else {
         toast.warn(res.msg)
         setLoading(false)

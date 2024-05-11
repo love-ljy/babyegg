@@ -3,6 +3,11 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "_feeAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
                 "name": "_wlAddress",
                 "type": "address"
             },
@@ -247,6 +252,19 @@
     },
     {
         "inputs": [],
+        "name": "feeAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "getBlockTime",
         "outputs": [
             {
@@ -466,6 +484,19 @@
         "inputs": [
             {
                 "internalType": "address",
+                "name": "_feeAddress",
+                "type": "address"
+            }
+        ],
+        "name": "updateFeeAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "_tokenAddress",
                 "type": "address"
             },
@@ -554,6 +585,11 @@
             {
                 "internalType": "uint256",
                 "name": "oid",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_fee",
                 "type": "uint256"
             },
             {

@@ -483,10 +483,7 @@ const UserPanel = () => {
       toast.warn('请链接钱包')
       return
     }
-    if(!isBindParent){
-      dispatch(setBindVisible(true))
-      return
-    }
+  
     if (userInfo.pay_password) {
       setEggVisible(true)
       setEggType(type)
@@ -620,6 +617,10 @@ const UserPanel = () => {
   }
 
   const handleOpen = async () => {
+    if(!isBindParent){
+      dispatch(setBindVisible(true))
+      return
+    }
     try {
       setEggLoading(true)
       const res: any = await createOrder({
@@ -643,6 +644,10 @@ const UserPanel = () => {
   }
 
   const handleUpgrade = async () => {
+    if(!isBindParent){
+      dispatch(setBindVisible(true))
+      return
+    }
     try {
       setUpLoading(true)
       const res: any = await createOrder({

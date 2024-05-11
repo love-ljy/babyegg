@@ -154,7 +154,8 @@ function LongEgg() {
         if (bindRes.data !== res.data.parent) {
           toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
           setBindAddress(res.data.parent)
-          dispatch(setBindVisible(true))
+          // dispatch(setBindVisible(true))
+          dispatch(setIsBindParent(false))
           setHadParent(1)
         } else {
           dispatch(setIsBindParent(true))
@@ -291,6 +292,7 @@ function LongEgg() {
 
   useEffect(() => {
     fetchUserParent()
+    fetchAllNetwork()
   }, [fetchUserParent])
 
   const LongHeader = () => {
