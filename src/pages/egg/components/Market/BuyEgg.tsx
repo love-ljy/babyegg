@@ -23,7 +23,8 @@ import {
   selectIsBindParent,
   selectGamingId,
   setBabyPrice,
-  selectBabyPrice
+  selectBabyPrice,
+  setBindVisible
 } from '@store/user'
 import { toast } from 'react-toastify'
 import PasswordModal from '../PasswordModal/PasswordModal'
@@ -332,6 +333,10 @@ const BuyEgg = () => {
       toast.warn('请链接钱包')
       return
     }
+    if(!isBindParent){
+      dispatch(setBindVisible(true))
+      return
+    }
     if (coinType === OTHER) {
       // todo 余额投资
       if (userInfo.pay_password) {
@@ -464,6 +469,10 @@ const BuyEgg = () => {
   const handleApprove = async () => {
     if (!address) {
       toast.warn('请链接钱包')
+      return
+    }
+    if(!isBindParent){
+      dispatch(setBindVisible(true))
       return
     }
     const estimatedGasInFloat = approveEstimatedGas
