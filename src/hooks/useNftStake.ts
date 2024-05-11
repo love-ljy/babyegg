@@ -1,15 +1,17 @@
 import { erc721Abi, maxUint256 } from 'viem'
+import { useState } from 'react'
 import { useAccount, useReadContracts } from 'wagmi'
 import useSubmitTransaction from './useSubmitTransaction'
 import { NULL_ADDRESS } from '@config/contants'
 import useGetBalance from '@hooks/useGetBalance'
 import { toast } from 'react-toastify'
-import NFTStakeABI from '@config/abi/NFTStake.json'
+import NFTStakeABI from '@config/abi/nftStake.json'
 import nftABI from '@config/abi/nft.json'
-
-import {ethers} from 'ethers'
-
+import { readContracts,simulateContract, writeContract } from '@wagmi/core'
+import {ContractInterface} from 'ethers'
+import {config} from '@config/wagmi'
 import {NFT_STAKE_1,NFT_STAKE_2,NFT_ADDR} from '@config/contants'
+import { useEffect } from 'react'
 
 interface Options {
   
@@ -17,74 +19,47 @@ interface Options {
   onError: (error, rawError) => void
 }
 
-const useNftStake = (type:number, options?: Options) => {
+const useNftStake = () => {
   const { address } = useAccount()
+  const [ApprovalForAll,setApprovalForAll] = useState<boolean[]>()
   const { userBalance } = useGetBalance()
-  const contractInterface = new ethers.utils.Interface(nftABI);
   const enabled = Boolean(address)
- console.info(contractInterface)
-  const config = [
+ 
+  const callConfig = [
     {
-        addressOrName: NFT_ADDR as `0x${string}`,
-        contractInterface: contractInterface,
+        address: NFT_ADDR as `0x${string}`,
+        abi: erc721Abi,
         functionName: 'isApprovedForAll',
         args: [address as `0x${string}`,NFT_STAKE_1] 
     },
     {
-        addressOrName: NFT_ADDR as `0x${string}`,
-        contractInterface: contractInterface,
+      address: NFT_ADDR as `0x${string}`,
+        abi: erc721Abi,
         functionName: 'isApprovedForAll',
         args: [address as `0x${string}`,NFT_STAKE_2] 
+     },
+     {
+      address: NFT_ADDR as `0x${string}`,
+        abi:erc721Abi,
+        functionName: 'balanceOf',
+        args: [address as `0x${string}`, Number(BigInt(1).toString()) ] 
      }
   ]
-  const {
-    data: isApprovedForAll,
-    isLoading: isAllowanceLoading,
-    error: allowanceError,
-    refetch,
-  } = useReadContracts({
-    allowFailure: true,
-    contracts: enabled ? config : [],
-  })
-  console.log(allowanceError,'allowanceError',isApprovedForAll)
-  const {
-    isLoading: isAllowing,
-    estimatedGas,
-    onSubmitTransaction: allowStakeNft,
-  } = useSubmitTransaction(
-    {
-      abi: erc721Abi,
-      address: NFT_ADDR,
-      functionName: 'setApprovalForAll',
-      args: [type===1?NFT_STAKE_1:NFT_STAKE_2, true],
-      query: {
-        enabled: true,
-      },
-    },
-    {
-      onSuccess() {
-        toast.success('授权成功')
-        userBalance.refetch()
-        refetch()
-      },
-      onError(error, rawError) {
-        console.log('stake error', rawError)
-        toast.warn('授权失败')
-      },
-      ...options
+  const fetchUserAllowance = async () => {
+    const data:any = await readContracts(config,{contracts:callConfig})
+    console.info(data)
+    if(data){
+
     }
-  )
-  const isApprovedForAllList = isApprovedForAll as any[]
+    // setApprovalForAll(allowance)
+  }
   
+  useEffect(() => {
+    fetchUserAllowance()
+  }, [])
 
   return {
-    isAllowanceLoading,
-    isAllowing,
-    isApprovedForAllList,
-    allowanceError,
-    refetch,
-    allowStakeNft,
-    approveEstimatedGas: estimatedGas,
+   
   }
 }
 

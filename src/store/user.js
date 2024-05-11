@@ -45,7 +45,11 @@ export const slice = createSlice({
       dragon_egg: "",
       can_withdraw: "",
       pay_password: "",
-      last_sort_num: ""
+      last_sort_num: "",
+      min_son_team_performance:"",
+      min_son_team_performance_week: "",
+      min_son_team_performance_month: "",
+      is_whitelisted_user: ""
     },
     walletInfo: {
       address: '',

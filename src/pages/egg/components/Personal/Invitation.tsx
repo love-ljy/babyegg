@@ -123,7 +123,7 @@ const Invitation = () => {
           <span>{t('Current Amount of Total Minor Group Sales')}</span>
         </div>
         <div className="bot">
-          <span>{userInfo.share_award || 0}</span>
+          <span>{userInfo.min_son_team_performance || 0}</span>
           <div className="bot-r">
             <MaticIcon />
             <span className="topTxt">Matic</span>
@@ -135,7 +135,7 @@ const Invitation = () => {
           <span>{t('Current Amount of Your Weekly New Sales')}</span>
         </div>
         <div className="bot">
-          <span>{userInfo.share_award || 0}</span>
+          <span>{userInfo.min_son_team_performance_week || 0}</span>
           <div className="bot-r">
             <MaticIcon />
             <span className="topTxt">Matic</span>
@@ -147,7 +147,7 @@ const Invitation = () => {
           <span>{t('Current Amount of Your Monthly New Sales')}</span>
         </div>
         <div className="bot">
-          <span>{userInfo.share_award || 0}</span>
+          <span>{userInfo.min_son_team_performance_month || 0}</span>
           <div className="bot-r">
             <MaticIcon />
             <span className="topTxt">Matic</span>

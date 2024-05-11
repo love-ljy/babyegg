@@ -44,15 +44,16 @@ function CountDown({ initialTimeInSeconds }: Props) {
   }
 
   // Renderer callback with condition
-  const renderer = ({ hours, minutes, seconds, completed }) => {
+  const renderer = ({ days,hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
       return <Completionist />;
     } else {
+      let hour = days * 24 + hours
       // Render a countdown
       return <div> <TimeWrap>
         <div className="time-item">
-          <span className="counter">{hours<10?`0${hours}`:hours}</span>
+          <span className="counter">{hour<10?`0${hour}`:hour}</span>
           <span className="label">{t('hours')}</span>
         </div>
         <Image src={quotePng} width={3} height={12} alt=":" />

@@ -48,6 +48,12 @@ const getGameInfo = async () => {
   })
 }
 
+const getGameCountDown = async () => {
+  return request({
+    url: '/api/main/nowTime',
+    method: 'get',
+  })
+}
 // 获取龙蛋信息
 const getGameEgg = async () => {
   return request({
@@ -251,4 +257,5 @@ export {
   incomeReceive,
   getUserHistory,
   getUserAllIncome,
+  getGameCountDown
 }

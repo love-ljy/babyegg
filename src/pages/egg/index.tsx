@@ -12,6 +12,7 @@ import {
   getUserInfo,
   getGameInfo,
   queryTotalNet,
+  getGameCountDown
 } from '@utils/api'
 import CommonModal from './components/commonModal/commonModal'
 import {
@@ -225,11 +226,9 @@ function LongEgg() {
       const res: any = await getGameInfo()
       if (res.code === 0) {
         setGameInfo(res.data)
-        const { end_time } = res.data
-        const endDate = new Date(end_time).getTime()
-        const startDate = new Date().getTime()
-        setCountDown(Math.ceil(endDate - startDate))
-        const isEnd = Math.ceil(endDate - startDate) < 0
+        const { end_time,now_time,remaining_time } = res.data
+        setCountDown(Math.ceil(now_time + Number(remaining_time))*1000)
+        const isEnd = Math.ceil(remaining_time) <= 0
         setGameEnd(isEnd)
         dispatch(setGamingId(res.data.id))
       } else if (res.code === 1) {
@@ -293,11 +292,12 @@ function LongEgg() {
   useEffect(() => {
     fetchUserParent()
     fetchAllNetwork()
+    fetchEggCountDown()
   }, [fetchUserParent])
 
   const LongHeader = () => {
     const timer = new Date().getTime() + Number(Number(gameInfo?.remaining_time) * 1000)
-    const deadlineDate = new Date(timer);
+    const deadlineDate = new Date(countDown);
     return (
       <LongEggWrap>
         <Typography fontWeight={700} fontSize={25}>

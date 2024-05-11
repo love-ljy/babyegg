@@ -73,7 +73,7 @@ const Participation: React.FC<{ allNet: any }> = ({ allNet }) => {
           {t('TOTAL DISTRIBUTE')}
         </Typography>
         <div className="bot">
-          <span className="count">{allNet?.wait_out_babyloong||'-'}</span>
+          <span className="count">{Number(allNet?.wait_out_babyloong).toFixed(0)||'-'}</span>
           <div className="img">
             <EggTokenIcon />
           </div>
