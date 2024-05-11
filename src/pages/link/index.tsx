@@ -1,58 +1,165 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import styles from './bazaar.module.css'
 import Image from 'next/image'
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 import babyloong from '@imgs/babyloong.png'
-import { whitelistedUserList, getUserInfo } from '@utils/api'
+import { whitelistedUserList, incomeReceive } from '@utils/api'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { toast } from 'react-toastify'
 import chehui from '@imgs/chehui.png'
 import { useTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../../next-i18next.config.js'
+import { useSelector } from 'react-redux'
+import { selectAuthToken } from '@store/user'
+import { BabyToken } from '@config/contants'
+import useBabyLongReward from '@hooks/useBabyLongReward'
+import useGetBalance from '@hooks/useGetBalance'
+import { useRouter } from 'next/router'
+
 const NftBazaar: React.FC = () => {
   const { t } = useTranslation('common')
+  const router = useRouter();
   const [state, setState] = useState<any>({})
+  const [btnThirtyLoading, setBtnThirtyLoading] = useState(false)
+  const [btnSevenTyLoading, setBtnSevenTyLoading] = useState(false)
   const [cardList, setCardList] = useState<any[]>([
     {
+      type: 'none',
       title: 'you have $BabyLoong awaiting collection',
       number: 0,
     },
     {
+      type: '30',
       title: '30% Available amount',
       number: 0,
     },
     {
+      type: '70',
       title: '70% Only receive it after activation',
       number: 0,
     },
   ])
-  //
-  const fetchUserInfo = useCallback(async () => {
+
+  const token = useSelector(selectAuthToken)
+  const { userBalance } = useGetBalance()
+  const { isBabyLongLoading, setBabyLongParam } = useBabyLongReward({
+    onSuccess() {
+      toast.success('提取成功')
+      userBalance.refetch()
+      setBabyLongParam([])
+      setBtnThirtyLoading(false)
+      setBtnSevenTyLoading(false)
+    },
+    onError(error, rawError) {
+      console.log('thirty babyLongWithdraw rawError', rawError)
+      toast.warn('提取失败')
+      setBabyLongParam([])
+      setBtnThirtyLoading(false)
+      setBtnSevenTyLoading(false)
+    },
+    mutationError() {
+      setBabyLongParam([])
+      setBtnThirtyLoading(false)
+      setBtnSevenTyLoading(false)
+    },
+  })
+
+  const goToEgg = () => {
+    router.push('egg');
+  }
+
+  const goHome = () => {
+    router.push('/');
+  }
+
+  const handleClick = (item) => {
+    if (item.type === '30') {
+      handleThirty(item)
+    } else {
+      handleSeventy(item)
+    }
+  }
+
+  const handleThirty = async (item) => {
+    if (item.number === 0) {
+      toast.warn('提现额度为0')
+      return
+    }
     try {
-      const res: any = await whitelistedUserList()
+      setBtnThirtyLoading(true)
+      const res: any = await incomeReceive({
+        type: -1,
+        coin_type: 1,
+      })
       if (res.code === 0) {
-        console.log(res, 'res')
-        setState(res.data)
-        let list = cardList.map((item,index)=>{
-          return{
-            ...item,
-            ...{
-              number:index === 0?res.data.number:index === 1?res.data.thirty_percent_type:res.data.seventy_percent_type
-            }
-          }
-        })
-        setCardList(list)
+        const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
+        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid, _fee, +v, r, s])
       } else {
-        toast.warn('网络错误')
+        toast.warn(res.msg)
+        setBtnThirtyLoading(false)
       }
     } catch (e) {
-      console.log('e', e)
+      console.log('baby withdraw error', e)
       toast.warn('网络错误')
+      setBtnThirtyLoading(false)
     }
-  }, [])
+  }
+
+  const handleSeventy = async (item) => {
+    if (!state.is_it_activated) {
+      toast.warn('请先激活')
+    }
+    if (item.number === 0) {
+      toast.warn('提现额度为0')
+      return
+    }
+    try {
+      setBtnSevenTyLoading(true)
+      const res: any = await incomeReceive({
+        type: -1,
+        coin_type: 1,
+      })
+      if (res.code === 0) {
+        const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
+        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid, _fee, +v, r, s])
+      } else {
+        toast.warn(res.msg)
+        setBtnSevenTyLoading(false)
+      }
+    } catch (e) {
+      console.log('baby withdraw error', e)
+      toast.warn('网络错误')
+      setBtnSevenTyLoading(false)
+    }
+  }
+
+  const fetchUserInfo = useCallback(async () => {
+    if (token) {
+      try {
+        const res: any = await whitelistedUserList()
+        if (res.code === 0) {
+          setState(res.data)
+          let list = cardList.map((item, index) => {
+            return {
+              ...item,
+              ...{
+                number: index === 0 ? res.data.number : index === 1 ? res.data.thirty_percent_type : res.data.seventy_percent_type
+              }
+            }
+          })
+          setCardList(list)
+        } else {
+          toast.warn('网络错误')
+        }
+      } catch (e) {
+        console.log('e', e)
+        toast.warn('网络错误')
+      }
+    }
+  }, [token])
+
   useEffect(() => {
     fetchUserInfo()
-  }, [])
+  }, [fetchUserInfo])
 
   return (
     <div className={styles.container}>
@@ -71,7 +178,10 @@ const NftBazaar: React.FC = () => {
                     <div className={styles.card_item_tips}>≈ {state.matic} MATIC</div>
                   </div>
                 </div>
-                {index > 0 ? <div className={styles.card_item_buttom}>{t('Get')}</div> : <></>}
+                {index > 0 ? <div className={styles.card_item_buttom} onClick={() => handleClick(item)}>
+                  {index !== 2 && (index === 1 && btnThirtyLoading && isBabyLongLoading ? t('Loading') : t('Get'))}
+                  {index !== 1 && (index === 2 && btnSevenTyLoading && isBabyLongLoading ? t('Loading') : t('Get'))}
+                </div> : <></>}
               </div>
             </div>
           ))}
@@ -82,13 +192,13 @@ const NftBazaar: React.FC = () => {
             <div className={styles.second_card_title}>{t('Double dragon eggs for first activation')}</div>
             <span className={styles.second_card_tips}>({t('Only valid for the first activation')})</span>
           </div>
-          <div className={styles.second_card_button}>{t('activate now')}</div>
+          <div className={styles.second_card_button} onClick={goToEgg}>{t('activate now')}</div>
         </div>
       )}
 
       <div className={styles.back}>
         <Image src={chehui} alt="1" width={20} height={18} className={styles.withdraw_icon}></Image>
-        <div className={styles.go_back}>{t('Go Back')}</div>
+        <div className={styles.go_back} onClick={goHome}>{t('Go Back')}</div>
       </div>
     </div>
   )
