@@ -5,21 +5,25 @@ import Image from 'next/image'
 import goldendragon from '@imgs/goldendragon.png'
 import Woodendragon from '@imgs/Woodendragon.png'
 import hose from '@imgs/hose.png'
+import tclong from '@imgs/tclong.jpg'
 import hotdragon from '@imgs/hotdragon.png'
 import earthridge from '@imgs/earthridge.png'
 import { getUserInfo, nftList } from '@utils/api'
 import { toast } from 'react-toastify'
 
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { config } from '../../wagmi/wagmi'
-import abi from './abi.json'
+import useNftStake from '@hooks/useNftStake'
 import { useTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../../next-i18next.config.js'
 const NftBazaar: React.FC = () => {
   const { t } = useTranslation('common')
   const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [type, setType] = useState<number>(1)
   const [selectedNft, setSelectedNft] = useState<any>(null) // 用于存储选中的NFT信息
+  const [isApprove, setIsApprove] = useState<string>('false')
+  const [isApprove1, setIsApprove1] = useState<string>('false')
   const LevelList = [
+    { name: 'Five Dragon', imgSrc: tclong },
     { name: 'Golden Dragon', imgSrc: goldendragon },
     {
       name: 'Wood Dragon',
@@ -32,10 +36,38 @@ const NftBazaar: React.FC = () => {
   const closeModal = () => {
     setModalOpen(false)
   }
-  const openModal = (item: any) => {
-    setSelectedNft(item) // 设置选中的NFT信息
-    setModalOpen(true)
+  const openModal = (item: any,index:number) => {
+    console.info(index,isApprove,isApprove1)
+    if(index===0&&isApprove){
+      setSelectedNft(item) // 设置选中的NFT信息
+      setModalOpen(true)
+    }else if(index>0&&isApprove1){
+      setSelectedNft(item) // 设置选中的NFT信息
+      setModalOpen(true)
+    }else{
+      setType(index===0?1:2);
+      allowStakeNft()
+    }
+
+    
   }
+
+const {isApprovedForAllList,allowStakeNft} = useNftStake(type,{
+  onSuccess: () => {
+    toast.success('Stake success')
+  },
+  onError: () => {
+    toast.error('Stake failed')
+  },
+})
+
+  useEffect(() => {
+    if (isApprovedForAllList) {
+      setIsApprove(isApprovedForAllList[0])
+      setIsApprove1(isApprovedForAllList[1])
+    }
+  }, [isApprovedForAllList])
+  console.info(isApprovedForAllList)
   //
   const fetchUserInfo = useCallback(async () => {
     try {
@@ -70,7 +102,7 @@ const NftBazaar: React.FC = () => {
                 <div>
                   <div
                     className={styles.list}
-                    onClick={() => openModal(item)}
+                    onClick={() => openModal(item,index)}
                     role="button"
                     tabIndex={0}
                   >
@@ -80,7 +112,8 @@ const NftBazaar: React.FC = () => {
                       </div>
                       <div className={styles.nft_name}>{t('NFT name')}</div>
                       <div className={styles.nfg_itemName}>{t(item.name)}</div>
-                      <div className={styles.pledge}>{t('Pledges')}</div>
+                     {index===0&& <div className={styles.pledge}>{t(!isApprove?'APPROVE':'Pledges')}</div>}
+                     {index>0&& <div className={styles.pledge}>{t(!isApprove1?'APPROVE':'Pledges')}</div>}
                     </div>
                   </div>
                 </div>

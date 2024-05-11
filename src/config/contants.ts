@@ -1,7 +1,7 @@
-export const MainContractAddr = '0x741dC0F39e2F3a460daf8D228aB017AB26916FaB'
+export const MainContractAddr = '0x0E8f973dC6a8A09b08b8d8e0F7A50D8A25903dC3'
 export const BurnContractAddr = '0xd23dC67e61322Da540D07f3aeCd9dbC8E81fc13C'
 export const BabyToken = '0x8CF572C204f3294267B0bFff180d0ceA5eC3E903'
-export const withDrawAddr = '0x3404DB971978Ed8C6A316EC7746f0E4d0356B42B'
+export const withDrawAddr = '0x3598b1989b9E5Ad482cb745C4D91cf30b708D37b'
 export const NULL_ADDRESS: `0x${string}` = "0x0000000000000000000000000000000000000000"
 export const NFT_ADDR = '0x6462573e050670fc149b3eaeBF8b296d93d8A6Dc'
 export const NFT_STAKE_1 = '0xd38e84F1bC90feB32A4215c4514f7857437e6ee5'
