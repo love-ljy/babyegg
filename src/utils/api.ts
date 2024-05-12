@@ -228,6 +228,14 @@ const whitelistedUserList = async () => {
     method: 'get'
   })
 }
+// 根据地址获取是否白名单用户
+const infoByAddress = async (params: any) => {
+  return request({
+    url: '/api/user/infoByAddress',
+    method: 'get',
+    params
+  })
+}
 
 export {
   whitelistedUserList,
@@ -257,5 +265,6 @@ export {
   incomeReceive,
   getUserHistory,
   getUserAllIncome,
-  getGameCountDown
+  getGameCountDown,
+  infoByAddress
 }

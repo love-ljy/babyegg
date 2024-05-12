@@ -14,6 +14,7 @@ import { BabyToken } from '@config/contants'
 import useBabyLongReward from '@hooks/useBabyLongReward'
 import useGetBalance from '@hooks/useGetBalance'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 
 const NftBazaar: React.FC = () => {
   const { t } = useTranslation('common')
@@ -41,6 +42,7 @@ const NftBazaar: React.FC = () => {
 
   const token = useSelector(selectAuthToken)
   const { userBalance } = useGetBalance()
+  const { address } = useAccount()
   const { isBabyLongLoading, setBabyLongParam } = useBabyLongReward({
     onSuccess() {
       toast.success('提取成功')
@@ -80,6 +82,10 @@ const NftBazaar: React.FC = () => {
   }
 
   const handleThirty = async (item) => {
+    if (!address) {
+      toast.warn('请链接钱包')
+      return
+    }
     if (item.number === 0) {
       toast.warn('提现额度为0')
       return
@@ -105,6 +111,10 @@ const NftBazaar: React.FC = () => {
   }
 
   const handleSeventy = async (item) => {
+    if (!address) {
+      toast.warn('请链接钱包')
+      return
+    }
     if (!state.is_it_activated) {
       toast.warn('请先激活')
     }
