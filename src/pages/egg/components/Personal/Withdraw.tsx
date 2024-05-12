@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectAuthToken, selectIsBindParent, setBindVisible } from '@store/user'
+import { selectWalletInfo, selectAuthToken, selectIsBindParent, setBindVisible,selectUserInfo } from '@store/user'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
@@ -19,6 +19,7 @@ import { useAccount } from 'wagmi'
 import { getBalanceAmount } from '@utils/formatterBalance'
 import BigNumber from 'bignumber.js'
 import { formatUnits } from 'viem'
+import useBatchFetchData from '@hooks/useBatchFetchData'
 import { dispatch } from '@store/index'
 
 const InvitationWrap = styled.div`
@@ -168,16 +169,22 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 `
 
 const Withdraw = () => {
-  // @ts-ignore
+  const feeList = [
+    { limit:500,invites:4,value:60},
+    { limit:500,invites:5,value:50},
+    { limit:1000,invites:8,value:40},
+    { limit:3000,invites:10,value:30}
+  ]
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [btnLoading, setLoading] = useState(false)
   const [withdrawType, setWithdrawType] = useState('')
   const walletInfo = useSelector(selectWalletInfo)
+  const userInfo:any = useSelector(selectUserInfo)
   const [maticMidReward, setMaticMidReward] = useState<any>('')
   const [babyLongReward, setBabyLongReward] = useState<any>('')
   const { userBalance } = useGetBalance()
-
+  const {flowwers} =useBatchFetchData()
   const gamingId: any = useSelector(selectGamingId)
 
   const { address } = useAccount()
@@ -210,6 +217,25 @@ const Withdraw = () => {
       setLoading(false)
     },
   })
+
+  const userFee =  useMemo(()=>{
+    const limit = Number(userInfo.my_performance)
+    const invites = Number(flowwers)
+    for (let i = feeList.length - 1; i >= 0; i--) {
+      if (limit > feeList[i].limit) {
+        // 当找到第一个limit条件符合的条目时，开始检查invites
+        for (let j = i; j >= 0; j--) {
+          if (invites >= feeList[j].invites) {
+            return feeList[j].value;
+          }
+        }
+        // 如果所有的invites都比输入的小，则返回最小的invites对应的value
+        return feeList[i].value;
+      }
+    }
+    // 如果输入的limit小于所有定义的limit，返回最小limit的value
+    return feeList[0].value;
+  },[userInfo, flowwers]) 
   console.info(maticContractReward,'maticContractReward')
 
   const { isMaticWithdrawLoading, maticWithdraw, maticEstimateGas } = useMaticWithdraw({
@@ -278,6 +304,10 @@ const Withdraw = () => {
       toast.warn('提现额度为0')
       return
     }
+    if (+maticContractReward + +maticMidReward < 10) {
+      toast.warn('最小提现额度为10')
+      return
+    }
     if (+maticMidReward > 0) {
       try {
         setLoading(true)
@@ -335,6 +365,7 @@ const Withdraw = () => {
       setLoading(false)
     }
   }
+
 
   const fetchUserRewardInfo = useCallback(async () => {
     if (address && isBindParent && token) {
@@ -455,7 +486,7 @@ const Withdraw = () => {
               </div>
               <div className="divied"></div>
               <div className="countWrap">
-                <span className="label">{t('Automatic reinvestment')} (60%)</span>
+                <span className="label">{t('Automatic reinvestment')} ({userFee}%)</span>
                 <span>{maticWithdrawInfo.maticRepeat}</span>
               </div>
               <div className="divied"></div>

@@ -745,7 +745,7 @@ const UserPanel = () => {
                 <div className="rit-bot">
                   <div className="t">
                     <EggTokenIcon />
-                    <span>{Number(eggInfo.dragon_egg_babyloong) || '0'}</span>
+                    <span>{Number(eggInfo.dragon_egg_babyloong).toFixed(0) || '0'}</span>
                   </div>
                   <div className="rit">
                     <span>
@@ -809,7 +809,7 @@ const UserPanel = () => {
               <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.last_100_income || '0'}</span>
+              <span>{Number(userReward?.last_100_income).toFixed(0) || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -818,7 +818,7 @@ const UserPanel = () => {
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.last_one_income || '0'}</span>
+              <span>{Number(userReward?.last_one_income).toFixed(0) || '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -886,12 +886,12 @@ const UserPanel = () => {
               </div>
               <div className="title">{t('Current total earnings from all eggs')}</div>
               <div className="countWrap">
-                <span>{Number(eggInfo.dragon_egg_babyloong)}</span>
+                <span>{Number(eggInfo.dragon_egg_babyloong).toFixed(0)}</span>
                 <EggTokenIcon />
               </div>
               <div className="mid">
                 <div className="box">
-                  <span>{Number(eggInfo.dragon_egg_babyloong)}</span>
+                  <span>{Number(eggInfo.dragon_egg_babyloong).toFixed(0)}</span>
                   <EggTokenIcon />
                 </div>
                 <span className="equ">=</span>
