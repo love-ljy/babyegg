@@ -79,7 +79,8 @@ export const slice = createSlice({
       "yulong_week_income": "0",
       "yulong_month_income": "0"
     },
-    bindVisible:false
+    bindVisible:false,
+    isWhitelistedUser:false
   },
   reducers: {
     setWalletInfo: (state, { payload }) => {
@@ -114,11 +115,14 @@ export const slice = createSlice({
     },
     setBindVisible: (state, { payload }) => {
       state.bindVisible = payload
+    },
+    setIsWhitelistedUser: (state, { payload }) => {
+      state.isWhitelistedUser = payload
     }
   },
 })
 
-export const { setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId, setBindVisible } = slice.actions
+export const { setTotalRewards, setTotalData, setBabyIncome, setBabyPrice, setUserInfo, setAuthToken, setInviteCode, setWalletInfo, setIsBindParent, setGamingId, setBindVisible, setIsWhitelistedUser } = slice.actions
 
 // getter
 export const selectWalletInfo = s => s.user.walletInfo
@@ -132,5 +136,6 @@ export const selectBabyIncome = s => s.user.babyIncome
 export const selectTotalData = s => s.user.TotalData
 export const selectTotalRewards = s => s.user.allRewards
 export const selectBindVisible = s => s.user.bindVisible
+export const selectIsWhitelistedUser = s => s.user.isWhitelistedUser
 
 export default slice.reducer

@@ -28,10 +28,12 @@ import RunIcon from '@imgs/run.png'
 import recharge from '@imgs/recharge.png'
 import enImg from '@imgs/en.png'
 import zhImg from '@imgs/zh.png'
-
+import { useSelector } from 'react-redux'
+import { selectIsWhitelistedUser } from '@store/user'
 import { alpha } from '@mui/material/styles';
 import { pink } from '@mui/material/colors';
 import Switch from '@mui/material/Switch';
+import { toast } from 'react-toastify';
 
 interface DrawProps {
   open: boolean
@@ -106,11 +108,16 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
   const { pathname } = useRouter()
   const { t } = useTranslation('common')
   const router = useRouter();
+  const isWhitelistedUser = useSelector(selectIsWhitelistedUser)
   const { locales, locale: currentLocale } = router;
   const extraPath = router.query.invite?'?invite=' + router.query.invite:''
 
-  const toggleDrawer = (path: string) => {
-    Router.push(path+extraPath);
+  const toggleDrawer = (path: string) => {    
+    if(path === '/link' && !isWhitelistedUser) {
+      toast.warn('您不是白名单用户')
+      return
+    }
+    router.push(path+extraPath);
     onClose()
   }
   const [checked, setChecked] = React.useState(false);
