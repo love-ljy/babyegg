@@ -93,15 +93,15 @@ const LogoBox = styled.div`
 `
 
 const config = [
-  { name: 'Home', icon: <HomeIcon />, activeIcon: <HomeActiveIcon />, path: '/' },
-  { name: 'NFT', icon: <NftIcon />, activeIcon: <NftActiveIcon />, path: '/nft' },
-  { name: 'WhiteList', icon: <LinkIcon />, activeIcon: <LinkActiveIcon />, path: '/link' },
+  { name: 'Home', icon: <HomeIcon />, activeIcon: <HomeActiveIcon />, path: '/',isOpen:true },
+  { name: 'NFT', icon: <NftIcon />, activeIcon: <NftActiveIcon />, path: '/nft',isOpen:true },
+  { name: 'WhiteList', icon: <LinkIcon />, activeIcon: <LinkActiveIcon />, path: '/link',isOpen:true },
 ]
 
 const config2 = [
-  { name: 'The Egg Hatchathon', path: '/egg', icon: <Image src={recharge} width="35" height="35" alt='' />, activeIcon: <Image src={recharge} width="35" height="35" alt='' /> },
-  { name: 'BabyLoong Dash', path: '/dd', icon: <Image src={LiveIcon} width="35" height="35" alt='' />, activeIcon: <Image src={LiveIcon} width="35" height="35" alt='' />  },
-  { name: 'BabyLoong Raising Saga', icon: <Image src={RunIcon} width="35" height="35" alt='' />, activeIcon: <Image src={RunIcon} width="35" height="35" alt='' />, path: '/link' },
+  { name: 'The Egg Hatchathon', path: '/egg',isOpen:true, icon: <Image src={recharge} width="35" height="35" alt='' />, activeIcon: <Image src={recharge} width="35" height="35" alt='' /> },
+  { name: 'BabyLoong Dash', path: '/dd',isOpen:false, icon: <Image src={LiveIcon} width="35" height="35" alt='' />, activeIcon: <Image src={LiveIcon} width="35" height="35" alt='' />  },
+  { name: 'BabyLoong Raising Saga',  path: '/ff',isOpen:false,icon: <Image src={RunIcon} width="35" height="35" alt='' />, activeIcon: <Image src={RunIcon} width="35" height="35" alt='' />, },
 ]
 
 const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
@@ -112,7 +112,8 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
   const { locales, locale: currentLocale } = router;
   const extraPath = router.query.invite?'?invite=' + router.query.invite:''
 
-  const toggleDrawer = (path: string) => {    
+  const toggleDrawer = (path: string,isOpen:boolean) => {   
+    if(!isOpen)return;
     if(path === '/link' && !isWhitelistedUser) {
       toast.warn('您不是白名单用户')
       return
@@ -135,7 +136,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
           <List>
             {config.map((text, index) => (
               <ListItem key={text.name} disablePadding sx={{ marginBottom: '10px' }}>
-                <MenuButton onClick={() => { toggleDrawer(text.path) }} isactive={pathname === text.path ? 1 : 0}>
+                <MenuButton onClick={() => { toggleDrawer(text.path,text.isOpen) }} disabled={!text.isOpen} isactive={pathname === text.path ? 1 : 0}>
                   <ListItemIcon sx={{ minWidth: '40px' }}>
                     {pathname === text.path ? text.activeIcon : text.icon}
                   </ListItemIcon>
@@ -174,7 +175,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
               {t('Trending Games')}
             </Typography>
             {config2.map((text, index) => (
-              <Link  onClick={onClose} href={text.path}>
+              <Link  onClick={onClose} href={text.isOpen?text.path:''}>
               <ListItem key={text.name} disablePadding>
                 <ListItemButton>
                   <ListItemIcon sx={{ minWidth: '40px' }}>

@@ -4,33 +4,45 @@ import { useAccount, useReadContract } from 'wagmi'
 import { NULL_ADDRESS } from '@config/contants'
 import { getBalanceNumber } from '@utils/formatterBalance'
 import BigNumber from 'bignumber.js'
+import {config} from '@config/wagmi'
+import { readContract,simulateContract, writeContract } from '@wagmi/core'
 
 const useTokenBalance = (tokenAddress: `0x${string}`) => {
   const { address } = useAccount()
   const [tokenBalance, setTokenBalance] = useState(0)
   const enabled = Boolean(tokenAddress && tokenAddress !== NULL_ADDRESS && address)
-  const { data: balance } = useReadContract({
-    abi: erc20Abi,
-    address: tokenAddress,
-    functionName: 'balanceOf',
-    args: [address as `0x${string}`],
-    query: {
-      enabled: enabled,
-    },
-  })
 
 
-  useEffect(() => {
-    if (balance) {
-      const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18)
-      setTokenBalance(formattedBalance)
-    } else {
+  const fetchTokenBalance = async()=>{
+    try {
+      const balance = await readContract(config,{
+        abi: erc20Abi,
+        address: tokenAddress,
+        functionName: 'balanceOf',
+        args: [address as `0x${string}`],
+      })
+      console.info(balance,'balance')
+      if (balance) {
+        console.info(balance,'balance')
+        const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18)
+        setTokenBalance(formattedBalance)
+      } else {
+        setTokenBalance(0)
+      }
+    } catch (error) {
       setTokenBalance(0)
     }
-  }, [balance])
+   
+  }
+
+  useEffect(() => {
+   if(address){
+    fetchTokenBalance()
+   }
+  }, [address])
 
   return {
-    balance,
+    tokenBalance,
     formatBalance: tokenBalance,
   }
 }

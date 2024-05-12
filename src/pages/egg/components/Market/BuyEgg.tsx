@@ -297,7 +297,7 @@ const BuyEgg = () => {
     handleStake,
     isLoading: stakeLoading,
   } = useStake({
-    value: BigInt(30 * 1e18),
+    value: BigInt(buyNum * 1e18),
     onSuccess() {
       toast.success('下单成功')
       userBalance.refetch()

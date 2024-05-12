@@ -46,28 +46,13 @@ const NftBazaar: React.FC = () => {
       setModalOpen(true)
     }else{
       setType(index===0?1:2);
-      allowStakeNft()
     }
 
     
   }
 
-const {isApprovedForAllList,allowStakeNft} = useNftStake(type,{
-  onSuccess: () => {
-    toast.success('Stake success')
-  },
-  onError: () => {
-    toast.error('Stake failed')
-  },
-})
 
-  useEffect(() => {
-    if (isApprovedForAllList) {
-      setIsApprove(isApprovedForAllList[0])
-      setIsApprove1(isApprovedForAllList[1])
-    }
-  }, [isApprovedForAllList])
-  console.info(isApprovedForAllList)
+
   //
   const fetchUserInfo = useCallback(async () => {
     try {
