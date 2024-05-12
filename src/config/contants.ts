@@ -1,4 +1,4 @@
-export const MainContractAddr = '0x0E8f973dC6a8A09b08b8d8e0F7A50D8A25903dC3'
+export const MainContractAddr = '0xe29C111813dFC386ef9bb95C093197D06e20365a'
 export const BurnContractAddr = '0xd23dC67e61322Da540D07f3aeCd9dbC8E81fc13C'
 export const BabyToken = '0x8CF572C204f3294267B0bFff180d0ceA5eC3E903'
 export const withDrawAddr = '0x3598b1989b9E5Ad482cb745C4D91cf30b708D37b'

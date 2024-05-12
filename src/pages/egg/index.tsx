@@ -149,10 +149,9 @@ function LongEgg() {
     try {
       const res: any = await getUserInfo()
       if (res.code === 0) {
-        const bindRes = await refetch()
-        console.log('bindRes', bindRes);
+        const bindRes:any = await refetch()
         
-        if (bindRes.data !== res.data.parent) {
+        if (bindRes.data?.toLocaleLowerCase() !== res.data.parent.toLocaleLowerCase()) {
           toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
           setBindAddress(res.data.parent)
           // dispatch(setBindVisible(true))

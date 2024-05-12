@@ -33,7 +33,7 @@ const useStake = ({ value, onSuccess, onError }: Props) => {
       onSuccess,
     }
   )
-
+  
   return {
     isPreparing,
     error,
