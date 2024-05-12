@@ -467,13 +467,13 @@ const UserPanel = () => {
 
   const LevelList = [
     { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt="" /> },
-    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt="" /> },
-    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt="" /> },
-    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt="" /> },
-    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt="" /> },
+    { name: 'Novice', count: 1000, imgSrc: <Image src={VIP1} width={61} height={66} alt="" /> },
+    { name: 'Elite', count: 3000, imgSrc: <Image src={VIP2} width={61} height={66} alt="" /> },
+    { name: 'Expert', count: 5000, imgSrc: <Image src={VIP3} width={61} height={66} alt="" /> },
+    { name: 'Master', count: 10000, imgSrc: <Image src={VIP4} width={61} height={66} alt="" /> },
     {
       name: 'Grandmaster',
-      count: 3000,
+      count: 30000,
       imgSrc: <Image src={VIP5} width={61} height={66} alt="" />,
     },
   ]
@@ -694,7 +694,7 @@ const UserPanel = () => {
         <div className="prograssWrap">
           <div className="masterWrap">
             <div className="title">{t(LevlName)}</div>
-            <span className="percent">{userInfo.dragon_egg || 0}/1000</span>
+            <span className="percent">{userInfo.dragon_egg || 0}/{userInfo.next_level_need_egg_num&&userInfo.next_level_need_egg_num||1000}</span>
           </div>
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={Number(userInfo.dragon_egg) / 100} />

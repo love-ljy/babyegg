@@ -270,20 +270,20 @@ const Rank = (props: Props) => {
   const { t } = useTranslation('common')
   const { dataSource = [], myRank, rankLevel = [] } = props
   const LevelList = [
-    { name: 'Intern', count: 1 },
-    { name: 'Novice', count: 2 },
-    { name: 'Elite', count: 3 },
-    { name: 'Expert', count: 4 },
-    { name: 'Master', count: 5 },
-    { name: 'Grandmaster', count: 6 }
+    { name: 'Intern', count: 0 },
+    { name: 'Novice', count: 1 },
+    { name: 'Elite', count: 2 },
+    { name: 'Expert', count: 3 },
+    { name: 'Master', count: 4 },
+    { name: 'Grandmaster', count: 5 }
   ]
   const LeveUserlList = [
-    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt='' /> },
-    { name: 'Novice', count: 100, imgSrc: <Image src={VIP1} width={61} height={66} alt='' /> },
-    { name: 'Elite', count: 300, imgSrc: <Image src={VIP2} width={61} height={66} alt='' /> },
-    { name: 'Expert', count: 500, imgSrc: <Image src={VIP3} width={61} height={66} alt='' /> },
-    { name: 'Master', count: 1000, imgSrc: <Image src={VIP4} width={61} height={66} alt='' /> },
-    { name: 'Grandmaster', count: 3000, imgSrc: <Image src={VIP5} width={61} height={66} alt='' /> }
+    { name: 'Intern', count: 0, imgSrc: <Image src={VIP0} width={61} height={66} alt="" /> },
+    { name: 'Novice', count: 1000, imgSrc: <Image src={VIP1} width={61} height={66} alt="" /> },
+    { name: 'Elite', count: 3000, imgSrc: <Image src={VIP2} width={61} height={66} alt="" /> },
+    { name: 'Expert', count: 5000, imgSrc: <Image src={VIP3} width={61} height={66} alt="" /> },
+    { name: 'Master', count: 10000, imgSrc: <Image src={VIP4} width={61} height={66} alt="" /> },
+    { name: 'Grandmaster', count: 30000, imgSrc: <Image src={VIP5} width={61} height={66} alt="" /> },
   ]
   const variable = Number(myRank?.my_egg)
   const UserLevel = useMemo(()=>{
@@ -301,7 +301,7 @@ const Rank = (props: Props) => {
   const imgSrc = UserLevel ? UserLevel?.imgSrc : null;
   const LevlName:string = UserLevel ? UserLevel?.name : 'Master';
   const  renderUserTitle = (level:number)=>{
-    console.info(level)
+    console.info(level,LevelList.find(e=>e.count===Number(level)))
     return LevelList.find(e=>e.count===Number(level))?.name||'Intern'
   }
   return (
@@ -409,7 +409,7 @@ const Rank = (props: Props) => {
                       <div className="No">{item.ranking}</div>
                       <div className="address">{formatAddress(item.username)}</div>
                       <div className="amount">{item.dragon_egg}</div>
-                      <div className="time">{t(renderUserTitle(item.level_grade))}</div>
+                      <div className="time">{t(renderUserTitle(Number(item.level_grade)))}</div>
                     </SourceItem>
                   )
                 })
