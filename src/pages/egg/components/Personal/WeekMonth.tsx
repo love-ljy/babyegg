@@ -283,8 +283,7 @@ const Comp = (props: CompProps) => {
           <Column>
             <div className="No">No.</div>
             <div className="address">{t('Address')}</div>
-            <div className="amount">{t('Amount')}</div>
-            <div className="time">{t('Time')}</div>
+            <div className="amount">{t('Sales')}</div>
           </Column>
           <Source>
             {dataSource.length ? (
@@ -293,8 +292,7 @@ const Comp = (props: CompProps) => {
                   <SourceItem>
                     <div className="No">{item.ranking}</div>
                     <div className="address">{formatAddress(item.username)}</div>
-                    <div className="amount">{item.rate}</div>
-                    <div className="time">{item.expect_reward}</div>
+                    <div className="amount">{item.min_son_team_performance ? Number(item.min_son_team_performance).toFixed(2) : 0}</div>
                   </SourceItem>
                 )
               })
