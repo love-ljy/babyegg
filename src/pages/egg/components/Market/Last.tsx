@@ -38,7 +38,9 @@ const Column = styled.div`
 const Source = styled.div`
   width: 100%;
   align-self: flex-start;
-  height: 100%;
+  /* height: 100%; */
+  max-height: 400px;
+  overflow: auto;
   .empty {
     color: rgba(255, 255, 255, 0.5);
     position: absolute;

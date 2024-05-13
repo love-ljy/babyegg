@@ -9,7 +9,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import MaticIcon from '@icons/matic.svg'
-import congratulationPng from '@imgs/congratulation.png'
+import congratulationMaticPng from '@imgs/congratulationMatic.png'
+import congratulationBabyPng from '@imgs/congratulationBaby.png'
 import congratulationsTxtPng from '@imgs/congratulationsTxt.png'
 import detailedPng from '@imgs/detailed.png'
 import { NumericFormat, NumericFormatProps } from 'react-number-format'
@@ -264,7 +265,7 @@ const BuyList = [500,1000,3000,30,70,150,300]
 const BuyEgg = () => {
   // @ts-ignore
   const { t } = useTranslation('common')
-  const [coinType, setCoinType] = useState(BABY)
+  const [coinType, setCoinType] = useState(MATIC)
   const [descShow, setDescShow] = useState(false)
   const [buyShow, setBuyShow] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -301,6 +302,7 @@ const BuyEgg = () => {
     onSuccess() {
       toast.success('下单成功')
       userBalance.refetch()
+      setBuyShow(true)
     },
     onError(error, rawError) {
       console.log('stake error', rawError)
@@ -315,6 +317,7 @@ const BuyEgg = () => {
       userBalance.refetch()
       setBabyArgs([])
       setLoading(false)
+      setBuyShow(true)
     },
     onError(error, rawError) {
       console.log('babyLong rawError', rawError)
@@ -622,7 +625,7 @@ const BuyEgg = () => {
         title={
           <DialogTitle>
             <div>
-              <Image src={congratulationPng} width={187} height={160} alt="desc" />
+              <Image src={coinType === BABY ?  congratulationBabyPng : congratulationMaticPng} width={187} height={160} alt="desc" />
             </div>
           </DialogTitle>
         }
@@ -638,7 +641,7 @@ const BuyEgg = () => {
           </div>
           <div>{t('you have received $BabyLoong')}</div>
           <div className="countWrap">
-            <span>10,000</span>
+            <span>{buyNum}</span>
             <div>
               <MaticIcon />
             </div>

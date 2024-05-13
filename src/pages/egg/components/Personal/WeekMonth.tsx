@@ -136,7 +136,7 @@ const Bot = styled.div`
 const LastWrap = styled.div`
   margin-top: 10px;
   display: flex;
-  min-height: 480px;
+  min-height: 360px;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
@@ -177,7 +177,9 @@ const Column = styled.div`
 const Source = styled.div`
   width: 100%;
   align-self: flex-start;
-  height: 100%;
+  /* height: 100%; */
+  max-height: 360px;
+  overflow: auto;
   .empty {
     color: rgba(255, 255, 255, 0.5);
     position: absolute;

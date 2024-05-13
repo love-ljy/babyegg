@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
 import { useTranslation } from 'next-i18next'
-import { getIncomeReceiveNumber, incomeReceive } from '@utils/api'
+import { getIncomeReceiveNumber, incomeReceive, getNowTime } from '@utils/api'
 import { selectGamingId } from '@store/user'
 import useMaticReward from '@hooks/useMaticReward'
 import useMaticWithdraw from '@hooks/useMaticWithdraw'
@@ -314,7 +314,13 @@ const Withdraw = () => {
           type: -1,
           coin_type: 0,
         })
+        const timeRes = await getNowTime()
         if (res.code === 0) {
+          if (res.data._deadline > timeRes.data) {
+            toast.warn('已过期')
+            setLoading(false)
+            return
+          }
           const { oid, token_amount, _deadline, v, r, s } = res.data
           setMaticParam([+oid, token_amount, +_deadline, +oid, v, r, s])
         } else {
@@ -351,13 +357,19 @@ const Withdraw = () => {
         type: -1,
         coin_type: 1,
       })
-      if (res.code === 0) {
-        const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
-        setBabyLongParam([BabyToken, token_amount, +_deadline, +oid, _fee, +v, r, s])
-      } else {
-        toast.warn(res.msg)
-        setLoading(false)
-      }
+      const timeRes = await getNowTime()
+      if (res.code === 0) {        
+          if (res.data._deadline > timeRes.data) {
+            toast.warn('已过期')
+            setLoading(false)
+            return
+          }
+          const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
+          setBabyLongParam([BabyToken, token_amount, +_deadline, +oid, _fee, +v, r, s])
+        } else {
+          toast.warn(res.msg)
+          setLoading(false)
+        }
     } catch (e) {
       console.log('baby withdraw error', e)
       toast.warn('网络错误')

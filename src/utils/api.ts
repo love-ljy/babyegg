@@ -238,6 +238,14 @@ const infoByAddress = async (params: any) => {
   })
 }
 
+// 获取服务器当前时间
+const getNowTime = async () => {
+  return request({
+    url: ' /api/main/nowTime',
+    method: 'get',
+  })
+}
+
 export {
   whitelistedUserList,
   history,
@@ -267,5 +275,6 @@ export {
   getUserHistory,
   getUserAllIncome,
   getGameCountDown,
-  infoByAddress
+  infoByAddress,
+  getNowTime
 }
