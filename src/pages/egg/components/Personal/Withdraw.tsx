@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import MaticIcon from '@icons/matic.svg'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useSelector } from 'react-redux'
-import { selectWalletInfo, selectAuthToken, selectIsBindParent, setBindVisible,selectUserInfo } from '@store/user'
+import { selectWalletInfo, selectAuthToken, selectIsBindParent, setBindVisible, selectUserInfo } from '@store/user'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
@@ -151,7 +151,7 @@ const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
 `
 
-const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
+const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -170,21 +170,21 @@ const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
 
 const Withdraw = () => {
   const feeList = [
-    { limit:500,invites:4,value:60},
-    { limit:500,invites:5,value:50},
-    { limit:1000,invites:8,value:40},
-    { limit:3000,invites:10,value:30}
+    { limit: 500, invites: 4, value: 60 },
+    { limit: 500, invites: 5, value: 50 },
+    { limit: 1000, invites: 8, value: 40 },
+    { limit: 3000, invites: 10, value: 30 }
   ]
   const { t } = useTranslation('common')
   const [visible, setVisible] = useState(false)
   const [btnLoading, setLoading] = useState(false)
   const [withdrawType, setWithdrawType] = useState('')
   const walletInfo = useSelector(selectWalletInfo)
-  const userInfo:any = useSelector(selectUserInfo)
+  const userInfo: any = useSelector(selectUserInfo)
   const [maticMidReward, setMaticMidReward] = useState<any>('')
   const [babyLongReward, setBabyLongReward] = useState<any>('')
   const { userBalance } = useGetBalance()
-  const {flowwers} =useBatchFetchData()
+  const { flowwers } = useBatchFetchData()
   const gamingId: any = useSelector(selectGamingId)
 
   const { address } = useAccount()
@@ -218,7 +218,7 @@ const Withdraw = () => {
     },
   })
 
-  const userFee =  useMemo(()=>{
+  const userFee = useMemo(() => {
     const limit = Number(userInfo.my_performance)
     const invites = Number(flowwers)
     for (let i = feeList.length - 1; i >= 0; i--) {
@@ -235,8 +235,7 @@ const Withdraw = () => {
     }
     // 如果输入的limit小于所有定义的limit，返回最小limit的value
     return feeList[0].value;
-  },[userInfo, flowwers]) 
-  console.info(maticContractReward,'maticContractReward')
+  }, [userInfo, flowwers])
 
   const { isMaticWithdrawLoading, maticWithdraw, maticEstimateGas } = useMaticWithdraw({
     onSuccess() {
@@ -279,7 +278,7 @@ const Withdraw = () => {
       toast.warn('请链接钱包')
       return
     }
-    if(!isBindParent){
+    if (!isBindParent) {
       dispatch(setBindVisible(true))
       return
     }
@@ -300,11 +299,11 @@ const Withdraw = () => {
   }
 
   const handleMatic = async () => {
-    if (+maticContractReward + +maticMidReward === 0) {
+    if (Number(maticContractReward) + Number(maticMidReward) === 0) {
       toast.warn('提现额度为0')
       return
     }
-    if (+maticContractReward + +maticMidReward < 10) {
+    if ((Number(maticContractReward) + Number(maticMidReward)) < 10) {
       toast.warn('最小提现额度为10')
       return
     }
@@ -317,7 +316,7 @@ const Withdraw = () => {
         })
         if (res.code === 0) {
           const { oid, token_amount, _deadline, v, r, s } = res.data
-          setMaticParam([+oid, +token_amount, +_deadline, +oid, v, r, s])
+          setMaticParam([+oid, token_amount, +_deadline, +oid, v, r, s])
         } else {
           toast.warn(res.msg)
           setLoading(false)
@@ -353,8 +352,8 @@ const Withdraw = () => {
         coin_type: 1,
       })
       if (res.code === 0) {
-        const { oid, token_amount, _deadline,_fee, v, r, s } = res.data
-        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid,_fee, +v, r, s])
+        const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
+        setBabyLongParam([BabyToken, token_amount, +_deadline, +oid, _fee, +v, r, s])
       } else {
         toast.warn(res.msg)
         setLoading(false)
@@ -365,7 +364,6 @@ const Withdraw = () => {
       setLoading(false)
     }
   }
-
 
   const fetchUserRewardInfo = useCallback(async () => {
     if (address && isBindParent && token) {
@@ -419,7 +417,7 @@ const Withdraw = () => {
       <div className="title">{t('Your Current Earning Balance')}</div>
       <div className="row">
         <RowLeft>
-          <span className="text">{maticWithdrawInfo.mergeMaticBalance}</span>
+          <span className="text">{Number(maticWithdrawInfo.mergeMaticBalance).toFixed(2)}</span>
           <MaticIcon />
         </RowLeft>
         <div className="draw" onClick={() => openModal('Matic')}>
@@ -428,7 +426,7 @@ const Withdraw = () => {
       </div>
       <div className="row">
         <RowLeft>
-          <span className="text">{babyLongReward}</span>
+          <span className="text">{Number(babyLongReward).toFixed(2)}</span>
           <EggTokenIcon />
         </RowLeft>
         <div className="draw2" onClick={() => openModal('BabyLong')}>
@@ -467,7 +465,7 @@ const Withdraw = () => {
                   <EggTokenIcon />
                 </div>
               </div>
-            
+
             </div>
           ) : (
             <div>
