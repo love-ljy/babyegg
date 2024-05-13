@@ -152,9 +152,9 @@ function LongEgg() {
         const bindRes:any = await refetch()
         
         if (bindRes.data?.toLocaleLowerCase() !== res.data.parent.toLocaleLowerCase()) {
-          toast.warn('测试文案: 与合约上级不一致, 需重新绑定')
+          toast.warn('确认绑定该上级')
           setBindAddress(res.data.parent)
-          // dispatch(setBindVisible(true))
+          dispatch(setBindVisible(true))
           dispatch(setIsBindParent(false))
           setHadParent(1)
         } else {

@@ -152,7 +152,7 @@ const NftBazaar: React.FC = () => {
             return {
               ...item,
               ...{
-                number: index === 0 ? res.data.number : index === 1 ? res.data.thirty_percent_type : res.data.seventy_percent_type
+                number: index === 0 ? res.data.number : index === 1 ? res.data.thirty_percent : res.data.seventy_percent
               }
             }
           })
@@ -173,7 +173,7 @@ const NftBazaar: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.rectangle}></div>
+     
       <div className={styles.title}>{t('WhiteList')}</div>
       <div className={styles.card}>
         {cardList &&
@@ -206,10 +206,7 @@ const NftBazaar: React.FC = () => {
         </div>
       )}
 
-      <div className={styles.back}>
-        <Image src={chehui} alt="1" width={20} height={18} className={styles.withdraw_icon}></Image>
-        <div className={styles.go_back} onClick={goHome}>{t('Go Back')}</div>
-      </div>
+     
     </div>
   )
 }

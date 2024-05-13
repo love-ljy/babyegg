@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect,useCallback } from 'react'
 import {
   Box,
   Typography,
@@ -11,6 +11,10 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material'
+import { useAccount } from 'wagmi'
+import { setIsWhitelistedUser } from '@store/user'
+import { dispatch } from '@store/index'
+import { infoByAddress } from '@utils/api'
 import Link from 'next/link';
 import Image from 'next/image'
 import logo from '@imgs/logo_big.png'
@@ -106,12 +110,35 @@ const config2 = [
 
 const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
   const { pathname } = useRouter()
+  const {address} = useAccount()
   const { t } = useTranslation('common')
   const router = useRouter();
   const isWhitelistedUser = useSelector(selectIsWhitelistedUser)
   const { locales, locale: currentLocale } = router;
   const extraPath = router.query.invite?'?invite=' + router.query.invite:''
+  const fetchInfoByAddress = useCallback(async () => {
+    if (address) {
+      try {
+        const res: any = await infoByAddress({
+          address
+        })
+        if (res.code === 0) {
+          dispatch(setIsWhitelistedUser(res.data.is_whitelisted_user))
+        } else {
+          toast.warn(res.msg)
+          dispatch(setIsWhitelistedUser(false))
+        }
+      } catch (e) {
+        console.log('fetchInfoByAddress error', e)
+        toast.warn('网络错误')
+        dispatch(setIsWhitelistedUser(false))
+      }
+    }
+  }, [address])
 
+  useEffect(() => {
+    fetchInfoByAddress()
+  }, [fetchInfoByAddress])
   const toggleDrawer = (path: string,isOpen:boolean) => {   
     if(!isOpen)return;
     if(path === '/link' && !isWhitelistedUser) {
