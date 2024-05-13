@@ -69,11 +69,10 @@ const NftBazaar: React.FC = () => {
     router.push('egg');
   }
 
-  const goHome = () => {
-    router.push('/');
-  }
-
   const handleClick = (item) => {
+    if(!token){
+      toast.warn('请先登录')
+    }
     if (item.type === '30') {
       handleThirty(item)
     } else {
@@ -143,9 +142,11 @@ const NftBazaar: React.FC = () => {
   }
 
   const fetchUserInfo = useCallback(async () => {
-    if (token) {
+    if (token || address) {
       try {
-        const res: any = await whitelistedUserList()
+        const res: any = await whitelistedUserList({
+          address
+        })
         if (res.code === 0) {
           setState(res.data)
           let list = cardList.map((item, index) => {
@@ -165,7 +166,7 @@ const NftBazaar: React.FC = () => {
         toast.warn('网络错误')
       }
     }
-  }, [token])
+  }, [token, address])
 
   useEffect(() => {
     fetchUserInfo()

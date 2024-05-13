@@ -222,10 +222,11 @@ const history = async (params: any) => {
   })
 }
 // 领取记录
-const whitelistedUserList = async () => {
+const whitelistedUserList = async (params: any) => {
   return request({
     url: '/api/user/whitelistedUserReward',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 // 根据地址获取是否白名单用户
