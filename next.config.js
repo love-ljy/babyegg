@@ -49,14 +49,14 @@ module.exports = {
       return [
         {
           source: '/api/:path*',
-          destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
+          destination: `https://api.babyloong.org/api/:path*`,
         },
       ]
     }
     return [
       {
         source: '/api/:path*',
-        destination: `https://test.babyloong.mpiswap.cn/api/:path*`,
+        destination: `https://api.babyloong.org/api/:path*`,
       },
     ]
   },
