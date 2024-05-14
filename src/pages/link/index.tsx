@@ -48,6 +48,7 @@ const NftBazaar: React.FC = () => {
       toast.success('提取成功')
       userBalance.refetch()
       setBabyLongParam([])
+      fetchUserInfo()
       setBtnThirtyLoading(false)
       setBtnSevenTyLoading(false)
     },
@@ -55,6 +56,7 @@ const NftBazaar: React.FC = () => {
       console.log('thirty babyLongWithdraw rawError', rawError)
       toast.warn('提取失败')
       setBabyLongParam([])
+      fetchUserInfo()
       setBtnThirtyLoading(false)
       setBtnSevenTyLoading(false)
     },
@@ -92,7 +94,7 @@ const NftBazaar: React.FC = () => {
     try {
       setBtnThirtyLoading(true)
       const res: any = await incomeReceive({
-        type: -1,
+        type: 10,
         coin_type: 1,
       })
       if (res.code === 0) {
@@ -124,7 +126,7 @@ const NftBazaar: React.FC = () => {
     try {
       setBtnSevenTyLoading(true)
       const res: any = await incomeReceive({
-        type: -1,
+        type: 11,
         coin_type: 1,
       })
       if (res.code === 0) {
