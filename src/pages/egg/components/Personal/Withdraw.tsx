@@ -21,6 +21,8 @@ import BigNumber from 'bignumber.js'
 import { formatUnits } from 'viem'
 import useBatchFetchData from '@hooks/useBatchFetchData'
 import { dispatch } from '@store/index'
+import useWithDrawBabyLong from '@hooks/useWithDraw'
+
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -188,7 +190,7 @@ const Withdraw = () => {
   const gamingId: any = useSelector(selectGamingId)
 
   const { address } = useAccount()
-
+  const {withDrawBabyLong} = useWithDrawBabyLong()
   const token = useSelector(selectAuthToken)
   const isBindParent: any = useSelector(selectIsBindParent)
   const gameIds = useMemo(() => {
@@ -359,13 +361,14 @@ const Withdraw = () => {
       })
       const timeRes = await getNowTime()
       if (res.code === 0) {        
-          if (res.data._deadline > timeRes.data) {
+          if (res.data._deadline < timeRes.data) {
             toast.warn('已过期')
             setLoading(false)
             return
           }
           const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
-          setBabyLongParam([BabyToken, token_amount, +_deadline, +oid, _fee, +v, r, s])
+          // await withDrawBabyLong()
+          setBabyLongParam([BabyToken, token_amount, _deadline+'', oid+'', _fee+'', +v, r, s])
         } else {
           toast.warn(res.msg)
           setLoading(false)
@@ -376,6 +379,7 @@ const Withdraw = () => {
       setLoading(false)
     }
   }
+  
 
   const fetchUserRewardInfo = useCallback(async () => {
     if (address && isBindParent && token) {
