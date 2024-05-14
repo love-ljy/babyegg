@@ -99,7 +99,7 @@ const NftBazaar: React.FC = () => {
       })
       if (res.code === 0) {
         const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
-        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid, _fee, +v, r, s])
+        setBabyLongParam([BabyToken, token_amount, +_deadline, +oid, _fee, +v, r, s])
       } else {
         toast.warn(res.msg)
         setBtnThirtyLoading(false)
@@ -118,6 +118,7 @@ const NftBazaar: React.FC = () => {
     }
     if (!state.is_it_activated) {
       toast.warn('请先激活')
+      return
     }
     if (item.number === 0) {
       toast.warn('提现额度为0')
@@ -131,7 +132,7 @@ const NftBazaar: React.FC = () => {
       })
       if (res.code === 0) {
         const { oid, token_amount, _deadline, _fee, v, r, s } = res.data
-        setBabyLongParam([BabyToken, +token_amount, +_deadline, +oid, _fee, +v, r, s])
+        setBabyLongParam([BabyToken, token_amount, +_deadline, +oid, _fee, +v, r, s])
       } else {
         toast.warn(res.msg)
         setBtnSevenTyLoading(false)

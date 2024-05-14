@@ -65,7 +65,7 @@ export const slice = createSlice({
     babyPrice: 0,
     isBindParent: false,
     gamingId: '',
-    authToken: '',
+    authToken: typeof window !== 'undefined' ? window.localStorage.getItem('token') : '',
     inviteCode: '',
     babyIncome: 0,
     allRewards: {
