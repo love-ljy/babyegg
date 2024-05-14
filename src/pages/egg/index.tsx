@@ -149,8 +149,7 @@ function LongEgg() {
     try {
       const res: any = await getUserInfo()
       if (res.code === 0) {
-        const bindRes:any = await refetch()
-        
+        const bindRes: any = await refetch()
         if (bindRes.data?.toLocaleLowerCase() !== res.data.parent.toLocaleLowerCase()) {
           toast.warn('确认绑定该上级')
           setBindAddress(res.data.parent)
@@ -201,10 +200,10 @@ function LongEgg() {
   }
 
   const handleBind = async () => {
-    if(hadParent === 1){
+    if (hadParent === 1) {
       const estimatedGasInFloat = bindEstimatedGas
-      ? parseFloat(formatUnits(bindEstimatedGas, walletInfo?.decimals))
-      : null
+        ? parseFloat(formatUnits(bindEstimatedGas, walletInfo?.decimals))
+        : null
       if (!estimatedGasInFloat) {
         toast.warn("Couldn't estimate gas")
         return
@@ -225,8 +224,8 @@ function LongEgg() {
       const res: any = await getGameInfo()
       if (res.code === 0) {
         setGameInfo(res.data)
-        const { end_time,now_time,remaining_time } = res.data
-        setCountDown(Math.ceil(now_time + Number(remaining_time))*1000)
+        const { end_time, now_time, remaining_time } = res.data
+        setCountDown(Math.ceil(now_time + Number(remaining_time)) * 1000)
         const isEnd = Math.ceil(remaining_time) <= 0
         setGameEnd(isEnd)
         dispatch(setGamingId(res.data.id))
@@ -266,10 +265,10 @@ function LongEgg() {
         })
         if (res.code === 0) {
           if (res.data.had_parent === 0) {
-            if(invite){
+            if (invite) {
               dispatch(setBindVisible(true))
             }
-            setBindAddress(res.data.username)
+            // setBindAddress(res.data.username)
             dispatch(setIsBindParent(false))
           } else {
             // 已绑定上级
@@ -324,7 +323,7 @@ function LongEgg() {
       <CommonModal visible={bindVisible} footer={<span></span>}>
         <ModalMain>
           <div className="title">{t('Bind superior address')}</div>
-          <CountInput type="text" value={bindAddress} onChange={handleChange} variant="standard" />
+          <CountInput type="text" InputProps={{ readOnly: true }} value={bindAddress} onChange={handleChange} variant="standard" />
           <BuyBtn
             iscancel={fetchLoading || bindLoading}
             disabled={fetchLoading || bindLoading}

@@ -1,6 +1,7 @@
 .container {
+  margin-top: 80px;
   width: 100vw;
-  height: 80vh;
+  height: 70vh;
   padding: 0px 20px 0 20px;
 
   background: radial-gradient(closest-side at 50% 75%, #1b4061,  #243546, #000);
