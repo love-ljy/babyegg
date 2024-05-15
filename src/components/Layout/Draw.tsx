@@ -202,7 +202,7 @@ const DrawerMenu: React.FC<DrawProps> = ({ open, onClose }) => {
               {t('Trending Games')}
             </Typography>
             {config2.map((text, index) => (
-              <Link  onClick={onClose} href={text.isOpen?text.path:''}>
+              <Link  onClick={onClose} href={text.isOpen?text.path+extraPath:''}>
               <ListItem key={text.name} disablePadding>
                 <ListItemButton>
                   <ListItemIcon sx={{ minWidth: '40px' }}>
