@@ -265,17 +265,23 @@ function LongEgg() {
         })
         if (res.code === 0) {
           if (res.data.had_parent === 0) {
-            if (invite) {
-              dispatch(setBindVisible(true))
+            if (invite&&typeof invite === 'string') {
+              login(invite)
+              dispatch(setInviteCode(invite))
+       
+            }else{
+              setBindAddress('')
+              dispatch(setInviteCode(''))
+              toast.warn('请联系邀请人绑定链接')
             }
-            // setBindAddress(res.data.username)
             dispatch(setIsBindParent(false))
           } else {
             // 已绑定上级
             login(res.data.invite)
+            dispatch(setInviteCode(res.data.invite))
           }
           setHadParent(res.data.had_parent)
-          dispatch(setInviteCode(res.data.invite))
+        
           localStorage.setItem('inviteCode', res.data.invite)
           localStorage.setItem('userAddress', address)
         } else {
@@ -322,8 +328,9 @@ function LongEgg() {
       </Content>
       <CommonModal visible={bindVisible} footer={<span></span>}>
         <ModalMain>
-          <div className="title">{t('Bind superior address')}</div>
-          <CountInput type="text" InputProps={{ readOnly: true }} value={bindAddress} onChange={handleChange} variant="standard" />
+        <div className="title">{t('Bind superior address')}</div>
+          {bindAddress?<>
+            <CountInput type="text" InputProps={{ readOnly: true }} value={bindAddress} onChange={handleChange} variant="standard" />
           <BuyBtn
             iscancel={fetchLoading || bindLoading}
             disabled={fetchLoading || bindLoading}
@@ -331,8 +338,13 @@ function LongEgg() {
           >
             {fetchLoading || bindLoading ? 'Loading...' : t('confirm')}
           </BuyBtn>
+          </>:<>
+          <div className="title">{t('Please contact the inviter to bind the link')}</div>
+          <BuyBtn onClick={() => {dispatch(setBindVisible(false))}}>{t('Close')}</BuyBtn>
+          </>}
         </ModalMain>
       </CommonModal>
+      
     </div>
   )
 }
