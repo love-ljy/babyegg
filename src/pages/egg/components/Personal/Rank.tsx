@@ -303,7 +303,6 @@ const Rank = (props: Props) => {
   const imgSrc = UserLevel ? UserLevel?.imgSrc : null;
   const LevlName:string = UserLevel ? UserLevel?.name : 'Master';
   const  renderUserTitle = (level:number)=>{
-    console.info(level,LevelList.find(e=>e.count===Number(level)))
     return LevelList.find(e=>e.count===Number(level))?.name||'Intern'
   }
   return (
