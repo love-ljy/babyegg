@@ -19,60 +19,70 @@ const NftBazaar: React.FC = () => {
   const { t } = useTranslation('common')
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   const [type, setType] = useState<number>(1)
+  const {ApprovalForAll,ApprovalForWl,nftBalance,ApproveUserNft} =  useNftStake()
+  const [userNfts, setUserNfts] = useState<any>([])
   const [selectedNft, setSelectedNft] = useState<any>(null) // 用于存储选中的NFT信息
-  const [isApprove, setIsApprove] = useState<string>('false')
-  const [isApprove1, setIsApprove1] = useState<string>('false')
   const LevelList = [
-    { name: 'Five Dragon', imgSrc: tclong },
-    { name: 'Golden Dragon', imgSrc: goldendragon },
+    { name: 'Five Dragon', imgSrc: tclong,id:0,num:0 },
+    { name: 'Golden Dragon', imgSrc: goldendragon,id:1,num:0 },
     {
       name: 'Wood Dragon',
       imgSrc: Woodendragon,
+      id:2,num:0
     },
-    { name: 'Water Dragon', imgSrc: hose },
-    { name: 'Fire Dragon', imgSrc: hotdragon },
-    { name: 'Earth Dragon', imgSrc: earthridge },
+    { name: 'Water Dragon', imgSrc: hose,id:3,num:0 },
+    { name: 'Fire Dragon', imgSrc: hotdragon,id:4,num:0 },
+    { name: 'Earth Dragon', imgSrc: earthridge,id:5,num:0 },
   ]
+ 
+  useEffect(()=>{
+    const mergeArraysById = (array1, array2) => {
+      const map = new Map();
+
+      array1?.forEach(item => {
+        map.set(item.id, { ...item });
+      });
+
+      array2.forEach(item => {
+        if (map.has(item.id)) {
+          map.set(item.id, { ...map.get(item.id), ...item });
+        } else {
+          map.set(item.id, { ...item });
+        }
+      });
+
+      return Array.from(map.values());
+    };
+
+    const merged = mergeArraysById(nftBalance, LevelList);
+    setUserNfts(merged)
+    console.info(merged,ApprovalForAll,ApprovalForWl)
+  },[nftBalance])
   const closeModal = () => {
     setModalOpen(false)
   }
-  const openModal = (item: any,index:number) => {
-    console.info(index,isApprove,isApprove1)
-    if(index===0&&isApprove){
-      setSelectedNft(item) // 设置选中的NFT信息
-      setModalOpen(true)
-    }else if(index>0&&isApprove1){
-      setSelectedNft(item) // 设置选中的NFT信息
-      setModalOpen(true)
-    }else{
-      setType(index===0?1:2);
-    }
 
+  const openModal = async(item: any,index:number) => {
     
+   if(index===0){
+    if(ApprovalForWl){
+      await ApproveUserNft(0);
+     }else{
+       setSelectedNft(item) // 设置选中的NFT信息
+       setModalOpen(true)
+     }
+   }else{
+    if(!ApprovalForAll){
+      await ApproveUserNft(1);
+     }else{
+       setSelectedNft(item) // 设置选中的NFT信息
+       setModalOpen(true)
+     }
+   }
   }
 
 
 
-  //
-  const fetchUserInfo = useCallback(async () => {
-    try {
-      const res: any = await nftList({
-        page: 1,
-        limit: 10,
-      })
-      if (res.code === 0) {
-        console.log(res, 'res')
-      } else {
-        toast.warn('网络错误')
-      }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
-    }
-  }, [])
-  useEffect(() => {
-    fetchUserInfo()
-  }, [])
 
   return (
     <div className={styles.container}>
@@ -81,7 +91,7 @@ const NftBazaar: React.FC = () => {
           <div className={styles.title}>{t('NFT market')}</div>
         </div>
         <div className={styles.fl}>
-          {LevelList.map((item, index) => (
+          {userNfts?.map((item, index) => (
             <div className={styles.container_list} key={index}>
               <div>
                 <div>
@@ -95,10 +105,10 @@ const NftBazaar: React.FC = () => {
                       <div className={styles.list_item_title}>
                         <Image src={item.imgSrc} alt="egg" />
                       </div>
-                      <div className={styles.nft_name}>{t('NFT name')}</div>
-                      <div className={styles.nfg_itemName}>{t(item.name)}</div>
-                     {index===0&& <div className={styles.pledge}>{t(!isApprove?'APPROVE':'Pledges')}</div>}
-                     {index>0&& <div className={styles.pledge}>{t(!isApprove1?'APPROVE':'Pledges')}</div>}
+                      <div className={styles.nft_name}>{t('NFT name')} {t(item.name)}</div>
+                      <div className={styles.nfg_itemName}>{t('Balance')}:{item.num}</div>
+                     {index===0&& <div className={styles.pledge}>{t(!ApprovalForWl?'APPROVE':'Pledges')}</div>}
+                     {index>0&& <div className={styles.pledge}>{t(!ApprovalForAll?'APPROVE':'Pledges')}</div>}
                     </div>
                   </div>
                 </div>
