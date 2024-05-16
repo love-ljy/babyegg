@@ -123,27 +123,33 @@ const useNftStake = () => {
      }
   ]
   const fetchUserAllowance = async () => {
-   
-    // @ts-ignore
-    const data:any = await readContracts(config,{contracts:callConfig})
-    if(data){
-      setApprovalForAll(data[1].result)
-      setApprovalForWl(data[0].result)
-      const list = data[2].result?.map((e:any,i:number)=>{return {id:i,num:Number(e?.toString())}})
-      const stakeList = data.slice(5).map((e,i)=>{
-        return {
-          ...stakeinfoList[i],
-          num:Number(e?.result?.toString())
-        }
-      })
-      console.info(stakeList,'stakeList')
-      setStakeList(stakeList.filter(e=>e.num>0))
-       // @ts-ignore
-      setNftEarnedWl(getFullDisplayBalance(new BigNumber(data[3].result.toString()),18))
-       // @ts-ignore
-      setNftEarnedAll(getFullDisplayBalance(new BigNumber(data[4].result.toString()),18))
-      setNftBalance(list)
+    try {
+      setIsLoading(true)
+      // @ts-ignore
+      const data:any = await readContracts(config,{contracts:callConfig})
+      if(data){
+        setApprovalForAll(data[1].result)
+        setApprovalForWl(data[0].result)
+        const list = data[2].result?.map((e:any,i:number)=>{return {id:i,num:Number(e?.toString())}})
+        const stakeList = data.slice(5).map((e,i)=>{
+          return {
+            ...stakeinfoList[i],
+            num:Number(e?.result?.toString())
+          }
+        })
+        console.info(stakeList,'stakeList')
+        setStakeList(stakeList.filter(e=>e.num>0))
+         // @ts-ignore
+        setNftEarnedWl(getFullDisplayBalance(new BigNumber(data[3].result.toString()),18))
+         // @ts-ignore
+        setNftEarnedAll(getFullDisplayBalance(new BigNumber(data[4].result.toString()),18))
+        setNftBalance(list)
+        setIsLoading(false)
+      }
+    } catch (error) {
+      setIsLoading(false)
     }
+   
   }
   const ApproveUserNft = async(type:number) => {
     try {
