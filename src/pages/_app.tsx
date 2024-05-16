@@ -34,8 +34,6 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
     <Provider store={store}>
        <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-      
-       
           <RainbowKitProvider
             theme={darkTheme({
               accentColor: '#3ae27d',
@@ -44,7 +42,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               fontStack: 'system',
               overlayBlur: 'small',
             })}
-            initialChain={bscTestnet}
+            initialChain={polygon}
           >
             <CacheProvider value={clientSideEmotionCache}>
               <ThemeProvider theme={themes}>

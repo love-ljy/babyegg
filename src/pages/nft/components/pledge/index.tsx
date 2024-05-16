@@ -5,10 +5,6 @@ import { Button, Box,Typography,Stack } from '@mui/material'
 import Image from 'next/image'
 import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import useNftStake from '@hooks/useNftStake'
-import nextI18NextConfig from '../../../../next-i18next.config.js'
-import Loading from '@components/Loading'
 
 interface PledgeProps{
   confrimUnstake:(type:number,ids:number[],num:number[])=>void
@@ -46,9 +42,9 @@ interface PledgeProps{
         </div>
         <div className={styles.ispledge_box}>
           <Typography>{t('Pledge list')}</Typography>
-        {stakeList.length>0&&stakeList.map((item,index)=>{
+        {stakeList?.length>0&&stakeList.map((item,index)=>{
           return(
-            <Box my={2}>
+            <Box my={2} key={item.name}>
             <Stack flexDirection="row" justifyContent="space-between" alignItems="center">
               <Box>
                 <Stack flexDirection="row" gap={1}>
@@ -71,8 +67,3 @@ interface PledgeProps{
 }
 
 export default Pledge
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common'], nextI18NextConfig)),
-  },
-})
