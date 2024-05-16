@@ -1002,7 +1002,7 @@ const UserPanel = () => {
         </ModalMain>
       </CommonModal>
       <CommonModal
-        visible={babyVisible}
+        visible={true}
         setVisible={setBabyVisible}
         title={
           <DialogTitle>
@@ -1018,7 +1018,7 @@ const UserPanel = () => {
         }
       >
         <CongContent>
-          <div>{t('获得龙蛋价值分红')}</div>
+          <div>{t('Obtain Dragon Egg Value Dividend')}</div>
           <div className="babyDialogMain">
             <div
               style={{
