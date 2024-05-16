@@ -183,8 +183,8 @@ const Withdraw = () => {
   const [withdrawType, setWithdrawType] = useState('')
   const walletInfo = useSelector(selectWalletInfo)
   const userInfo: any = useSelector(selectUserInfo)
-  const [maticMidReward, setMaticMidReward] = useState<any>('')
-  const [babyLongReward, setBabyLongReward] = useState<any>('')
+  const [maticMidReward, setMaticMidReward] = useState<any>('0')
+  const [babyLongReward, setBabyLongReward] = useState<any>('0')
   const { userBalance } = useGetBalance()
   const { flowwers } = useBatchFetchData()
   const gamingId: any = useSelector(selectGamingId)
@@ -306,7 +306,7 @@ const Withdraw = () => {
       return
     }
     if ((Number(maticContractReward) + Number(maticMidReward)) < 10) {
-      toast.warn('最小提现额度为10')
+      toast.warn('最小提现额度小于10')
       return
     }
     if (+maticMidReward > 0) {
@@ -404,23 +404,23 @@ const Withdraw = () => {
     )
     const maticFee = mergeMaticBalance.multipliedBy(new BigNumber(0.05))
     const maticTotal = mergeMaticBalance.minus(maticFee)
-    const maticRepeat = maticTotal.multipliedBy(new BigNumber(0.6))
+    const maticRepeat = maticTotal.multipliedBy(new BigNumber(userFee / 100))
     const maticReal = maticTotal.minus(maticRepeat)
     return {
-      mergeMaticBalance: mergeMaticBalance.toNumber() || 0,
-      maticFee: maticFee.toNumber() || 0,
-      maticTotal: maticTotal.toNumber() || 0,
-      maticRepeat: maticRepeat.toNumber() || 0,
-      maticReal: maticReal.toNumber() || 0,
+      mergeMaticBalance: mergeMaticBalance.toNumber().toFixed(4) || 0,
+      maticFee: maticFee.toNumber().toFixed(4) || 0,
+      maticTotal: maticTotal.toNumber().toFixed(4) || 0,
+      maticRepeat: maticRepeat.toNumber().toFixed(4) || 0,
+      maticReal: maticReal.toNumber().toFixed(4) || 0,
     }
-  }, [maticContractReward, maticMidReward])
+  }, [maticContractReward, maticMidReward, userFee])
 
   const babyLongWithdrawInfo = useMemo(() => {
     const babyLongFee = new BigNumber(babyLongReward).multipliedBy(new BigNumber(0.05))
     const babyLongReal = new BigNumber(babyLongReward).minus(babyLongFee)
     return {
-      babyLongFee: babyLongFee.toNumber() || 0,
-      babyLongReal: babyLongReal.toNumber() || 0,
+      babyLongFee: babyLongFee.toNumber().toFixed(4) || 0,
+      babyLongReal: babyLongReal.toNumber().toFixed(4) || 0,
     }
   }, [babyLongReward])
 

@@ -197,13 +197,13 @@ const Invite = () => {
   const { t } = useTranslation('common')
   const router = useRouter()
   const { address } = useAccount()
-  const [expanded, setExpanded] = useState<string | false>('panel1')
-  const [dataSource, setDataSource] = useState<MyType[]>()
+  const [expanded, setExpanded] = useState<number | undefined>(undefined)
+  const [dataSource, setDataSource] = useState<MyType[]>([])
   const isBindParent = useSelector(selectIsBindParent)
   const token = useSelector(selectAuthToken)
 
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-    setExpanded(newExpanded ? panel : false)
+  const handleChange = (index: number) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+    setExpanded(newExpanded ? index : undefined)
   }
 
   const goBack = () => {
@@ -247,8 +247,8 @@ const Invite = () => {
               <>
                 <Accordion
                   key={e?.team_num + i + 's'}
-                  expanded={expanded === 'panel1'}
-                  onChange={handleChange('panel1')}
+                  expanded={expanded === i}
+                  onChange={handleChange(i)}
                 >
                   <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                     <Item>
@@ -285,7 +285,7 @@ const Invite = () => {
                               )
                             })
                           ) : (
-                            <div className="empty">No Data</div>
+                            <div className="empty"></div>
                           )}
                         </Source>
                       </div>

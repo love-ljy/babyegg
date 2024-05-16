@@ -38,7 +38,7 @@ const useMaticReward = ({ mutationError, onError, onSuccess, args }: Props) => {
       enabled,
     },
   })
-  console.info(maticContractReward,'maticContractReward')
+
   const rewards = maticContractReward as bigint[]
   const totalSum = rewards?.reduce((acc, current) => acc + current, BigInt(0));
 

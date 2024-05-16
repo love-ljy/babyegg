@@ -145,7 +145,6 @@ const NftBazaar: React.FC = () => {
   }
 
   const fetchUserInfo = useCallback(async () => {
-    console.log('prod');
     
     if (token || address) {
       try {

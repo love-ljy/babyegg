@@ -29,7 +29,7 @@ import {
   selectIsBindParent,
   selectBabyPrice,
   selectGamingId,
-  setBindVisible
+  setBindVisible,
 } from '@store/user'
 import {
   getGameEgg,
@@ -38,7 +38,7 @@ import {
   // getCoin,
   // getIncomeReceiveNumber,
   getUserAllIncome,
-  createOrder
+  createOrder,
 } from '@utils/api'
 import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
@@ -48,7 +48,7 @@ import { useTranslation } from 'next-i18next'
 import { dispatch } from '@store/index'
 import useBabyLong from '@hooks/useBabyLong'
 import useGetBalance from '@hooks/useGetBalance'
-
+import congratulationBabyPng from '@imgs/congratulationBaby.png'
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -396,8 +396,22 @@ const ModalMain = styled.div`
     }
   }
 `
+const DialogFooter = styled.div`
+  width: 250px;
+  height: 40px;
+  border-radius: 32px;
+  margin: 20px auto 0;
+  background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(246, 26, 126, 1) 100%);
+  border: 1px solid rgba(255, 255, 255, 1);
 
-const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
+  box-shadow: inset 0px 4px 4px rgba(255, 255, 255, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 15px 6px 15px;
+`
+
+const BuyBtn = styled(Button)<{ width?: string; iscancel?: boolean }>`
   width: 80%;
   height: 30px;
   border-radius: 32px;
@@ -413,9 +427,45 @@ const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`
     background: rgba(213, 27, 140, 1);
   }
 `
+const DialogTitle = styled.div`
+  margin: 0 auto -10px;
+`
 
 const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
   display: flex;
+`
+
+const CongContent = styled.div`
+  width: 60vw;
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: start;
+  font-size: 13px;
+  /* padding-bottom: 50px; */
+  .cong {
+    font-size: 22px;
+    text-shadow:
+      inset 0px 1px 0.6px rgba(255, 255, 255, 0.56),
+      0px 3px 3.9px rgba(0, 0, 0, 0.36);
+  }
+  .babyDialogMain {
+    margin-top: 15px;
+    width: 100%;
+    /* height: 65px; */
+    border-radius: 5px;
+    background: rgba(8, 17, 33, 1);
+    border: 1px solid rgba(143, 13, 245, 1);
+    box-shadow: inset 0px 0px 12.1px rgba(143, 13, 245, 1);
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    padding: 16px 29px 16px 29px;
+    span {
+      margin-right: 20px;
+      font-size: 30px;
+    }
+  }
 `
 
 const UserPanel = () => {
@@ -432,9 +482,11 @@ const UserPanel = () => {
   const [eggInfo, setEggInfo] = useState({
     dragon_egg: 0,
     dragon_egg_babyloong: 0,
+    dragon_egg_babyloong_up_num: 0,
+    dragon_egg_babyloong_up_num_matic: 0,
   })
   const [eggVisible, setEggVisible] = useState(false)
-
+  const [babyVisible, setBabyVisible] = useState(false)
   const userInfo: any = useSelector(selectUserInfo)
   const token = useSelector(selectAuthToken)
   const walletInfo: any = useSelector(selectWalletInfo)
@@ -483,7 +535,7 @@ const UserPanel = () => {
       toast.warn('请链接钱包')
       return
     }
-  
+
     if (userInfo.pay_password) {
       setEggVisible(true)
       setEggType(type)
@@ -548,10 +600,15 @@ const UserPanel = () => {
         const res: any = await getGameEgg()
         if (res.code === 0) {
           setEggInfo(res.data)
+          if (res.data.dragon_egg_babyloong_up_num > 0) {
+            setBabyVisible(true)
+          }
         } else {
           setEggInfo({
             dragon_egg: 0,
             dragon_egg_babyloong: 0,
+            dragon_egg_babyloong_up_num: 0,
+            dragon_egg_babyloong_up_num_matic: 0,
           })
           toast.warn(res.msg)
         }
@@ -561,6 +618,8 @@ const UserPanel = () => {
         setEggInfo({
           dragon_egg: 0,
           dragon_egg_babyloong: 0,
+          dragon_egg_babyloong_up_num: 0,
+          dragon_egg_babyloong_up_num_matic: 0,
         })
       }
     }
@@ -606,7 +665,6 @@ const UserPanel = () => {
     }
   }, [address, isBindParent, token])
 
-
   useEffect(() => {
     fetchGameEgg()
     fetchUserTotalRewards()
@@ -617,7 +675,7 @@ const UserPanel = () => {
   }
 
   const handleOpen = async () => {
-    if(!isBindParent){
+    if (!isBindParent) {
       dispatch(setBindVisible(true))
       return
     }
@@ -626,7 +684,7 @@ const UserPanel = () => {
       const res: any = await createOrder({
         type: 2,
         id: gamingId,
-        event_type: 1
+        event_type: 1,
       })
       if (res.code === 0) {
         const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
@@ -644,7 +702,7 @@ const UserPanel = () => {
   }
 
   const handleUpgrade = async () => {
-    if(!isBindParent){
+    if (!isBindParent) {
       dispatch(setBindVisible(true))
       return
     }
@@ -653,7 +711,7 @@ const UserPanel = () => {
       const res: any = await createOrder({
         type: 2,
         id: gamingId,
-        event_type: 2
+        event_type: 2,
       })
       if (res.code === 0) {
         const { r, v, s, id, type, amount, coin_token, sign_out_time } = res.data
@@ -668,6 +726,10 @@ const UserPanel = () => {
       toast.warn('网络错误')
       setUpLoading(false)
     }
+  }
+
+  const closeBabyDialog = () => {
+    setBabyVisible(false)
   }
 
   const variable = Number(userInfo.dragon_egg)
@@ -694,7 +756,10 @@ const UserPanel = () => {
         <div className="prograssWrap">
           <div className="masterWrap">
             <div className="title">{t(LevlName)}</div>
-            <span className="percent">{userInfo.dragon_egg || 0}/{userInfo.next_level_need_egg_num&&userInfo.next_level_need_egg_num||1000}</span>
+            <span className="percent">
+              {userInfo.dragon_egg || 0}/
+              {(userInfo.next_level_need_egg_num && userInfo.next_level_need_egg_num) || 1000}
+            </span>
           </div>
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={Number(userInfo.dragon_egg) / 100} />
@@ -758,10 +823,10 @@ const UserPanel = () => {
             </div>
             <div className="btnWrap">
               <div className="open" onClick={handleOpen}>
-                {eggLoading || babyLoading && !upLoading ? t('Loading...') : t('Open Egg')}
+                {eggLoading || (babyLoading && !upLoading) ? t('Loading...') : t('Open Egg')}
               </div>
               <div className="repu" onClick={handleUpgrade}>
-                {upLoading || babyLoading && !eggLoading ? t('Loading...') : t('Upgrade')}
+                {upLoading || (babyLoading && !eggLoading) ? t('Loading...') : t('Upgrade')}
               </div>
             </div>
           </SwipeItem>
@@ -779,7 +844,9 @@ const UserPanel = () => {
             <span>{t('Egg Earnings')}</span>
           </div>
           <div className="bot">
-            <span>{userReward?.egg_income&&Number(userReward?.egg_income).toFixed(2) || '0'}</span>
+            <span>
+              {(userReward?.egg_income && Number(userReward?.egg_income).toFixed(2)) || '0'}
+            </span>
             <EggTokenIcon />
           </div>
         </CommonRow>
@@ -789,7 +856,9 @@ const UserPanel = () => {
               <span>{t('Public Sep Earnings')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.index_income&&Number(userReward?.index_income).toFixed(2) || '0'}</span>
+              <span>
+                {(userReward?.index_income && Number(userReward?.index_income).toFixed(2)) || '0'}
+              </span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -798,7 +867,9 @@ const UserPanel = () => {
               <span>{t('Lucky Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.lucky_income&&Number(userReward?.lucky_income).toFixed(2) || '0'}</span>
+              <span>
+                {(userReward?.lucky_income && Number(userReward?.lucky_income).toFixed(2)) || '0'}
+              </span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -809,7 +880,9 @@ const UserPanel = () => {
               <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
-              <span>{Number(userReward?.last_100_income).toFixed(0) || '0'}</span>
+              <span>
+                {userReward?.last_100_income ? Number(userReward?.last_100_income).toFixed(0) : '0'}
+              </span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -818,7 +891,9 @@ const UserPanel = () => {
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>{Number(userReward?.last_one_income).toFixed(0) || '0'}</span>
+              <span>
+                {userReward?.last_one_income ? Number(userReward?.last_one_income).toFixed(0) : '0'}
+              </span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -838,7 +913,11 @@ const UserPanel = () => {
               <span>{t('Weekly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.yulong_week_income&&Number(userReward?.yulong_week_income).toFixed(2) || '0'}</span>
+              <span>
+                {(userReward?.yulong_week_income &&
+                  Number(userReward?.yulong_week_income).toFixed(2)) ||
+                  '0'}
+              </span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -847,7 +926,11 @@ const UserPanel = () => {
               <span>{t('Monthly Rank Reward')}</span>
             </div>
             <div className="bot">
-              <span>{userReward?.yulong_month_income&&Number(userReward?.yulong_month_income).toFixed(2) || '0'}</span>
+              <span>
+                {(userReward?.yulong_month_income &&
+                  Number(userReward?.yulong_month_income).toFixed(2)) ||
+                  '0'}
+              </span>
               <EggTokenIcon />
             </div>
           </CommonRow>
@@ -896,7 +979,9 @@ const UserPanel = () => {
                 </div>
                 <span className="equ">=</span>
                 <div className="box">
-                  <span>{(Number(eggInfo.dragon_egg_babyloong) * Number(babyPrice)).toFixed(4)}</span>
+                  <span>
+                    {(Number(eggInfo.dragon_egg_babyloong) * Number(babyPrice)).toFixed(4)}
+                  </span>
                   <MaticIcon />
                 </div>
               </div>
@@ -915,6 +1000,56 @@ const UserPanel = () => {
             <BuyBtn onClick={closeEggModal}>{t('No')}</BuyBtn>
           </BtnWrap>
         </ModalMain>
+      </CommonModal>
+      <CommonModal
+        visible={true}
+        setVisible={setBabyVisible}
+        title={
+          <DialogTitle>
+            <div>
+              <Image src={congratulationBabyPng} width={187} height={160} alt="desc" />
+            </div>
+          </DialogTitle>
+        }
+        footer={
+          <DialogFooter onClick={closeBabyDialog}>
+            <span>{t('confirm')}</span>
+          </DialogFooter>
+        }
+      >
+        <CongContent>
+          <div>{t('Obtain Dragon Egg Value Dividend')}</div>
+          <div className="babyDialogMain">
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '10px',
+              }}
+            >
+              <div
+                style={{
+                  marginRight: '10px',
+                }}
+              >
+                {eggInfo.dragon_egg_babyloong_up_num}
+              </div>
+              <div>
+                <EggTokenIcon />
+              </div>
+            </div>
+            <div
+              className="count"
+              style={{
+                textAlign: 'center',
+                color: 'rgba(255, 255, 255, 0.5)',
+                fontSize: '10px',
+              }}
+            >
+              <i>{`≈ ${Number(eggInfo.dragon_egg_babyloong_up_num_matic)}$Matic`}</i>{' '}
+            </div>
+          </div>
+        </CongContent>
       </CommonModal>
     </UserPanelWrap>
   )
