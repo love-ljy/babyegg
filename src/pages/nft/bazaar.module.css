@@ -1,9 +1,10 @@
 .container {
   width: 100vw;
   min-height: 100vh;
-  padding-top: 50px;
+  padding: 67px 20px 0 20px;
   box-sizing: border-box;
   /* display: flex; */
+  color: #fff;
   background: linear-gradient(180deg, #304186 0%, #0f113c 100%);
 }
 
@@ -21,8 +22,7 @@
 .list {
   margin-bottom: 15px;
   border-radius: 5px;
-  width: 168px;
-  height: 267px;
+
   background: linear-gradient(180deg, #4e177f 0%, #1c1e4e 100%);
   display: flex;
   justify-content: center;
@@ -35,16 +35,13 @@
   align-items: center;
   flex-direction: column;
 
-  height: 243px;
 }
 .list_item_title {
-  width: 140px;
+
   border-radius: 5px;
-  height: 140px;
+
   background: rgba(255, 255, 255, 0.21);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .nft_name {
@@ -54,15 +51,16 @@
 .nfg_itemName {
   font-size: 15px;
   font-weight: 600;
+  margin: 10px 0;
   color: rgba(255, 255, 255, 1);
 }
 .new {
   background: rgba(97, 74, 136, 1);
   font-size: 15px;
   font-weight: 700;
-  width: 140px;
+
   color: rgba(255, 255, 255, 0.5);
-  height: 40px;
+
   text-align: center;
   line-height: 40px;
   border-radius: 5px;
@@ -72,7 +70,7 @@
   background: linear-gradient(90deg, #3220d0 0%, #f61a7e 100%);
   font-size: 15px;
   font-weight: 700;
-  width: 140px;
+width: 100%;
   height: 40px;
   text-align: center;
   line-height: 40px;

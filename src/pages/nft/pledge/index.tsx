@@ -1,76 +1,78 @@
 // pledge.js
 import React, { useState, useEffect, useCallback } from 'react'
 import styles from './pledge.module.css'
-import { getUserInfo, pledgeList } from '@utils/api'
-import { toast } from 'react-toastify'
-import { useRouter } from 'next/router'
+import { Button, Box,Typography,Stack } from '@mui/material'
 import Image from 'next/image'
-import chehui from '@imgs/chehui.png'
+import EggTokenIcon from '@icons/eggToken.svg'
 import { useTranslation } from 'next-i18next'
-function Pledge() {
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import useNftStake from '@hooks/useNftStake'
+import nextI18NextConfig from '../../../../next-i18next.config.js'
+import Loading from '@components/Loading'
+
+interface PledgeProps{
+  confrimUnstake:(type:number,ids:number[],num:number[])=>void
+  confirmGetReward:(type:number)=>void
+  nftEarnedAll:number
+  nftEarnedWl:number
+  stakeList:any[]
+}
+  const Pledge: React.FC<PledgeProps> = ({nftEarnedAll,nftEarnedWl,stakeList,confrimUnstake,confirmGetReward}) => {
   const { t } = useTranslation('common')
-  const [pledgeData, setPledgeData] = useState<any>({}) // 初始化一个状态来存储质押列表数据
-  const router = useRouter() // 将 useRouter 移动到组件顶部
-  // 点击按钮跳转到新路由
-  const handleClick = () => {
-    router.push('/nft/ClaimRecord')
-  }
-  const fetchUserInfo = useCallback(async () => {
-    try {
-      const res: any = await pledgeList({
-        page: 1,
-        limit: 10,
-      })
-      if (res.code === 0) {
-        setPledgeData(res.data) // 将获取的数据存储到状态中
-        console.log(res.data, 'res')
-      } else {
-        toast.warn('网络错误/未登录')
-      }
-    } catch (e) {
-      console.log('e', e)
-      toast.warn('网络错误')
-    }
-  }, [])
-  useEffect(() => {
-    fetchUserInfo()
-  }, [])
-  //已获得总收益
-  const firstPledge = pledgeData || {}
+
+ const HandleUnstake = async(item)=>{
+  const type = item.id==0?0:1
+  await confrimUnstake(type,[item.id],[item.num])
+ }
+
   return (
     <div className={styles.container}>
       <div className={styles.padding_box}>
-        <div className={styles.title}>
-          <div className={styles.title_left}>{t('Pledge list')}</div>
-          <div className={styles.title_right} onClick={handleClick}>
-            {/* 加跳转 */}
-            {t('Claim record')} &gt;
-          </div>
-        </div>
+     
         <div className={styles.padding_box} style={{ paddingTop: '0px' }}>
           <div className={styles.ispledge_box}>
             <div className={styles.ispledge_title}>
-              <div className={styles.redeemable}>{t('Available income')}</div>
-              <div className={styles.number}>{t('firstPledge.total_revenue')}</div>
+              <div className={styles.redeemable}>{t('Five Dragon')}{t('Available income')}</div>
+              <div className={styles.number}>{nftEarnedWl} <EggTokenIcon/></div>
             </div>
-            <div className={styles.bottom}>{t('Confirmed collection')}</div>
+            <Button  onClick={()=>{confirmGetReward(0)}} disabled={Number(nftEarnedWl)===0} sx={{margin:'20px 0'}} fullWidth>{t('Confirmed collection')}</Button>
+            <div className={styles.ispledge_title}>
+              <div className={styles.redeemable}>{t('Others')}{t('Available income')}</div>
+              <div className={styles.number}>{nftEarnedAll} <EggTokenIcon/></div>
+            </div>
+            <Button onClick={()=>{confirmGetReward(1)}} disabled={Number(nftEarnedAll)===0} sx={{margin:'20px 0'}} fullWidth>{t('Confirmed collection')}</Button>
           </div>
+          
         </div>
         <div className={styles.ispledge_box}>
-          <div className={styles.ispledge_title}>
-            <div className={styles.redeemable}>{t('Redeemable principal')}</div>
-            <div className={styles.number}>1,000.00 USDT</div>
-          </div>
-          <div className={styles.bottom}>{firstPledge.state}</div>
+          <Typography>{t('Pledge list')}</Typography>
+        {stakeList.length>0&&stakeList.map((item,index)=>{
+          return(
+            <Box my={2}>
+            <Stack flexDirection="row" justifyContent="space-between" alignItems="center">
+              <Box>
+                <Stack flexDirection="row" gap={1}>
+                  <Image src={item.imgSrc} alt="chehui" width={40} height={40} />
+                  <Box>
+                    <Typography textAlign="left">{t(item.name)}  #{item.id}</Typography>
+                    <Typography textAlign="left">{t('Amount')} : {item.num}</Typography>
+                  </Box>
+                </Stack>
+              </Box>
+              <Button onClick={()=>{HandleUnstake(item)}} sx={{height:'30px'}}>{t('UnStake')}</Button>
+            </Stack>
+           </Box>
+          )
+        })}
         </div>
-      </div>
-
-      <div className={styles.withdraw}>
-        <Image src={chehui} alt="1" width={20} height={18} className={styles.withdraw_icon}></Image>
-        {t('Withdraw')}
       </div>
     </div>
   )
 }
 
 export default Pledge
+export const getStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'], nextI18NextConfig)),
+  },
+})

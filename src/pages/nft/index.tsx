@@ -8,18 +8,20 @@ import hose from '@imgs/hose.png'
 import tclong from '@imgs/tclong.jpg'
 import hotdragon from '@imgs/hotdragon.png'
 import earthridge from '@imgs/earthridge.png'
-import { getUserInfo, nftList } from '@utils/api'
+import CommonTab from '../egg/components/commonTab/commonTab'
 import { toast } from 'react-toastify'
-
+import Loading from '@components/Loading'
+import Pledge from './pledge/index'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import useNftStake from '@hooks/useNftStake'
 import { useTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../../next-i18next.config.js'
+
+
 const NftBazaar: React.FC = () => {
   const { t } = useTranslation('common')
   const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const [type, setType] = useState<number>(1)
-  const {ApprovalForAll,ApprovalForWl,nftBalance,ApproveUserNft} =  useNftStake()
+  const {ApprovalForAll,ApprovalForWl,nftBalance,ApproveUserNft,StakeUserNft,isLoading,nftEarnedAll,nftEarnedWl,stakeList,UnStakeUserNft,HandleGetUserReward} =  useNftStake()
   const [userNfts, setUserNfts] = useState<any>([])
   const [selectedNft, setSelectedNft] = useState<any>(null) // 用于存储选中的NFT信息
   const LevelList = [
@@ -43,7 +45,7 @@ const NftBazaar: React.FC = () => {
         map.set(item.id, { ...item });
       });
 
-      array2.forEach(item => {
+      array2?.forEach(item => {
         if (map.has(item.id)) {
           map.set(item.id, { ...map.get(item.id), ...item });
         } else {
@@ -54,7 +56,7 @@ const NftBazaar: React.FC = () => {
       return Array.from(map.values());
     };
 
-    const merged = mergeArraysById(nftBalance, LevelList);
+    const merged = mergeArraysById(LevelList,nftBalance);
     setUserNfts(merged)
     console.info(merged,ApprovalForAll,ApprovalForWl)
   },[nftBalance])
@@ -65,7 +67,7 @@ const NftBazaar: React.FC = () => {
   const openModal = async(item: any,index:number) => {
     
    if(index===0){
-    if(ApprovalForWl){
+    if(!ApprovalForWl){
       await ApproveUserNft(0);
      }else{
        setSelectedNft(item) // 设置选中的NFT信息
@@ -81,43 +83,75 @@ const NftBazaar: React.FC = () => {
    }
   }
 
-
-
-
-  return (
-    <div className={styles.container}>
-      <div className={styles.box}>
-        <div>
-          <div className={styles.title}>{t('NFT market')}</div>
-        </div>
-        <div className={styles.fl}>
-          {userNfts?.map((item, index) => (
-            <div className={styles.container_list} key={index}>
-              <div>
-                <div>
-                  <div
-                    className={styles.list}
-                    onClick={() => openModal(item,index)}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    <div className={styles.list_item}>
-                      <div className={styles.list_item_title}>
-                        <Image src={item.imgSrc} alt="egg" />
-                      </div>
-                      <div className={styles.nft_name}>{t('NFT name')} {t(item.name)}</div>
-                      <div className={styles.nfg_itemName}>{t('Balance')}:{item.num}</div>
-                     {index===0&& <div className={styles.pledge}>{t(!ApprovalForWl?'APPROVE':'Pledges')}</div>}
-                     {index>0&& <div className={styles.pledge}>{t(!ApprovalForAll?'APPROVE':'Pledges')}</div>}
-                    </div>
+  interface tabItem {
+    label: string
+    value: string
+    component: any
+  }
+  
+  const tabList: tabItem[] = [
+    {
+      label: t('NFT market'),
+      value: 'panel',
+      component: <div className={styles.fl}>
+      {userNfts?.map((item, index) => (
+        <div className={styles.container_list} key={index}>
+          <div>
+            <div>
+              <div
+                className={styles.list}
+                onClick={() => openModal(item,index)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className={styles.list_item}>
+                  <div className={styles.list_item_title}>
+                    <Image src={item.imgSrc} alt="egg" />
                   </div>
+                  <div className={styles.nft_name}>{t('NFT name')} {t(item.name)}</div>
+                  <div className={styles.nfg_itemName}>{t('Balance')}:{item.num}</div>
+                 {index===0&& <div className={styles.pledge}>{t(!ApprovalForWl?'APPROVE':'Pledges')}</div>}
+                 {index>0&& <div className={styles.pledge}>{t(!ApprovalForAll?'APPROVE':'Pledges')}</div>}
                 </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
+      ))}
+    </div>,
+    },
+    {
+      label: t('Pledge list'),
+      value: 'Invitation',
+      component: <Pledge confrimUnstake={UnStakeUserNft} confirmGetReward={HandleGetUserReward} nftEarnedAll={nftEarnedAll} nftEarnedWl={nftEarnedWl} stakeList={stakeList} />,
+    }
+  ]
+  const tabChange = (_event: React.SyntheticEvent, i: number) => {}
+
+  const swipeChange = (i: number) => {}
+  const HandleConfirm = async(id:number,num:number)=>{
+    try {
+      const type = id===0?0:id
+      const res = await StakeUserNft(type,[id],[num])
+      closeModal()
+    } catch (error) {
+      
+    }
+  }
+  return (
+    <div className={styles.container}>
+      <div className={styles.box}>
+      <div className="tab">
+        <CommonTab
+          tabList={tabList}
+          tabChange={tabChange}
+          swipeChange={swipeChange}
+          selectedcolor={'linear-gradient(90deg, #3220d0 0%, #f61a7e 100%)'}
+        />
       </div>
-      <Modal isOpen={modalOpen} onClose={closeModal} nft={selectedNft}></Modal>
+      </div>
+      <Modal isOpen={modalOpen} onConfirm={HandleConfirm} onClose={closeModal} nft={selectedNft}></Modal>
+      {isLoading&&<Loading open={isLoading}/>}
     </div>
   )
 }

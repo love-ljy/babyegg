@@ -1,11 +1,9 @@
 .container {
-  width: 100vw;
-  height: 100vh;
-  /* display: flex; */
-  background: linear-gradient(180deg, #304186 0%, #0f113c 100%);
+
 }
 .padding_box {
-  padding: 72px 14px 12px 14px;
+  margin-bottom: 20px;
+  /* padding: 72px 14px 12px 14px; */
 }
 .title_left {
   padding-left: 2px;
@@ -26,18 +24,19 @@
 .ispledge_box {
   border-radius: 5px;
   /* margin-top: 36px; */
-  width: 349px;
-  height: 114px;
-  margin: 0 auto;
+padding: 20px;
   background: linear-gradient(180deg, #4e177f 0%, #1c1e4e 100%);
+  & img{
+    border-radius: 5px;
+  }
 }
 .ispledge_title {
   display: flex;
   justify-content: space-between;
 }
 .redeemable {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  color: #fff;
 }
 .ispledge_title {
   margin: 0 auto;
@@ -49,6 +48,7 @@
   font-size: 15px;
   font-weight: 600;
   color: #fff;
+  display: flex;
 }
 .bottom {
   font-weight: 700;

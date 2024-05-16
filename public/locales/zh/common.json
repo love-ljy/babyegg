@@ -21,6 +21,7 @@
   "BUY": "购买",
   "days":"天",
   "Home": "首页",
+  "Others":"其他",
   "WhiteList": "白名单",
   "Trending Games": "热门游戏",
   "Waiting for the next round to start": "等待下一轮开始",
@@ -301,5 +302,6 @@
   "withdraw": "撤回",
   "draw time": "领取时间",
   "Quantity claimed": "领取数量",
-  "Claim status": "领取状态"
+  "Claim status": "领取状态",
+  "UnStake":"赎回"
 }

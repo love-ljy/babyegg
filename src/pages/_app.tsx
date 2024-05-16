@@ -10,7 +10,7 @@ import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 import { CacheProvider } from '@emotion/react'
 import createEmotionCache from '../createEmotionCache'
-import { config } from '../wagmi/wagmi'
+import { config } from '@config/wagmi'
 import { polygonAmoy, polygon, bscTestnet } from 'viem/chains'
 import { appWithTranslation } from 'next-i18next'
 import nextI18NextConfig from '../../next-i18next.config.js'
@@ -32,8 +32,10 @@ const clientSideEmotionCache = createEmotionCache()
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
+       <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={config}>
+      
+       
           <RainbowKitProvider
             theme={darkTheme({
               accentColor: '#3ae27d',
@@ -56,8 +58,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
               </ThemeProvider>
             </CacheProvider>
           </RainbowKitProvider>
-        </WagmiProvider>
+      
       </QueryClientProvider>
+      </WagmiProvider>
     </Provider>
   )
 }

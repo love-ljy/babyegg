@@ -15,6 +15,7 @@ const useTokenBalance = (tokenAddress: `0x${string}`) => {
 
   const fetchTokenBalance = async()=>{
     try {
+        // @ts-ignore
       const balance = await readContract(config,{
         abi: erc20Abi,
         address: tokenAddress,

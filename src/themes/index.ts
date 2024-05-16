@@ -33,6 +33,10 @@ const themes = createTheme({
           borderRadius: '5px;',
           color: '#fff',
           background: 'var(--Linear, linear-gradient(90deg, #3220D0 0%, #F61A7E 100%));',
+          '&:disabled': {
+            color: '#ccc', // Change this to the color you want for the disabled state
+            background: 'var(--Linear, linear-gradient(90deg, #666666 0%, #999999 100%))',
+          },
         },
       },
     },

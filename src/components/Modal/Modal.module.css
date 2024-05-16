@@ -15,7 +15,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 349px;
-  height: 536px;
+  padding-bottom: 30px;
+  /* height: 536px; */
   background: linear-gradient(180deg, #4e177f 0%, #1c1e4e 100%);
 }
 .modal-header-img {
@@ -32,17 +33,16 @@
   justify-content: center;
   display: flex;
   margin-top: 30px;
-  width: 227px;
-  height: 90px;
+
   color: #fff;
 }
 .center {
-  width: 94px;
-  height: 90px;
+ 
 }
 .box {
-  width: 94px;
-  height: 33px;
+
+  display: flex;
+justify-content: space-between;
 }
 .box_text {
   font-size: 15px;
