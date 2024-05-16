@@ -79,7 +79,7 @@ const Invitation = () => {
   const router = useRouter()
   const userInfo: any = useSelector(selectUserInfo)
   const { flowwers } = useBatchFetchData();
-  console.info(flowwers)
+
   const toHistory = () => {
     router.push('invite')
   }

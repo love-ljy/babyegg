@@ -122,7 +122,6 @@ const Last = (props: Props) => {
   const { dataSource, changePage } = props
   const totalData = useSelector(selectTotalData)
   const { t } = useTranslation('common')
-  console.info(dataSource, '--',totalData)
   const changePageFormat = (event: React.ChangeEvent<unknown>, value: number) => {
     changePage(value)
   }
@@ -163,7 +162,8 @@ const Last = (props: Props) => {
               )
             })
           ) : (
-            <div className="empty">{t('No Data')}</div>
+            // <div className="empty">{t('No Data')}</div>
+            <div className="empty"></div>
           )}
         </Source>
       </div>

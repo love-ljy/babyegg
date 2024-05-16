@@ -357,7 +357,6 @@ const BuyEgg = () => {
   }
 
   const handleMatic = () => {
-    console.info(stakeEstimatedGas,'stakeEstimatedGas')
     const estimatedGasInFloat = stakeEstimatedGas
       ? parseFloat(formatUnits(stakeEstimatedGas, walletInfo?.decimals))
       : null
@@ -516,7 +515,6 @@ const BuyEgg = () => {
               }
             })
           const babyMaticPrice = res.data.filter((e:any)=>Number(e.type)===1)[0];
-          console.info(babyMaticPrice,res.data)  
           setCoinList(balanceList)
           setCoinBalance(balanceList[0].balance)
           dispatch(setBabyPrice(babyMaticPrice.matic_price))

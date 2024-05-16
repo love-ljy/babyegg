@@ -809,7 +809,7 @@ const UserPanel = () => {
               <span>{t('Last 100 Reward')}</span>
             </div>
             <div className="bot">
-              <span>{Number(userReward?.last_100_income).toFixed(0) || '0'}</span>
+              <span>{userReward?.last_100_income ? Number(userReward?.last_100_income).toFixed(0) : '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>
@@ -818,7 +818,7 @@ const UserPanel = () => {
               <span>{t('Last Master Reward')}</span>
             </div>
             <div className="bot">
-              <span>{Number(userReward?.last_one_income).toFixed(0) || '0'}</span>
+              <span>{userReward?.last_one_income ? Number(userReward?.last_one_income).toFixed(0) : '0'}</span>
               <MaticIcon />
             </div>
           </CommonRow>

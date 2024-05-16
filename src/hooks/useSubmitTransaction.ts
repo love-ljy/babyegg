@@ -119,6 +119,7 @@ const useSubmitTransaction = (
         onError?.(error, rawError)
         return
       }
+
       writeContract({
         ...contractCallConfig,
         overrides: {

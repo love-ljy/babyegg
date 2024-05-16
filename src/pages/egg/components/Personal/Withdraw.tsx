@@ -404,7 +404,7 @@ const Withdraw = () => {
     )
     const maticFee = mergeMaticBalance.multipliedBy(new BigNumber(0.05))
     const maticTotal = mergeMaticBalance.minus(maticFee)
-    const maticRepeat = maticTotal.multipliedBy(new BigNumber(0.6))
+    const maticRepeat = maticTotal.multipliedBy(new BigNumber(userFee / 100))
     const maticReal = maticTotal.minus(maticRepeat)
     return {
       mergeMaticBalance: mergeMaticBalance.toNumber() || 0,
@@ -413,7 +413,7 @@ const Withdraw = () => {
       maticRepeat: maticRepeat.toNumber() || 0,
       maticReal: maticReal.toNumber() || 0,
     }
-  }, [maticContractReward, maticMidReward])
+  }, [maticContractReward, maticMidReward, userFee])
 
   const babyLongWithdrawInfo = useMemo(() => {
     const babyLongFee = new BigNumber(babyLongReward).multipliedBy(new BigNumber(0.05))
