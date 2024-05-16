@@ -1002,7 +1002,7 @@ const UserPanel = () => {
         </ModalMain>
       </CommonModal>
       <CommonModal
-        visible={true}
+        visible={babyVisible}
         setVisible={setBabyVisible}
         title={
           <DialogTitle>
