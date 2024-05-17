@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import CommonModal from '../commonModal/commonModal'
 import { Button } from '@mui/material'
 import { useTranslation } from 'next-i18next'
+import Image from 'next/image'
 import { getIncomeReceiveNumber, incomeReceive, getNowTime } from '@utils/api'
 import { selectGamingId } from '@store/user'
 import useMaticReward from '@hooks/useMaticReward'
@@ -22,7 +23,7 @@ import { formatUnits } from 'viem'
 import useBatchFetchData from '@hooks/useBatchFetchData'
 import { dispatch } from '@store/index'
 import useWithDrawBabyLong from '@hooks/useWithDraw'
-
+import congratulationMatic from '@imgs/congratulationMatic.png'
 
 const InvitationWrap = styled.div`
   border-radius: 5px;
@@ -68,6 +69,46 @@ const InvitationWrap = styled.div`
       margin-bottom: 10px;
     }
   }
+`
+const DialogTitle = styled.div`
+margin: 0 auto -10px;
+`
+
+const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
+display: flex;
+`
+
+const CongContent = styled.div`
+width: 60vw;
+display: flex;
+justify-content: start;
+flex-direction: column;
+align-items: start;
+font-size: 13px;
+/* padding-bottom: 50px; */
+.cong {
+  font-size: 22px;
+  text-shadow:
+    inset 0px 1px 0.6px rgba(255, 255, 255, 0.56),
+    0px 3px 3.9px rgba(0, 0, 0, 0.36);
+}
+.babyDialogMain {
+  margin-top: 15px;
+  width: 100%;
+  /* height: 65px; */
+  border-radius: 5px;
+  background: rgba(8, 17, 33, 1);
+  border: 1px solid rgba(143, 13, 245, 1);
+  box-shadow: inset 0px 0px 12.1px rgba(143, 13, 245, 1);
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  padding: 16px 29px 16px 29px;
+  span {
+    margin-right: 20px;
+    font-size: 30px;
+  }
+}
 `
 const RowLeft = styled.div`
   border-radius: 5px;
@@ -149,8 +190,20 @@ const ModalMain = styled.div`
   }
 `
 
-const BtnWrap = styled.div<{ width?: string; iscancel?: boolean }>`
+
+const DialogFooter = styled.div`
+  width: 250px;
+  height: 40px;
+  border-radius: 32px;
+  margin: 20px auto 0;
+  background: linear-gradient(180deg, rgba(50, 32, 208, 1) 0%, rgba(246, 26, 126, 1) 100%);
+  border: 1px solid rgba(255, 255, 255, 1);
+
+  box-shadow: inset 0px 4px 4px rgba(255, 255, 255, 0.25);
   display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 15px 6px 15px;
 `
 
 const BuyBtn = styled(Button) <{ width?: string; iscancel?: boolean }>`

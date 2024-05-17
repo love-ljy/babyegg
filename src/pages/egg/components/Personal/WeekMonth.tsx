@@ -253,7 +253,7 @@ const Comp = (props: CompProps) => {
           {t('TOTAL PRIZE POOL')}
         </Typography>
         <div className="bot">
-          <span className="count">{myInfo?.total_reward_matic}</span>
+          <span className="count">{myInfo?.total_reward_matic&&Math.trunc(Number(myInfo?.total_reward_matic))}</span>
           <div className="img">
             <EggTokenIcon />
           </div>

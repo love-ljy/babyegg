@@ -19,6 +19,7 @@
     "paths": {
       "@icons/*": ["./src/assets/svg/*"],
       "@imgs/*": ["./src/assets/img/*"],
+      "@lottie/*": ["./src/assets/lottie/*"],
       "@styles/*": ["./src/assets/styles/*"],
       "@config/*": ["./src/config/*"],
       "@api/*": ["./src/utils/api/*"],

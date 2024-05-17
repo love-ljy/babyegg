@@ -36,7 +36,7 @@ import {
   // openEgg,
   // eggIncomeReinvestment,
   // getCoin,
-  // getIncomeReceiveNumber,
+  getIncomeReceiveNumber,
   getUserAllIncome,
   createOrder,
 } from '@utils/api'
@@ -49,6 +49,10 @@ import { dispatch } from '@store/index'
 import useBabyLong from '@hooks/useBabyLong'
 import useGetBalance from '@hooks/useGetBalance'
 import congratulationBabyPng from '@imgs/congratulationBaby.png'
+import congratulationMatic from '@imgs/congratulationMatic.png'
+import useMaticReward from '@hooks/useMaticReward'
+import LottieModal from '@components/LottieModal'
+import hatchingJson from '@lottie/matic_hatching.json'
 
 const UserPanelWrap = styled.div`
   border-radius: 5px;
@@ -485,6 +489,9 @@ const UserPanel = () => {
     dragon_egg_babyloong_up_num: 0,
     dragon_egg_babyloong_up_num_matic: 0,
   })
+  const [openLoading,setOpenLoading] = useState(false)
+  const [maticMidReward, setMaticMidReward] = useState<any>('0')
+  const [maticVisible,setMaticVisible] = useState(false)
   const [eggVisible, setEggVisible] = useState(false)
   const [babyVisible, setBabyVisible] = useState(false)
   const userInfo: any = useSelector(selectUserInfo)
@@ -493,8 +500,12 @@ const UserPanel = () => {
   const babyPrice: any = useSelector(selectBabyPrice)
   const isBindParent: any = useSelector(selectIsBindParent)
   const gamingId: any = useSelector(selectGamingId)
-  const { userBalance } = useGetBalance()
 
+  const gameIds = useMemo(() => {
+    const start = 1
+    return Array.from({ length: +gamingId - start + 1 }, (_, index) => index + start)
+  }, [gamingId])
+  const { userBalance,userMaticReward } = useGetBalance(gameIds)
   const { isLoading: babyLoading, setBabyArgs } = useBabyLong({
     onSuccess() {
       toast.success('操作成功')
@@ -665,10 +676,36 @@ const UserPanel = () => {
     }
   }, [address, isBindParent, token])
 
+  const fetchUserRewardInfo = useCallback(async () => {
+    if (address && isBindParent && token) {
+      try {
+        const res: any = await getIncomeReceiveNumber(-1)
+        if (res.code === 0) {
+          setMaticMidReward(res.data.find(v => v.coin_type === '0')?.number || 0)
+        } else {
+          toast.warn(res.msg)
+        }
+      } catch (e) {
+        console.log('e', e)
+        toast.warn('网络错误')
+      }
+    }
+  }, [address && isBindParent && token])
+
   useEffect(() => {
     fetchGameEgg()
     fetchUserTotalRewards()
+    fetchUserRewardInfo()
+   
   }, [fetchGameEgg, fetchUserTotalRewards])
+
+  const MaticIncome = useMemo(()=>{
+    const value =  Number(userMaticReward)+Number(maticMidReward)
+    if(Number(value)>0){
+      setMaticVisible(true)
+    }
+    return value
+  },[userMaticReward,maticMidReward])
 
   const toHistory = () => {
     router.push('/history')
@@ -936,6 +973,7 @@ const UserPanel = () => {
           </CommonRow>
         </CommWrap>
       </RewardStatusWrap>
+      {/* <LottieModal visible={eggLoading} anmitJson={hatchingJson} /> */}
       {/* <PasswordModal
         visible={passVisible}
         type={userInfo.pay_password ? 'normal' : 'set'}
@@ -1047,6 +1085,46 @@ const UserPanel = () => {
               }}
             >
               <i>{`≈ ${Number(eggInfo.dragon_egg_babyloong_up_num_matic)}$Matic`}</i>{' '}
+            </div>
+          </div>
+        </CongContent>
+      </CommonModal>
+      <CommonModal
+        visible={maticVisible}
+        setVisible={setMaticVisible}
+        title={
+          <DialogTitle>
+            <div>
+              <Image src={congratulationMatic} width={187} height={160} alt="desc" />
+            </div>
+          </DialogTitle>
+        }
+        footer={
+          <DialogFooter onClick={()=>{setMaticVisible(false)}}>
+            <span>{t('confirm')}</span>
+          </DialogFooter>
+        }
+      >
+        <CongContent>
+          <div>{t('Obtain Dragon Egg Value Dividend')}</div>
+          <div className="babyDialogMain">
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '10px',
+              }}
+            >
+              <div
+                style={{
+                  marginRight: '10px',
+                }}
+              >
+                {MaticIncome} Matic
+              </div>
+              <div>
+                <MaticIcon />
+              </div>
             </div>
           </div>
         </CongContent>

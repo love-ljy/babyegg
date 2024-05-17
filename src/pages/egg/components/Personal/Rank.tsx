@@ -127,7 +127,7 @@ const RankItem = styled.div`
     display: flex;
     align-items: center;
     span {
-      margin-right: 20px;
+      margin-right: 5px;
       &.big {
         font-size: 30px;
       }
@@ -317,7 +317,7 @@ const Rank = (props: Props) => {
         <RankItem className="special">
           <Image src={rankBgPng} alt="rank" />
           <div className="countIcon">
-            <span className="big">{rankLevel[4]?.total_reward_babyloong_matic}</span>
+            <span className="big">{rankLevel[4]?.total_reward_babyloong&&Math.trunc(Number(rankLevel[4]?.total_reward_babyloong))}</span>
             <EggTokenIcon width={24} />
           </div>
           <div className="second">
@@ -328,7 +328,7 @@ const Rank = (props: Props) => {
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel[3]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[3]?.total_reward_babyloong&&Math.trunc(Number(rankLevel[3]?.total_reward_babyloong))}</span>
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
@@ -338,7 +338,7 @@ const Rank = (props: Props) => {
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel[2]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[2]?.total_reward_babyloong&&Math.trunc(Number(rankLevel[2]?.total_reward_babyloong))}</span>
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
@@ -350,7 +350,7 @@ const Rank = (props: Props) => {
         <div className="row">
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel[1]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[1]?.total_reward_babyloong&&Math.trunc(Number(rankLevel[1]?.total_reward_babyloong))}</span>
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
@@ -360,7 +360,7 @@ const Rank = (props: Props) => {
           </RankItem>
           <RankItem>
             <div className="countIcon">
-              <span className="big">{rankLevel[0]?.total_reward_babyloong_matic}</span>
+              <span className="big">{rankLevel[0]?.total_reward_babyloong&&Math.trunc(Number(rankLevel[0]?.total_reward_babyloong))}</span>
               <EggTokenIcon width={24} />
             </div>
             <div className="second">
