@@ -284,6 +284,11 @@ const Withdraw = () => {
       dispatch(setBindVisible(true))
       return
     }
+    console.info((Number(maticWithdrawInfo.mergeMaticBalance)>13))
+    if(Number(maticWithdrawInfo.mergeMaticBalance)-10<0&&type==='Matic'){
+      toast.warn('最小提现额度小于10')
+      return
+    }
     setWithdrawType(type)
     setVisible(true)
   }

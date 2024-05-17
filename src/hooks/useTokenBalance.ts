@@ -5,6 +5,7 @@ import { NULL_ADDRESS } from '@config/contants'
 import { getBalanceNumber } from '@utils/formatterBalance'
 import BigNumber from 'bignumber.js'
 import {config} from '@config/wagmi'
+import {BabyToken} from '@config/contants'
 import { readContract,simulateContract, writeContract } from '@wagmi/core'
 
 const useTokenBalance = (tokenAddress: `0x${string}`) => {
@@ -18,15 +19,14 @@ const useTokenBalance = (tokenAddress: `0x${string}`) => {
         // @ts-ignore
       const balance = await readContract(config,{
         abi: erc20Abi,
-        address: tokenAddress,
+        address: BabyToken,
         functionName: 'balanceOf',
         args: [address as `0x${string}`],
       })
 
       if (balance) {
-  
-        const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18)
-        setTokenBalance(formattedBalance)
+        const formattedBalance = getBalanceNumber(new BigNumber(balance.toString()), 18).toFixed(2)
+        setTokenBalance(Number(formattedBalance))
       } else {
         setTokenBalance(0)
       }

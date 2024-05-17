@@ -284,7 +284,6 @@ const BuyEgg = () => {
   const { address } = useAccount()
   const { userBalance } = useGetBalance()
   const { formatBalance } = useTokenBalance(tokenAddressMap[coinType]) // !
-
   const {
     isAllowing,
     allowance,
@@ -511,7 +510,7 @@ const BuyEgg = () => {
               return {
                 label: v.label,
                 value: v.value,
-                balance: v.value === BABY ? formatBalance : +walletInfo?.balance.toFixed(2),
+                balance: Number(v.value) === Number(BABY) ? formatBalance : +walletInfo?.balance.toFixed(2),
               }
             })
           const babyMaticPrice = res.data.filter((e:any)=>Number(e.type)===1)[0];
